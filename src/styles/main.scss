@@ -1,0 +1,143 @@
+/* Vendors */
+@import 'vendors/normalize.scss';
+
+/* Themes */
+@import 'themes/solarized_dark.scss';
+
+/* Layouts */
+@import 'layouts/header.scss';
+
+body {
+  background: #22252f;
+  padding-top: 50px;
+  margin:0;
+}
+
+a {
+  text-decoration: none;
+}
+
+pre {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.line-number {
+  vertical-align: top;
+  color: #d3d2c8;
+}
+
+.code-title {
+  color: white;
+  text-align: center;
+  font-size: 1.3em;
+  font-family: $primary-font;
+  font-weight: bold;
+  padding-left: 8px;
+  @media (min-width: 768px) {
+    text-align: initial;
+  }
+}
+
+/* Root Container */
+.main-container {
+  padding-top: 15px;
+  .title-container {
+    padding: 0 30px;
+    display: block;
+    input {
+      color: white;
+      font-family: $primary-font;
+      font-size: 20px;
+      background: transparent;
+      box-shadow: none;
+      border: none;
+      width: 100%;
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid gray;
+      transition: .4s;
+      &:focus,
+      &:active {
+        border-bottom: 1px solid white;
+        box-shadow: none;
+        outline: none;
+      }
+    }
+  }
+  .option-container {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 20px;
+  }
+  .text-container {
+    text-align: center;
+    textarea {
+      color: white;
+      height: 80%;
+      background: transparent;
+      width: 90%;
+      font-family: $primary-font;
+      border: none;
+      transition: .4s;
+      padding: 20px 30px 0 30px;
+      &:focus,
+      &:active {
+        &::-webkit-input-placeholder {
+          color: white;
+        }
+      }
+      &::-webkit-input-placeholder {
+        font-family: 'FontAwesome';
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: inherit;
+        font-size: 30px;
+        position: relative;
+        top: -10px;
+      }
+    }
+  }
+  .input-row {
+    display: inline-block;
+    padding-bottom: 8px;
+    [type="radio"] {
+      position: relative;
+      bottom: 2px;
+      left: 5px;
+    }
+    label {
+      color: white;
+      padding-left: 10px;
+      padding-right: 15px;
+    }
+  }
+  .select-row {
+    display: flex;
+    label {
+      display: block;
+      padding-right: 6px;
+      padding-bottom: 8px;
+      color: white;
+    }
+    select {
+      position: relative;
+      bottom: 2px;
+    }
+  }
+  .radio-row {
+    position: relative;
+    right: 25px;
+  }
+}
