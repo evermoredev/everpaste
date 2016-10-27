@@ -52,9 +52,6 @@ ul {
   font-family: $primary-font;
   font-weight: bold;
   padding-left: 8px;
-  @media (min-width: 768px) {
-    text-align: initial;
-  }
   .from-name {
     color: #bfb5b5;
     padding-left: 10px;
