@@ -66,7 +66,7 @@ ul {
 .main-container {
   padding-top: 15px;
   .title-container {
-    padding: 0 30px;
+    padding: 0 50px;
     display: block;
     input {
       color: white;
@@ -82,7 +82,7 @@ ul {
       transition: .4s;
       &:focus,
       &:active {
-        border-bottom: 1px solid white;
+        border-bottom: 1px solid #5891cb;
         box-shadow: none;
         outline: none;
       }
@@ -108,23 +108,27 @@ ul {
   }
   .text-container {
     text-align: center;
+    padding: 0 50px;
     textarea {
       color: white;
       height: 80%;
       background: transparent;
-      width: 90%;
+      width: 100%;
       font-family: $code-font;
       border: 1px solid gray;
       transition: .4s;
-      padding: 20px 30px 0 30px;
+      padding: 30px;
+      border-radius: 3px;
       &:focus,
       &:active {
+        outline: none;
+        border: 1px solid #5891cb;
         &::-webkit-input-placeholder {
           color: white;
         }
       }
       &::-webkit-input-placeholder {
-        font-family: 'FontAwesome';
+        font-family: $primary-font;
         font-style: normal;
         font-weight: normal;
         text-decoration: inherit;
