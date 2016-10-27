@@ -93,7 +93,7 @@ class DocHandler {
       data.public = !!data.privacyPublic;
       // Create expiration timestamp
       data.expiration =
-        (['30 minutes', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
+        (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
           postgresTimestamp(data.expiration) : null;
 
       // Generate a new key

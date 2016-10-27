@@ -113,8 +113,8 @@ class PasteView extends React.Component {
                 <option value="forever">Forever</option>
                 <option value="1 weeks">1 Week</option>
                 <option value="1 days">1 Day</option>
-                <option value="1 hours">1 Hour</option>
-                <option value="10 minutes">10 Minutes</option>
+                <option value="6 hours">6 Hours</option>
+                <option value="30 minutes">30 Minutes</option>
               </select>
             </fieldset>
           </form>
