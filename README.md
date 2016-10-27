@@ -11,6 +11,7 @@ Check out the `config.example.json` for more information.
 ### TODO's
 
 [] Update README.md / Docs
+[] Update styles for better readability in ReadView
 [] Add public panel to main screen
 [] Update api for better `curl` post requests/responses
 [] Add from name input in options box
@@ -18,3 +19,4 @@ Check out the `config.example.json` for more information.
 [] Update not found routing
 [] Add settings section to change theme and save to cookie
 [] More comments in code
+[] Enable travis
