@@ -1,8 +1,9 @@
 /* Vendors */
 @import 'vendors/normalize.scss';
+@import 'vendors/pure-forms';
 
 /* Themes */
-@import 'themes/solarized_dark.scss';
+@import 'themes/solarized-dark.scss';
 
 /* Layouts */
 @import 'layouts/header.scss';
@@ -79,9 +80,20 @@ ul {
   .option-container {
     display: flex;
     justify-content: space-around;
-    border: solid #716a6a;
     margin: 10px;
-    padding: 10px;
+    padding-top: 10px;
+  }
+  .pure-form {
+    margin: 0;
+    .pure-radio {
+      display: inline;
+      margin-right: 7px;
+    }
+    label {
+      color: white;
+      padding-left: 10px;
+      padding-right: 15px;
+    }
   }
   .text-container {
     text-align: center;
@@ -110,36 +122,5 @@ ul {
         top: -10px;
       }
     }
-  }
-  .input-row {
-    display: inline-block;
-    padding-bottom: 8px;
-    [type="radio"] {
-      position: relative;
-      bottom: 2px;
-      left: 5px;
-    }
-    label {
-      color: white;
-      padding-left: 10px;
-      padding-right: 15px;
-    }
-  }
-  .select-row {
-    display: flex;
-    label {
-      display: block;
-      padding-right: 6px;
-      padding-bottom: 8px;
-      color: white;
-    }
-    select {
-      position: relative;
-      bottom: 2px;
-    }
-  }
-  .radio-row {
-    position: relative;
-    right: 25px;
   }
 }

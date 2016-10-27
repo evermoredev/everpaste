@@ -57,42 +57,55 @@ class PasteView extends React.Component {
             onChange={this.handleChange}
           />
         </div>
+
         <div className="option-container">
-          <div className="radio-row">
-            <div className="input-row">
-              <input
-                type="radio"
-                name="public"
-                value="public"
-                checked={this.state.selectedRadio === 'public'}
-                onChange={this.handleRadioChange}
-              />
-              <label htmlFor="public">Public</label>
-            </div>
-            <div className="input-row">
-              <input
-                type="radio"
-                name="private"
-                value="private"
-                checked={this.state.selectedRadio === 'private'}
-                onChange={this.handleRadioChange}
-              />
-              <label htmlFor="private">Private</label>
-            </div>
-          </div>
-          <div className="select-row">
-            <label htmlFor="alive-time">
-              Save Duration:
-            </label>
-            <select name="alive-time" defaultValue="Forever">
-              <option value="Forever">Forever</option>
-              <option value="1 Week">1 Week</option>
-              <option value="24 Hour">24 Hours</option>
-              <option value="1 Hour">1 Hour</option>
-              <option value="10 Minutes">10 Minutes</option>
-            </select>
-          </div>
+          <form className="pure-form">
+            <fieldset>
+              <label htmlFor="public">
+                <input
+                  className="pure-radio"
+                  type="radio"
+                  name="public"
+                  value="public"
+                  checked={this.state.selectedRadio === 'public'}
+                  onChange={this.handleRadioChange}
+                />
+                Public
+              </label>
+              <label htmlFor="private">
+                <input
+                  className="pure-radio"
+                  type="radio"
+                  name="private"
+                  value="private"
+                  checked={this.state.selectedRadio === 'private'}
+                  onChange={this.handleRadioChange}
+                />
+                Private
+              </label>
+              <label htmlFor="name">
+                <input
+                  type="text"
+                  name="name"
+                  value={this.state.name}
+                  placeholder="Name (Optional)"
+                  onChange={this.handleChange}
+                />
+              </label>
+              <label htmlFor="alive-time">
+                Expiration:
+              </label>
+              <select id="alive-time" name="alive-time" defaultValue="Forever">
+                <option value="Forever">Forever</option>
+                <option value="1 Week">1 Week</option>
+                <option value="24 Hour">24 Hours</option>
+                <option value="1 Hour">1 Hour</option>
+                <option value="10 Minutes">10 Minutes</option>
+              </select>
+            </fieldset>
+          </form>
         </div>
+
         <div className="text-container">
           <textarea
             name="text"
