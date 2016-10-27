@@ -15,10 +15,12 @@ const highlight = (code, options = {}) => {
 
   // HighlightJS throws an error if the language you're trying doesn't exist.
   try {
-    if (lang && lang != 'txt') {
+    if (lang == 'txt') {
+      codeBuf = htmlEscapeStr(code);
+    } else if (lang) {
       codeBuf = hljs.highlight(code, lang).value;
     } else {
-      codeBuf = htmlEscapeStr(code);
+      codeBuf = hljs.highlightAuto(code).value;
     }
   } catch (e) {
     codeBuf = hljs.highlightAuto(code).value;

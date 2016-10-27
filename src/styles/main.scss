@@ -79,7 +79,9 @@ ul {
   .option-container {
     display: flex;
     justify-content: space-around;
-    padding-top: 20px;
+    border: solid #716a6a;
+    margin: 10px;
+    padding: 10px;
   }
   .text-container {
     text-align: center;

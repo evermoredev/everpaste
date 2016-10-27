@@ -26,6 +26,7 @@ class RootContainer extends React.Component {
           <LayoutContainer>
             <Match pattern="/" component={PasteView} exactly={true} />
             <Match pattern="/:key" component={ReadView} />
+            <Match pattern="/edit/:key" component={PasteView} />
             <Miss component={NotFoundView} />
           </LayoutContainer>
         </BrowserRouter>

@@ -99,9 +99,17 @@ class DocHandler {
       }
     };
 
+
     req.on('data', (reqData) => {
-      data = JSON.parse(reqData);
+      try {
+        data = JSON.parse(reqData);
+      } catch(e) {
+        data = {
+          text: (reqData || '').toString()
+        }
+      }
     });
+
     req.on('end', () => {
       if (cancelled) { return; }
       onSuccess();
