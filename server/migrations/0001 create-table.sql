@@ -5,5 +5,6 @@ CREATE TABLE entries
  public bool not null,
  name varchar(255),
  title varchar(255),
- expiration int,
+ expiration timestamp,
+ created timestamp default clock_timestamp(),
  unique(key));

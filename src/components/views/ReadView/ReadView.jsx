@@ -44,6 +44,9 @@ class PasteView extends React.Component {
         <div id="messages"></div>
         <div className="unselectable code-title">
           {this.state.title || 'Untitled'}
+          {this.state.name &&
+            <span className="from-name">from {this.state.name}</span>
+          }
         </div>
         <div id="code-document">
           <pre>

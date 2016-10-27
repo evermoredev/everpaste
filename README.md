@@ -8,7 +8,9 @@ Node >= v6
 
 Check out the `config.example.json` for more information.
 
-### TODO's
+## TODO's
+
+#### Version 1 Milestones
 
 - [ ] Update README.md / Docs
 - [ ] Update styles for better readability in ReadView
@@ -20,3 +22,4 @@ Check out the `config.example.json` for more information.
 - [ ] Add settings section to change theme and save to cookie
 - [ ] More comments in code
 - [ ] Enable travis
+- [ ] Edit functionality

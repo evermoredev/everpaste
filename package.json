@@ -35,6 +35,7 @@
     "mobx": "^2.6.0",
     "mobx-react": "^3.5.8",
     "mobx-react-devtools": "^4.2.9",
+    "moment": "^2.15.2",
     "pg": "^6.1.0",
     "postcss-custom-media": "^5.0.1",
     "react": "^15.3.2",

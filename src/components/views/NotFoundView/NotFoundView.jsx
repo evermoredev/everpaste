@@ -10,7 +10,7 @@ class NotFoundView extends React.Component {
 
   render() {
     return (
-      <div className="page-not-found">
+      <div className="not-found">
         <HeaderLayout />
         <div>
           {`So incredibly sorry! It seems the page you are looking for

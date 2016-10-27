@@ -10,6 +10,7 @@ import highlighter from './highlighter';
 import PostgresStore from './postgres_store';
 import KeyGenerator from './key_generator';
 import Config from '../../config';
+import { postgresTimestamp } from './_helpers';
 
 class DocHandler {
 
@@ -33,7 +34,7 @@ class DocHandler {
 
   async handleGet(docKey, res, options = {}) {
     const { key, lang } = DocHandler.splitDocKey(docKey);
-    const data = await this.store.getPromise(key);
+    const data = await this.store.getByKey(key);
     if (data && data.text) {
       data.text = highlighter(data.text, { lang });
       winston.verbose('Retrieved document', { key });
@@ -47,7 +48,7 @@ class DocHandler {
 
   async handleRawGet(docKey, res) {
     const { key, lang } = DocHandler.splitDocKey(docKey);
-    const data = await this.store.getPromise(key);
+    const data = await this.store.getByKey(key);
     if (data && data.text) {
       winston.verbose('Retrieved raw document', { key });
       res.writeHead(200, DocHandler.contentType.plain);
@@ -63,9 +64,12 @@ class DocHandler {
     let cancelled = false, data;
 
     const onSuccess = async () => {
+
+      /**
+       * Do some validation
+       **/
       const errors = [];
 
-      // Do some validation
       if (data.text.length > this.maxLength) {
         winston.warn('Document exceeds max length.', {maxLength: this.maxLength});
         errors.push('Document exceeds max length.');
@@ -82,10 +86,19 @@ class DocHandler {
         return;
       }
 
+      /**
+       * Do some formatting
+       **/
       // Make sure public is a boolean
-      data.public = !!data.public;
+      data.public = !!data.privacyPublic;
+      // Create expiration timestamp
+      data.expiration =
+        (['30 minutes', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
+          postgresTimestamp(data.expiration) : null;
 
+      // Generate a new key
       const key = await this.chooseKey();
+      // Insert the query
       const queryInserted = await this.store.insert(key, data);
 
       if (queryInserted) {
@@ -99,7 +112,9 @@ class DocHandler {
       }
     };
 
-
+    /**
+     * Handle the initial POST request
+     **/
     req.on('data', (reqData) => {
       try {
         data = JSON.parse(reqData);
@@ -109,7 +124,6 @@ class DocHandler {
         }
       }
     });
-
     req.on('end', () => {
       if (cancelled) { return; }
       onSuccess();
@@ -130,7 +144,7 @@ class DocHandler {
     let foundKey = false;
     while (!foundKey) {
       let key = this.keyGenerator.createKey();
-      let keyExists = await this.store.getPromise(key);
+      let keyExists = await this.store.getByKey(key);
       if (!keyExists) {
         return key;
       }

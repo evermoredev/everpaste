@@ -12,11 +12,12 @@ class PasteView extends React.Component {
     super(props);
     this.state = {
       title: '',
-      text: '',
-      public: true,
-      errors: '',
+      name: '',
+      text: this.props.text || '',
+      expiration: '1 days',
+      privacyPublic: true,
+      errors: [],
       redirect: '',
-      selectedRadio: 'public'
     };
   }
 
@@ -25,21 +26,30 @@ class PasteView extends React.Component {
   };
 
   saveButton = () => {
-    console.log('save button pressed');
-    axios.post('/api', {
-      title: this.state.title,
-      text: this.state.text
-    }).then(res => {
-      console.log('/api post response', res);
-      this.setState({ redirect: res.data.key });
-    }).catch(err => {
-      console.log(err);
-    })
+    let { title, text, name, privacyPublic, expiration } = this.state;
+    // Do some validation and formatting
+    let errors = [];
+    if (!text || text.length < 3) {
+      errors.push("Please enter some text to save.");
+    }
+
+    if (errors.length) {
+      this.setState({ errors });
+    } else {
+      axios.post('/api', {
+        title, text, name, expiration, privacyPublic
+      }).then(res => {
+        this.setState({redirect: res.data.key});
+      }).catch(err => {
+        errors.push(err);
+        this.setState({ errors });
+      })
+    }
   };
 
-  handleRadioChange = (event) => {
+  handlePrivacyRadio = (event) => {
     this.setState({
-      selectedRadio: event.currentTarget.value
+      privacyPublic: event.currentTarget.value === 'public'
     })
   };
 
@@ -48,7 +58,7 @@ class PasteView extends React.Component {
       <div className="main-container">
         {this.state.redirect && <Redirect to={`/${this.state.redirect}`} />}
         <HeaderLayout saveButton={this.saveButton} />
-        <div id="messages">{this.state.errors}</div>
+        <div className="error-messages">{this.state.errors}</div>
         <div className="title-container">
           <input
             placeholder="Enter a Title"
@@ -67,8 +77,8 @@ class PasteView extends React.Component {
                   type="radio"
                   name="public"
                   value="public"
-                  checked={this.state.selectedRadio === 'public'}
-                  onChange={this.handleRadioChange}
+                  checked={this.state.privacyPublic}
+                  onChange={this.handlePrivacyRadio}
                 />
                 Public
               </label>
@@ -78,8 +88,8 @@ class PasteView extends React.Component {
                   type="radio"
                   name="private"
                   value="private"
-                  checked={this.state.selectedRadio === 'private'}
-                  onChange={this.handleRadioChange}
+                  checked={!this.state.privacyPublic}
+                  onChange={this.handlePrivacyRadio}
                 />
                 Private
               </label>
@@ -92,15 +102,19 @@ class PasteView extends React.Component {
                   onChange={this.handleChange}
                 />
               </label>
-              <label htmlFor="alive-time">
+              <label htmlFor="expiration">
                 Expiration:
               </label>
-              <select id="alive-time" name="alive-time" defaultValue="Forever">
-                <option value="Forever">Forever</option>
-                <option value="1 Week">1 Week</option>
-                <option value="24 Hour">24 Hours</option>
-                <option value="1 Hour">1 Hour</option>
-                <option value="10 Minutes">10 Minutes</option>
+              <select
+                name="expiration"
+                value={this.state.expiration}
+                onChange={this.handleChange}
+              >
+                <option value="forever">Forever</option>
+                <option value="1 weeks">1 Week</option>
+                <option value="1 days">1 Day</option>
+                <option value="1 hours">1 Hour</option>
+                <option value="10 minutes">10 Minutes</option>
               </select>
             </fieldset>
           </form>
