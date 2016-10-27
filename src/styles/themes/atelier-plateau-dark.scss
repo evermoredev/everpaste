@@ -3,82 +3,85 @@
 /* Original Base16 color scheme by Chris Kempson (https://github.com/chriskempson/base16) */
 
 /* Atelier-Plateau Comment */
-.hljs-comment,
-.hljs-quote {
-  color: #7e7777;
-}
 
-/* Atelier-Plateau Red */
-.hljs-variable,
-.hljs-template-variable,
-.hljs-attribute,
-.hljs-tag,
-.hljs-name,
-.hljs-regexp,
-.hljs-link,
-.hljs-name,
-.hljs-selector-id,
-.hljs-selector-class {
-  color: #ca4949;
-}
+.atelier-plateau-dark-theme {
+  .hljs-comment,
+  .hljs-quote {
+    color: #7e7777;
+  }
 
-/* Atelier-Plateau Orange */
-.hljs-number,
-.hljs-meta,
-.hljs-built_in,
-.hljs-builtin-name,
-.hljs-literal,
-.hljs-type,
-.hljs-params {
-  color: #b45a3c;
-}
+  /* Atelier-Plateau Red */
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-attribute,
+  .hljs-tag,
+  .hljs-name,
+  .hljs-regexp,
+  .hljs-link,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class {
+    color: #ca4949;
+  }
 
-/* Atelier-Plateau Green */
-.hljs-string,
-.hljs-symbol,
-.hljs-bullet {
-  color: #4b8b8b;
-}
+  /* Atelier-Plateau Orange */
+  .hljs-number,
+  .hljs-meta,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-literal,
+  .hljs-type,
+  .hljs-params {
+    color: #b45a3c;
+  }
 
-/* Atelier-Plateau Blue */
-.hljs-title,
-.hljs-section {
-  color: #7272ca;
-}
+  /* Atelier-Plateau Green */
+  .hljs-string,
+  .hljs-symbol,
+  .hljs-bullet {
+    color: #4b8b8b;
+  }
 
-/* Atelier-Plateau Purple */
-.hljs-keyword,
-.hljs-selector-tag {
-  color: #8464c4;
-}
+  /* Atelier-Plateau Blue */
+  .hljs-title,
+  .hljs-section {
+    color: #7272ca;
+  }
 
-.hljs-deletion,
-.hljs-addition {
-  color: #1b1818;
-  display: inline-block;
-  width: 100%;
-}
+  /* Atelier-Plateau Purple */
+  .hljs-keyword,
+  .hljs-selector-tag {
+    color: #8464c4;
+  }
 
-.hljs-deletion {
-  background-color: #ca4949;
-}
+  .hljs-deletion,
+  .hljs-addition {
+    color: #1b1818;
+    display: inline-block;
+    width: 100%;
+  }
 
-.hljs-addition {
-  background-color: #4b8b8b;
-}
+  .hljs-deletion {
+    background-color: #ca4949;
+  }
 
-.hljs {
-  display: block;
-  overflow-x: auto;
-  background: #1b1818;
-  color: #8a8585;
-  padding: 0.5em;
-}
+  .hljs-addition {
+    background-color: #4b8b8b;
+  }
 
-.hljs-emphasis {
-  font-style: italic;
-}
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    background: #1b1818;
+    color: #8a8585;
+    padding: 0.5em;
+  }
 
-.hljs-strong {
-  font-weight: bold;
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
 }

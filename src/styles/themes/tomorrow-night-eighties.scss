@@ -3,72 +3,76 @@
 /* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
 
 /* Tomorrow Comment */
-.hljs-comment,
-.hljs-quote {
-  color: #999999;
-}
 
-/* Tomorrow Red */
-.hljs-variable,
-.hljs-template-variable,
-.hljs-tag,
-.hljs-name,
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-regexp,
-.hljs-deletion {
-  color: #f2777a;
-}
+.tomorrow-night-eighties-theme {
+  .hljs-comment,
+  .hljs-quote {
+    color: #999999;
+  }
 
-/* Tomorrow Orange */
-.hljs-number,
-.hljs-built_in,
-.hljs-builtin-name,
-.hljs-literal,
-.hljs-type,
-.hljs-params,
-.hljs-meta,
-.hljs-link {
-  color: #f99157;
-}
+  /* Tomorrow Red */
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-tag,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class,
+  .hljs-regexp,
+  .hljs-deletion {
+    color: #f2777a;
+  }
 
-/* Tomorrow Yellow */
-.hljs-attribute {
-  color: #ffcc66;
-}
+  /* Tomorrow Orange */
+  .hljs-number,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-literal,
+  .hljs-type,
+  .hljs-params,
+  .hljs-meta,
+  .hljs-link {
+    color: #f99157;
+  }
 
-/* Tomorrow Green */
-.hljs-string,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition {
-  color: #99cc99;
-}
+  /* Tomorrow Yellow */
+  .hljs-attribute {
+    color: #ffcc66;
+  }
 
-/* Tomorrow Blue */
-.hljs-title,
-.hljs-section {
-  color: #6699cc;
-}
+  /* Tomorrow Green */
+  .hljs-string,
+  .hljs-symbol,
+  .hljs-bullet,
+  .hljs-addition {
+    color: #99cc99;
+  }
 
-/* Tomorrow Purple */
-.hljs-keyword,
-.hljs-selector-tag {
-  color: #cc99cc;
-}
+  /* Tomorrow Blue */
+  .hljs-title,
+  .hljs-section {
+    color: #6699cc;
+  }
 
-.hljs {
-  display: block;
-  overflow-x: auto;
-  background: #2d2d2d;
-  color: #cccccc;
-  padding: 0.5em;
-}
+  /* Tomorrow Purple */
+  .hljs-keyword,
+  .hljs-selector-tag {
+    color: #cc99cc;
+  }
 
-.hljs-emphasis {
-  font-style: italic;
-}
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    background: #2d2d2d;
+    color: #cccccc;
+    padding: 0.5em;
+  }
 
-.hljs-strong {
-  font-weight: bold;
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
+
 }

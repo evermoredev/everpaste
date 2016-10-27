@@ -4,57 +4,60 @@
   Original theme - https://github.com/chriskempson/tomorrow-theme
 */
 
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  background: #222;
-  color: #fff;
-}
 
-.hljs-comment,
-.hljs-quote {
-  color: #777;
-}
+.codepen-embed-theme {
+  .hljs {
+    display: block;
+    overflow-x: auto;
+    padding: 0.5em;
+    background: #222;
+    color: #fff;
+  }
 
-.hljs-variable,
-.hljs-template-variable,
-.hljs-tag,
-.hljs-regexp,
-.hljs-meta,
-.hljs-number,
-.hljs-built_in,
-.hljs-builtin-name,
-.hljs-literal,
-.hljs-params,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-deletion {
-  color: #ab875d;
-}
+  .hljs-comment,
+  .hljs-quote {
+    color: #777;
+  }
 
-.hljs-section,
-.hljs-title,
-.hljs-name,
-.hljs-selector-id,
-.hljs-selector-class,
-.hljs-type,
-.hljs-attribute {
-  color: #9b869b;
-}
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-tag,
+  .hljs-regexp,
+  .hljs-meta,
+  .hljs-number,
+  .hljs-built_in,
+  .hljs-builtin-name,
+  .hljs-literal,
+  .hljs-params,
+  .hljs-symbol,
+  .hljs-bullet,
+  .hljs-link,
+  .hljs-deletion {
+    color: #ab875d;
+  }
 
-.hljs-string,
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-addition {
-  color: #8f9c6c;
-}
+  .hljs-section,
+  .hljs-title,
+  .hljs-name,
+  .hljs-selector-id,
+  .hljs-selector-class,
+  .hljs-type,
+  .hljs-attribute {
+    color: #9b869b;
+  }
 
-.hljs-emphasis {
-  font-style: italic;
-}
+  .hljs-string,
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-addition {
+    color: #8f9c6c;
+  }
 
-.hljs-strong {
-  font-weight: bold;
+  .hljs-emphasis {
+    font-style: italic;
+  }
+
+  .hljs-strong {
+    font-weight: bold;
+  }
 }

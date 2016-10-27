@@ -5,7 +5,7 @@ import axios from 'axios';
 import HeaderLayout from 'components/layouts/HeaderLayout';
 
 @observer
-class PasteView extends React.Component {
+class ReadView extends React.Component {
 
   constructor(props) {
     super(props);
@@ -15,13 +15,21 @@ class PasteView extends React.Component {
       text: '',
       name: '',
       docKey: '',
-      loaded: false
+      loaded: false,
+      currentTheme: 'dracula-theme'
     };
   }
 
   componentDidMount() {
     this.getDoc(this.props.params.key);
   }
+
+  handleThemeChange = (event) => {
+    console.log('Theme Selected: ', event.target.value);
+    this.setState({
+      currentTheme: event.target.value
+    })
+  };
 
   getDoc = (key) => {
     axios
@@ -42,13 +50,31 @@ class PasteView extends React.Component {
       <div className="main-container">
         <HeaderLayout docKey={this.state.key} />
         <div id="messages"></div>
-        <div className="unselectable code-title">
-          {this.state.title || 'Untitled'}
-          {this.state.name &&
+        <div className="code-information-container">
+          <div className="unselectable code-title">
+            {this.state.title || 'Untitled'}
+            {this.state.name &&
             <span className="from-name">from {this.state.name}</span>
-          }
+            }
+          </div>
+          <div className="code-theme-selector">
+            <div>
+              <label htmlFor="code-theme">
+                Current Theme:
+              </label>
+              <select
+                name="code-theme"
+                value={this.state.currentTheme}
+                onChange={this.handleThemeChange}
+              >
+                <option value="dracula-theme">Dracula</option>
+                <option value="androidstudio-theme">Android Studio</option>
+                <option value="atelier-forest-light-theme">Atelier Light</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div id="code-document">
+        <div className={`code-document ${this.state.currentTheme}`}>
           <pre>
             <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
           </pre>
@@ -59,4 +85,4 @@ class PasteView extends React.Component {
 
 }
 
-export default PasteView;
+export default ReadView;
