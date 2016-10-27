@@ -82,6 +82,14 @@ class HeaderLayout extends React.Component {
                 </span>
               </a>
             </li>
+            <li>
+              <a href="#">
+                <i className="fa fa-gear" />
+                <span className="navigation-tooltip">
+                  Settings
+                </span>
+              </a>
+            </li>
           </ul>
         </div>
       </div>
