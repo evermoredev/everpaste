@@ -119,11 +119,10 @@ class PasteView extends React.Component {
             </fieldset>
           </form>
         </div>
-
         <div className="text-container">
           <textarea
             name="text"
-            placeholder="&#xf040;  Paste Text Here" // Font icon Added
+            placeholder="  Paste Text Here"
             defaultValue={this.state.text}
             onChange={this.handleChange}
             spellCheck="false"
