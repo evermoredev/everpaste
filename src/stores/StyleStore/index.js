@@ -1,1 +1,2 @@
-export { default as StyleStore } from './StyleStore';
+import StyleStore from './StyleStore';
+export default StyleStore;

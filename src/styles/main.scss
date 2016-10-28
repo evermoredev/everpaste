@@ -9,7 +9,6 @@
 @import 'layouts/header.scss';
 
 body {
-  background: #22252f;
   padding-top: 50px;
   margin:0;
 }
@@ -64,27 +63,34 @@ ul {
 
 /* Root Container */
 .main-container {
-  padding-top: 5px;
+  height: calc(100% - 16px);
   .title-container {
-    padding: 0 50px;
+    padding: 15px 50px;
     display: block;
+    color: inherit;
     input {
-      color: white;
+      color: inherit;
       font-family: $primary-font;
       font-size: 20px;
       background: transparent;
       box-shadow: none;
-      border: none;
       width: 100%;
+      border: none;
       padding: 10px;
       text-align: center;
-      border-bottom: 1px solid gray;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      border-bottom-color: inherit;
       transition: .4s;
+      &::-webkit-input-placeholder {
+        color: inherit;
+      }
       &:focus,
       &:active {
         border-bottom: 1px solid #5891cb;
         box-shadow: none;
         outline: none;
+        color: inherit;
       }
     }
   }
@@ -101,16 +107,15 @@ ul {
       margin-right: 7px;
     }
     label {
-      color: white;
       padding-left: 10px;
       padding-right: 15px;
+      color: inherit;
     }
   }
   .text-container {
     text-align: center;
     padding: 0 50px;
     textarea {
-      color: white;
       height: 80%;
       background: transparent;
       width: 100%;
@@ -123,9 +128,6 @@ ul {
       &:active {
         outline: none;
         border: 1px solid #5891cb;
-        &::-webkit-input-placeholder {
-          color: white;
-        }
       }
       &::-webkit-input-placeholder {
         font-family: $primary-font;
@@ -135,6 +137,7 @@ ul {
         font-size: 30px;
         position: relative;
         top: -10px;
+        color: inherit;
       }
     }
   }
@@ -153,6 +156,7 @@ ul {
   }
 }
 
-.theme-wrapper {
-  height: calc(100% - 26px);
+.code-container {
+  position: relative;
+  top: 10px;
 }

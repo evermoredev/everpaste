@@ -125,6 +125,7 @@ class PasteView extends React.Component {
         </div>
         <div className="text-container">
           <textarea
+            className="hljs"
             name="text"
             placeholder="  Paste Text Here"
             defaultValue={this.state.text}
