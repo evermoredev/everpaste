@@ -47,37 +47,42 @@ class ReadView extends React.Component {
 
   render() {
     return (
-      <div className="main-container">
-        <HeaderLayout docKey={this.state.key} />
-        <div id="messages"></div>
-        <div className="code-information-container">
-          <div className="unselectable code-title">
-            {this.state.title || 'Untitled'}
-            {this.state.name &&
-            <span className="from-name">from {this.state.name}</span>
-            }
-          </div>
-          <div className="code-theme-selector">
-            <div>
-              <label htmlFor="code-theme">
-                Current Theme:
-              </label>
-              <select
-                name="code-theme"
-                value={this.state.currentTheme}
-                onChange={this.handleThemeChange}
-              >
-                <option value="dracula-theme">Dracula</option>
-                <option value="androidstudio-theme">Android Studio</option>
-                <option value="atelier-forest-light-theme">Atelier Light</option>
-              </select>
+      <div className={`main-container ${this.state.currentTheme}`}>
+        <div className="hljs theme-wrapper">
+          <HeaderLayout docKey={this.state.key} />
+          <div className="error-messages"></div>
+          <div className="code-information-container">
+            <div className="unselectable code-title">
+              {this.state.title || 'Untitled'}
+              {this.state.name &&
+              <span className="from-name">from {this.state.name}</span>
+              }
+            </div>
+            <div className="code-theme-selector">
+              <div>
+                <label htmlFor="code-theme">
+                  Current Theme:
+                </label>
+                <select
+                  name="code-theme"
+                  value={this.state.currentTheme}
+                  onChange={this.handleThemeChange}
+                >
+                  <option value="dracula-theme">Dracula</option>
+                  <option value="agate-theme">Agate</option>
+                  <option value="atom-one-dark-theme">Atom Dark</option>
+                  <option value="androidstudio-theme">Android Studio</option>
+                  <option value="atelier-forest-light-theme">Atelier Light</option>
+                  <option value="brown-paper-theme">Brown Paper</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-        <div className={`code-document ${this.state.currentTheme}`}>
+          <div className="code-document">
           <pre>
             <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
           </pre>
+          </div>
         </div>
       </div>
     );

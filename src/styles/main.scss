@@ -3,11 +3,7 @@
 @import 'vendors/pure-forms';
 
 /* Themes */
-@import 'themes/arta.scss';
-@import 'themes/dracula.scss';
-@import 'themes/androidstudio.scss';
-@import 'themes/atom-one-dark.scss';
-@import 'themes/atelier-forest-light.scss';
+@import 'themes/index.scss';
 
 /* Layouts */
 @import 'layouts/header.scss';
@@ -50,7 +46,6 @@ ul {
 }
 
 .code-title {
-  color: white;
   text-align: center;
   font-size: 1.3em;
   font-family: $primary-font;
@@ -69,7 +64,7 @@ ul {
 
 /* Root Container */
 .main-container {
-  padding-top: 15px;
+  padding-top: 5px;
   .title-container {
     padding: 0 50px;
     display: block;
@@ -148,12 +143,16 @@ ul {
 .code-information-container {
   display: flex;
   justify-content: space-around;
+  padding: 15px;
   .code-theme-selector {
     label {
-      color: white;
       padding-right: 5px;
       font-family: $primary-font;
       font-weight: bold;
     }
   }
+}
+
+.theme-wrapper {
+  height: calc(100% - 26px);
 }

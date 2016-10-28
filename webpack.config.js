@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Config = require('./config.js');
 
@@ -49,9 +50,11 @@ const webpackConfig = {
       }
     ]
   },
-  postcss: function () {
+  postcss: function (webpack) {
     return [
-      require('postcss-smart-import')(),
+      require('postcss-smart-import')({
+        addDependencyTo: webpack
+      }),
       require('precss')(),
       require('autoprefixer')(),
     ];
