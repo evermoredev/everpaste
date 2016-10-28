@@ -4,7 +4,7 @@ import axios from 'axios';
 
 import HeaderLayout from 'components/layouts/HeaderLayout';
 
-@observer
+@observer(['ViewsStore'])
 class ReadView extends React.Component {
 
   constructor(props) {
@@ -39,6 +39,8 @@ class ReadView extends React.Component {
         const newState =
           Object.assign({}, this.state, res.data);
         this.setState(newState);
+        // Store the text that get's loaded in case they click edit.
+        this.props.ViewsStore.readViewText = res.data.rawText;
       })
       .catch(error => {
         console.log(error);

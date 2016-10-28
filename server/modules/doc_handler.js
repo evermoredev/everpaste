@@ -36,6 +36,7 @@ class DocHandler {
     const { key, lang } = DocHandler.splitDocKey(docKey);
     const data = await this.store.getByKey(key);
     if (data && data.text) {
+      data.rawText = data.text;
       data.text = highlighter(data.text, { lang });
       winston.verbose('Retrieved document', { key });
       res.end(JSON.stringify(data));

@@ -21,7 +21,7 @@ class RootContainer extends React.Component {
 
   render() {
     return (
-      <Provider store={stores}>
+      <Provider {...stores}>
         <BrowserRouter>
           <LayoutContainer>
             <Match pattern="/" component={PasteView} exactly={true} />
