@@ -2,9 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router';
 
-import HeaderLayoutState from './HeaderLayout.state';
-
-@observer
+@observer(['GlobalStore','HeaderLayoutStore'])
 class HeaderLayout extends React.Component {
 
   constructor(props) {
@@ -17,17 +15,19 @@ class HeaderLayout extends React.Component {
   render() {
     return (
       <div className="main-nav unselectable">
-        <div className="left-nav">
-          <img src="/img/logo.svg" alt="logo" className="logo" />
-          <h1>{document.title}</h1>
-        </div>
+        <Link to="/">
+          <div className="left-nav">
+            <img src="/img/logo.svg" alt="logo" className="logo" />
+            <h1>{document.title}</h1>
+          </div>
+        </Link>
         <div className="right-nav">
           <div className="mobile-navicon">
-            <a href="#" onClick={HeaderLayoutState.handleMobileNaviconClick}>
+            <a href="#" onClick={this.props.HeaderLayoutStore.handleMobileNaviconClick}>
               <i className="fa fa-bars" />
             </a>
           </div>
-          <ul className={HeaderLayoutState.mobileNavigationClass}>
+          <ul className={this.props.HeaderLayoutStore.mobileNavigationClass}>
             <li><Link to="/"><i className="fa fa-plus" />New</Link></li>
             <li>
               <a href="#"><i className="fa fa-floppy-o" />Save</a>

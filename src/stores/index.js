@@ -1,10 +1,10 @@
 // From the stores folder
-export { default as AuthStore } from './AuthStore';
-export { default as StateStore } from './StateStore';
-export { default as StyleStore } from './StyleStore';
+export GlobalStore from './GlobalStore';
+export StyleStore from './StyleStore';
 
 // Stores from other folders
-export { default as ViewsStore } from '../components/views/Views.state.js'
+export ViewsStore from '../components/views/Views.store';
+export HeaderLayoutStore from '../components/layouts/HeaderLayout/HeaderLayout.store';
 
 /**
  * In general there are three ways in which you can pass stores in MobX

@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
 
-class HeaderLayoutState {
+class HeaderLayoutStore {
 
   @observable mobileNavigationClass = 'mobile-navigation';
 
@@ -21,4 +21,4 @@ class HeaderLayoutState {
   };
 }
 
-export default new HeaderLayoutState;
+export default new HeaderLayoutStore();
