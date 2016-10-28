@@ -20,5 +20,4 @@ const postgresTimestamp = (addTime, subtractTime) => {
   return timestamp.format('YYYY-MM-DD h:mm:ss');
 };
 
-
 export { htmlEscapeStr, postgresTimestamp };
