@@ -46,6 +46,11 @@ class HeaderLayout extends React.Component {
                 <i className="fa fa-files-o" />Raw
               </a>
             </li>
+            <li>
+              <Link to="/settings">
+                <i className="fa fa-gear" />Settings
+              </Link>
+            </li>
             <li className="mobile-overlay" />
           </ul>
           <ul className='desktop-navicon'>
@@ -87,12 +92,12 @@ class HeaderLayout extends React.Component {
               </a>
             </li>
             <li>
-              <a href="#">
+              <Link to="/settings">
                 <i className="fa fa-gear" />
                 <span className="navigation-tooltip">
                   Settings
                 </span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

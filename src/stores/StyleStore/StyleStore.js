@@ -3,6 +3,11 @@ import cookie from 'cookie';
 
 class StyleStore {
 
+  static themeList = [
+    'agate', 'androidstudio', 'ardruino-light', 'atom-one-dark',
+    'darkula', 'far'
+  ];
+
   constructor() {
     this.cookies = cookie.parse(document.cookie);
     this.defaultTheme = this.cookies.theme || 'atom-one-dark-theme';

@@ -4,7 +4,7 @@ import { Provider } from 'mobx-react';
 import * as stores from 'stores/';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer.jsx';
-import { PasteView, ReadView, NotFoundView } from 'components/views';
+import{ PasteView, ReadView, SettingsView, NotFoundView } from 'components/views';
 
 class RootContainer extends React.Component {
 
@@ -23,6 +23,7 @@ class RootContainer extends React.Component {
         <BrowserRouter>
           <LayoutContainer>
             <Match pattern="/" component={PasteView} exactly={true} />
+            <Match pattern="/settings" component={SettingsView} />
             <Match pattern="/:key" component={ReadView} />
             <Match pattern="/edit/:key" component={PasteView} />
             <Miss component={NotFoundView} />
