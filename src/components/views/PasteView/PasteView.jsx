@@ -5,20 +5,24 @@ import Redirect from 'react-router/Redirect'
 
 import HeaderLayout from 'components/layouts/HeaderLayout';
 
-@observer
+@observer(['ViewsStore'])
 class PasteView extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       title: '',
       name: '',
-      text: this.props.text || '',
+      text: this.props.ViewsStore.readViewText || '',
       expiration: '1 days',
       privacyPublic: true,
       errors: [],
       redirect: '',
     };
+
+    // Reset the text stored from ReadView
+    this.props.ViewsStore.readViewText = '';
   }
 
   handleChange = (event) => {

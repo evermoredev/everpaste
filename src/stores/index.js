@@ -1,12 +1,9 @@
-import AuthStore from './AuthStore';
-import ViewStore from './ViewStore';
-import StateStore from './StateStore';
+// From the stores folder
+export { default as AuthStore } from './AuthStore';
+export { default as StateStore } from './StateStore';
 
-export {
-  AuthStore,
-  StateStore,
-  ViewStore
-};
+// Stores from other folders
+export { default as ViewsStore } from '../components/views/Views.state.js'
 
 /**
  * In general there are three ways in which you can pass stores in MobX

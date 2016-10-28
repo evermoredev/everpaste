@@ -33,7 +33,9 @@ class HeaderLayout extends React.Component {
               <a href="#"><i className="fa fa-floppy-o" />Save</a>
             </li>
             <li>
-              <Link to="/">
+              <Link to="/"
+                    isActive={(location) => location.pathname.match(/.{10,}/)}
+              >
               <i className="fa fa-pencil" />Edit</Link>
             </li>
             <li>
@@ -64,7 +66,9 @@ class HeaderLayout extends React.Component {
               </a>
             </li>
             <li>
-              <Link to="/">
+              <Link to="/"
+                    isActive={(location) => location.pathname.match(/.{10,}/)}
+              >
                 <i className="fa fa-pencil" />
                  <span className="navigation-tooltip">
                   Edit
