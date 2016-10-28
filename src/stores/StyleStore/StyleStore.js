@@ -1,13 +1,18 @@
 import { observable, action } from 'mobx';
-import getCookie from 'core/modules/cookies';
+import cookie from 'cookie';
 
 class StyleStore {
-  @observable theme = getCookie('theme') || 'atom-one-dark-theme';
+
+  constructor() {
+    this.cookies = cookie.parse(document.cookie);
+    this.defaultTheme = this.cookies.theme || 'atom-one-dark-theme';
+  }
+
+  @observable theme = this.defaultTheme;
 
   @action
   setTheme = (themeName) => {
-    document.cookie = `theme=${themeName};`;
-    document.cookie = 'key=1';
+    document.cookie = cookie.serialize('theme', String(themeName));
     this.theme = themeName;
   }
 }

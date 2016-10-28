@@ -29,6 +29,7 @@
     "axios": "^0.15.2",
     "busboy": "^0.2.13",
     "connect-ratelimit": "0.0.7",
+    "cookie": "^0.3.1",
     "es6-promise": "^4.0.5",
     "express": "^4.14.0",
     "highlight.js": "^9.7.0",
