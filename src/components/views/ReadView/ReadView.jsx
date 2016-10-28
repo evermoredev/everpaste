@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import axios from 'axios';
 
-import HeaderLayout from 'components/layouts/HeaderLayout';
+import { HeaderLayout } from 'components/layouts';
 
 @observer(['ViewsStore', 'StyleStore'])
 class ReadView extends React.Component {

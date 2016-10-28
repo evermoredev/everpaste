@@ -3,10 +3,8 @@ import { Miss, Match, BrowserRouter } from 'react-router';
 import { Provider } from 'mobx-react';
 import * as stores from 'stores/';
 
-import LayoutContainer from 'components/containers/LayoutContainer';
-import PasteView from 'components/views/PasteView';
-import ReadView from 'components/views/ReadView';
-import NotFoundView from 'components/views/NotFoundView';
+import LayoutContainer from '../LayoutContainer/LayoutContainer.jsx';
+import { PasteView, ReadView, NotFoundView } from 'components/views';
 
 class RootContainer extends React.Component {
 

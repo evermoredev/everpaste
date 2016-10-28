@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import axios from 'axios';
 import Redirect from 'react-router/Redirect'
 
-import HeaderLayout from 'components/layouts/HeaderLayout';
+import { HeaderLayout } from 'components/layouts';
 
 @observer(['ViewsStore'])
 class PasteView extends React.Component {

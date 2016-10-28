@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 
-import HeaderLayout from 'components/layouts/HeaderLayout';
+import { HeaderLayout } from 'components/layouts';
 
 @observer(['StyleStore'])
 class LayoutContainer extends React.Component {
