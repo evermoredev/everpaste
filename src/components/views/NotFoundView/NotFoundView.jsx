@@ -1,11 +1,15 @@
 import React from 'react';
+import { observer } from 'mobx-react';
 
+import { HeaderLayout } from 'components/layouts';
+
+@observer(['GlobalStore'])
 class NotFoundView extends React.Component {
-
-  static displayName = 'NotFound';
 
   constructor(props) {
     super(props);
+
+    this.props.GlobalStore.currentView = 'NotFoundView';
   }
 
   render() {

@@ -5,16 +5,22 @@ import Redirect from 'react-router/Redirect'
 
 import { HeaderLayout } from 'components/layouts';
 
-@observer(['ViewsStore'])
+@observer(['GlobalStore', 'ViewsStore'])
 class PasteView extends React.Component {
 
   constructor(props) {
     super(props);
 
+    this.props.GlobalStore.currentView = 'PasteView';
+
+    // If we got here from the edit link, let's copy over the stored text
+    let defaultTxt = this.props.location.state && this.props.location.state.editLink ?
+      this.props.ViewsStore.readViewText : '';
+
     this.state = {
       title: '',
       name: '',
-      text: this.props.ViewsStore.readViewText || '',
+      text: defaultTxt || '',
       expiration: '1 days',
       privacyPublic: true,
       errors: [],

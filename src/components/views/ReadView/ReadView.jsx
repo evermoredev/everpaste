@@ -4,11 +4,13 @@ import axios from 'axios';
 
 import { HeaderLayout } from 'components/layouts';
 
-@observer(['ViewsStore', 'StyleStore'])
+@observer(['GlobalStore', 'ViewsStore', 'StyleStore'])
 class ReadView extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.props.GlobalStore.currentView = 'ReadView';
 
     this.state = {
       title: '',
@@ -41,6 +43,7 @@ class ReadView extends React.Component {
         this.setState(newState);
         // Store the text that get's loaded in case they click edit.
         this.props.ViewsStore.readViewText = res.data.rawText;
+        this.props.GlobalStore.readViewDocKey = key;
       })
       .catch(error => {
         console.log(error);
@@ -50,7 +53,7 @@ class ReadView extends React.Component {
   render() {
     return (
       <div className="code-container">
-        <HeaderLayout docKey={this.state.key} />
+        <HeaderLayout docKey={this.state.docKey} />
         <div className="error-messages"></div>
         <div className="code-information-container">
           <div className="unselectable code-title">

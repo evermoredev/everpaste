@@ -12,6 +12,12 @@ class HeaderLayout extends React.Component {
   saveButton = () => this.props.saveButton ? this.props.saveButton() : false;
   editButton = () => this.props.editButton ? this.props.editButton() : false;
 
+  handleRawLink = (event) => {
+    if (this.props.GlobalStore.currentView != 'ReadView' || !this.props.docKey) {
+      event.preventDefault();
+    }
+  };
+
   render() {
     return (
       <div className="main-nav unselectable">
@@ -33,18 +39,22 @@ class HeaderLayout extends React.Component {
               <a href="#"><i className="fa fa-floppy-o" />Save</a>
             </li>
             <li>
-              <Link to="/"
-                    isActive={(location) => location.pathname.match(/.{10,}/)}
+              <Link to={{ pathname: '/', state: { editLink: true }}}
+                    isActive={() => this.props.GlobalStore.currentView == 'EditView'}
               >
               <i className="fa fa-pencil" />Edit</Link>
             </li>
             <li>
-              <a
-                href={this.props.docKey ? `/raw/${this.props.docKey}` : ''}
+              <a href={this.props.docKey ? `/raw/${this.props.docKey}` : ''}
                 target={this.props.docKey ? '_blank' : ''}
               >
                 <i className="fa fa-files-o" />Raw
               </a>
+            </li>
+            <li>
+              <Link to="/settings">
+                <i className="fa fa-gear" />Settings
+              </Link>
             </li>
             <li className="mobile-overlay" />
           </ul>
@@ -66,8 +76,8 @@ class HeaderLayout extends React.Component {
               </a>
             </li>
             <li>
-              <Link to="/"
-                    isActive={(location) => location.pathname.match(/.{10,}/)}
+              <Link to={{ pathname: '/', state: { editLink: true }}}
+                    isActive={() => this.props.GlobalStore.currentView == 'EditView'}
               >
                 <i className="fa fa-pencil" />
                  <span className="navigation-tooltip">
@@ -76,9 +86,9 @@ class HeaderLayout extends React.Component {
               </Link>
             </li>
             <li>
-              <a
-                href={this.props.docKey ? `/raw/${this.props.docKey}` : ''}
-                target={this.props.docKey ? '_blank' : ''}
+              <a onClick={this.handleRawLink}
+                href={`/raw/${this.props.docKey || ''}`}
+                target={'_blank'}
               >
                 <i className="fa fa-files-o" />
                 <span className="navigation-tooltip">
@@ -87,12 +97,12 @@ class HeaderLayout extends React.Component {
               </a>
             </li>
             <li>
-              <a href="#">
+              <Link to="/settings">
                 <i className="fa fa-gear" />
                 <span className="navigation-tooltip">
                   Settings
                 </span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
