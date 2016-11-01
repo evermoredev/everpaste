@@ -34,9 +34,20 @@ class PostgresStore {
       const queryKeys = [key, now];
       const { rows } = await this.query(queryString, queryKeys);
       resolve(rows.length ? rows[0] : false);
+      reject(false);
     });
   }
 
+  getList() {
+    return new Promise(async (resolve, reject) => {
+      const now = postgresTimestamp();
+      const queryString = 'SELECT * from entries where public = $1 and (expiration IS NULL or expiration > $2)';
+      const queryKeys = [true, now];
+      const { rows } = await this.query(queryString, queryKeys);
+      resolve(rows.length ? rows : false);
+      reject(false);
+    });
+  }
   /**
    * Wrap some postgres functions in promises
    */

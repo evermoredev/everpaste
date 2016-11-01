@@ -4,9 +4,9 @@ import cookie from 'cookie';
 class StyleStore {
 
   constructor() {
-    this.cookies = cookie.parse(document.cookie);
-    this.defaultTheme = this.cookies.theme || 'atom-one-dark-theme';
 
+    // LIst of all available themes
+    // TODO: Let's make this a hashmap with className property as the hash key
     this.themes = [
       { name: 'Agate', className: 'agate-theme' },
       { name: 'Android Studio', className: 'androidstudio-theme' },
@@ -45,17 +45,63 @@ class StyleStore {
       { name: 'Far', className: 'far-theme' },
       { name: 'Foundation', className: 'foundation-theme' },
       { name: 'Github', className: 'github-theme' },
-      { name: 'Github Gist', className: 'github-gist-theme' }
+      { name: 'Github Gist', className: 'github-gist-theme' },
+      { name: 'Google Code', className: 'googlecode-theme' },
+      { name: 'Gray Scale', className: 'grayscale-theme' },
+      { name: 'Gruvbox Dark', className: 'gruvbox-dark-theme' },
+      { name: 'Gruvbox Light', className: 'gruvbox-light-theme' },
+      { name: 'Hopscotch', className: 'hopscotch-theme' },
+      { name: 'Hybrid', className: 'hybrid-theme' },
+      { name: 'Idea', className: 'idea-theme' },
+      { name: 'IR Black', className: 'ir-black-theme' },
+      { name: 'Kimbie Dark', className: 'kimbie-dark-theme' },
+      { name: 'Kimbie Light', className: 'kimbie-light-theme' },
+      { name: 'Magula', className: 'magula-theme' },
+      { name: 'Mono Blue', className: 'mono-blue-theme' },
+      { name: 'Monokai', className: 'monokai-theme' },
+      { name: 'Monokai Sublime', className: 'monokai-sublime-theme' },
+      { name: 'Obsidian', className: 'obsidian-theme' },
+      { name: 'Ocean', className: 'ocean-theme' },
+      { name: 'Paraiso Dark', className: 'paraiso-dark-theme' },
+      { name: 'Paraiso Light', className: 'paraiso-light-theme' },
+      { name: 'Pojoaque', className: 'pojoaque-theme' },
+      { name: 'Pure Basic', className: 'pure-basic-theme' },
+      { name: 'QT Creator Dark', className: 'qtcreator-dark-theme' },
+      { name: 'QT Creator Light', className: 'qtcreator-light-theme' },
+      { name: 'Rails Casts', className: 'railscasts-theme' },
+      { name: 'Rainbow', className: 'rainbow-theme' },
+      { name: 'School Book', className: 'school-book-theme' },
+      { name: 'Solarized Dark', className: 'solarized-dark-theme' },
+      { name: 'Solarized Light', className: 'solarized-light-theme' },
+      { name: 'Sunburst', className: 'sunburst-theme' },
+      { name: 'Tomorrow', className: 'tomorrow-theme' },
+      { name: 'Tomorrow Night', className: 'tomorrow-night-theme' },
+      { name: 'Tomorrow Night Blue', className: 'tomorrow-night-blue-theme' },
+      { name: 'Tomorrow Night Bright', className: 'tomorrow-night-bright-theme' },
+      { name: 'Tomorrow Night Eighties', className: 'tomorrow-night-eighties-theme' },
+      { name: 'VS', className: 'vs-theme' },
+      { name: 'XCode', className: 'xcode-theme' },
+      { name: 'XT256', className: 'xt256-theme' },
+      { name: 'Zenburn', className: 'zenburn-theme' }
     ];
+
+    this.cookies = cookie.parse(document.cookie);
+    this.defaultTheme = this.cookies.theme || 'atom-one-dark-theme';
+    this.defaultThemeDisplayName = this.getThemeDisplayName(this.defaultTheme);
   }
 
   @observable theme = this.defaultTheme;
+  @observable themeDisplayName = this.defaultThemeDisplayName;
 
   @action
   setTheme = (themeName) => {
     document.cookie = cookie.serialize('theme', String(themeName));
     this.theme = themeName;
-  }
+    this.themeDisplayName = this.getThemeDisplayName(this.theme);
+  };
+
+  getThemeDisplayName = (theme) => this.themes.filter(t => t.className == theme)[0].name;
+
 }
 
 export default new StyleStore();

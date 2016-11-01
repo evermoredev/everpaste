@@ -26,13 +26,6 @@ class ReadView extends React.Component {
     this.getDoc(this.props.params.key);
   }
 
-  handleThemeChange = (event) => {
-    this.props.StyleStore.setTheme(event.target.value);
-    this.setState({
-      currentTheme: event.target.value
-    });
-  };
-
   getDoc = (key) => {
     axios
       .get(`/api/${key}`)
@@ -61,25 +54,6 @@ class ReadView extends React.Component {
             {this.state.name &&
             <span className="from-name">from {this.state.name}</span>
             }
-          </div>
-          <div className="code-theme-selector">
-            <div>
-              <label htmlFor="code-theme">
-                Current Theme:
-              </label>
-              <select
-                name="code-theme"
-                value={this.state.currentTheme}
-                onChange={this.handleThemeChange}
-              >
-                <option value="dracula-theme">Dracula</option>
-                <option value="agate-theme">Agate</option>
-                <option value="atom-one-dark-theme">Atom Dark</option>
-                <option value="androidstudio-theme">Android Studio</option>
-                <option value="atelier-forest-light-theme">Atelier Light</option>
-                <option value="brown-paper-theme">Brown Paper</option>
-              </select>
-            </div>
           </div>
         </div>
         <div className="code-document">

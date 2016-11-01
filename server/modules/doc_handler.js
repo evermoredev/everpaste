@@ -61,6 +61,19 @@ class DocHandler {
     }
   }
 
+  async handleGetList(req, res) {
+    const data = await this.store.getList();
+    if (data) {
+      winston.verbose('Retrieving document list.');
+      res.writeHead(200, DocHandler.contentType.plain);
+      res.end(JSON.stringify(data));
+    } else {
+      winston.warn('Retrieved empty list.');
+      res.writeHead(404, DocHandler.contentType.json);
+      res.end(JSON.stringify({ message: 'Empty list.' }));
+    }
+  }
+
   handlePost(req, res) {
     let cancelled = false, data;
 

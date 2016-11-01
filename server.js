@@ -54,6 +54,7 @@ if (config.rateLimits) {
 
 // api calls for the server to handle
 app.post('/api', (req, res) => docHandler.handlePost(req, res));
+app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
 app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
 app.get('/raw/:id', (req, res) => docHandler.handleRawGet(req.params.id, res));
 
