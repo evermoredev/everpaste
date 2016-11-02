@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import HeaderLayout from 'components/layouts';
+import { HeaderLayout } from 'components/layouts';
+
 
 class PublicListView extends React.Component {
 
