@@ -35,7 +35,7 @@ class ReadView extends React.Component {
         this.setState(newState);
         // Store the text that get's loaded in case they click edit.
         this.props.ViewsStore.readViewText = res.data.rawText;
-        this.props.GlobalStore.readViewDocKey = key;
+        this.props.GlobalStore.docKey = key;
       })
       .catch(error => {
         console.log(error);

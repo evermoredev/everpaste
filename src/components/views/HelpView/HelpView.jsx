@@ -1,5 +1,5 @@
 import React from 'react';
-import { observer } from 'react-mobx';
+import { observer } from 'mobx-react';
 
 class HelpView extends React.Component {
 

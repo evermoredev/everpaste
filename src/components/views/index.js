@@ -1,3 +1,4 @@
+export HelpView from './HelpView/HelpView.jsx';
 export NotFoundView from './NotFoundView/NotFoundView.jsx';
 export PasteView from './PasteView/PasteView.jsx';
 export PublicListView from './PublicListView/PublicListView.jsx';

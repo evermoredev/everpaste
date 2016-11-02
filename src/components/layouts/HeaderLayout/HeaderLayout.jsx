@@ -13,7 +13,7 @@ class HeaderLayout extends React.Component {
   editButton = () => this.props.editButton ? this.props.editButton() : false;
 
   handleRawLink = (event) => {
-    if (this.props.GlobalStore.currentView != 'ReadView' || !this.props.docKey) {
+    if (this.props.GlobalStore.currentView != 'ReadView' || !this.props.GlobalStore.docKey) {
       event.preventDefault();
     }
   };
@@ -45,8 +45,9 @@ class HeaderLayout extends React.Component {
               <i className="fa fa-pencil" />Edit</Link>
             </li>
             <li>
-              <a href={this.props.docKey ? `/raw/${this.props.docKey}` : ''}
-                target={this.props.docKey ? '_blank' : ''}
+              <a onClick={this.handleRawLink}
+                 href={`/raw/${this.props.GlobalStore.docKey || ''}`}
+                 target={'_blank'}
               >
                 <i className="fa fa-files-o" />Raw
               </a>
@@ -87,7 +88,7 @@ class HeaderLayout extends React.Component {
             </li>
             <li>
               <a onClick={this.handleRawLink}
-                href={`/raw/${this.props.docKey || ''}`}
+                href={`/raw/${this.props.GlobalStore.docKey || ''}`}
                 target={'_blank'}
               >
                 <i className="fa fa-files-o" />

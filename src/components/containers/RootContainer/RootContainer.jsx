@@ -13,7 +13,14 @@ import { Provider } from 'mobx-react';
 import * as stores from 'stores/';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer.jsx';
-import { PasteView, PublicListView, ReadView, SettingsView, NotFoundView } from 'components/views';
+import {
+  HelpView,
+  PasteView,
+  PublicListView,
+  ReadView,
+  SettingsView,
+  NotFoundView
+} from 'components/views';
 
 class RootContainer extends React.Component {
 
@@ -33,6 +40,7 @@ class RootContainer extends React.Component {
                 <div>
                   <Match pattern="/settings" component={SettingsView} />
                   <Match pattern="/list" component={PublicListView} />
+                  <Match pattern="/help" component={HelpView} />
                   <Miss render={() => <ReadView {...matchProps} /> } />
                 </div>
               )
