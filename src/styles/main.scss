@@ -11,6 +11,7 @@
 body {
   padding-top: 50px;
   margin:0;
+  background: #282c34;
 }
 
 a {
@@ -59,6 +60,7 @@ ul {
 
 .code-document {
   padding-top: 10px;
+  height: calc(100% - 73px);
 }
 
 /* Root Container */
@@ -66,7 +68,7 @@ ul {
   height: calc(100% - 16px);
   background: #282c34;
   .title-container {
-    padding: 15px 50px;
+    padding: 20px 50px;
     display: block;
     color: inherit;
     input {
@@ -198,3 +200,30 @@ ul {
     color: white;
   }
 }
+
+/* Loader Animation */
+.loader {
+  color: #fff;
+  font-family: Consolas, Menlo, Monaco, monospace;
+  font-weight: bold;
+  opacity: 0.8;
+  text-align: center;
+  padding-top: 20px;
+  span {
+    display: inline-block;
+    font-size: 20vh;
+    animation: pulse 0.4s alternate infinite ease-in-out;
+    &:nth-child(odd) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes pulse {
+  to {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+/* End Loader Animation */

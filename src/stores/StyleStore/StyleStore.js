@@ -105,7 +105,8 @@ class StyleStore {
     this.themeDisplayName = this.getThemeDisplayName(this.theme);
   };
 
-  getThemeDisplayName = (theme) => this.themes.filter(t => t.className == theme)[0].name;
+  getThemeDisplayName = (theme) =>
+    this.themes.filter(t => t.className == theme)[0].name;
 
 }
 
