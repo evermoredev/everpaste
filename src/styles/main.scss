@@ -59,8 +59,11 @@ ul {
 }
 
 .code-document {
-  padding-top: 10px;
-  height: calc(100% - 73px);
+  height: calc(100vh - 90px);
+}
+
+.code-table {
+  line-height: .8;
 }
 
 .settings-code-document {
@@ -159,7 +162,7 @@ ul {
 .code-information-container {
   display: flex;
   justify-content: space-around;
-  padding: 15px;
+  padding: 3px;
   .code-theme-selector {
     label {
       padding-right: 5px;
@@ -176,7 +179,6 @@ ul {
 
 .settings-header {
   text-align: center;
-  padding-top: 15px;
   color: #abb2bf;
   padding-top: 20px;
 }
