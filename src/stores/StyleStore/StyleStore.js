@@ -3,11 +3,6 @@ import cookie from 'cookie';
 
 class StyleStore {
 
-  static themeList = [
-    'agate', 'androidstudio', 'ardruino-light', 'atom-one-dark',
-    'darkula', 'far'
-  ];
-
   constructor() {
 
     // LIst of all available themes
@@ -105,8 +100,7 @@ class StyleStore {
     this.themeDisplayName = this.getThemeDisplayName(this.theme);
   };
 
-  getThemeDisplayName = (theme) =>
-    this.themes.filter(t => t.className == theme)[0].name;
+  getThemeDisplayName = (theme) => this.themes.filter(t => t.className == theme)[0].name;
 
 }
 
