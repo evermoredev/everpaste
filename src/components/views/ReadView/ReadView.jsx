@@ -51,7 +51,7 @@ class ReadView extends React.Component {
       )
     } else {
       return (
-        <div className="loader">
+        <div className="loader hljs">
           <span>{`{`}</span>
           <span>{`}`}</span>
         </div>

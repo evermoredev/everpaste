@@ -65,7 +65,7 @@ class PasteView extends React.Component {
 
   render() {
     return (
-      <div className="main-container">
+      <div className="paste-view">
         {this.state.redirect && <Redirect to={`/${this.state.redirect}`} />}
         <HeaderLayout saveButton={this.saveButton} />
         <div className="error-messages">{this.state.errors}</div>
@@ -105,6 +105,7 @@ class PasteView extends React.Component {
               </label>
               <label htmlFor="name">
                 <input
+                  className="input-dark"
                   type="text"
                   name="name"
                   value={this.state.name}
@@ -116,6 +117,7 @@ class PasteView extends React.Component {
                 Expiration:
               </label>
               <select
+                className="input-dark"
                 name="expiration"
                 value={this.state.expiration}
                 onChange={this.handleChange}

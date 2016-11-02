@@ -75,7 +75,6 @@ ul {
   height: calc(100% - 16px);
   background: #282c34;
   .title-container {
-    padding: 20px 50px;
     display: block;
     color: inherit;
     input {
@@ -90,7 +89,7 @@ ul {
       text-align: center;
       border-bottom-width: 1px;
       border-bottom-style: solid;
-      border-bottom-color: inherit;
+      border-bottom-color: #abb2bf;
       transition: .4s;
       &::-webkit-input-placeholder {
         color: inherit;
@@ -107,7 +106,6 @@ ul {
   .option-container {
     display: flex;
     justify-content: space-around;
-    margin: 10px;
     padding-top: 10px;
   }
   .pure-form {
@@ -124,16 +122,15 @@ ul {
   }
   .text-container {
     text-align: center;
-    padding: 0 50px;
     textarea {
-      height: 80%;
+      height: 85%;
       background: transparent;
       color: #abb2bf;
       width: 100%;
       font-family: $code-font;
-      border: 1px solid gray;
+      border: 1px solid #abb2bf;
       transition: .4s;
-      padding: 30px;
+      padding: 20px;
       border-radius: 3px;
       &:focus,
       &:active {
@@ -157,6 +154,10 @@ ul {
       }
     }
   }
+}
+
+.paste-view {
+  padding: 15px;
 }
 
 .code-information-container {
@@ -209,7 +210,6 @@ ul {
 
 /* Loader Animation */
 .loader {
-  color: #fff;
   font-family: Consolas, Menlo, Monaco, monospace;
   font-weight: bold;
   opacity: 0.8;
@@ -223,6 +223,12 @@ ul {
       animation-delay: 0.4s;
     }
   }
+}
+
+.input-dark {
+  box-shadow: none !important;
+  color: #abb2bf;
+  background: transparent !important;
 }
 
 @keyframes pulse {
