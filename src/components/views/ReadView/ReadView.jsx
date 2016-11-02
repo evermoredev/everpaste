@@ -45,7 +45,7 @@ class ReadView extends React.Component {
 
   render() {
     return (
-      <div className="code-container">
+      <div className="code-container hljs">
         <HeaderLayout docKey={this.state.docKey} />
         <div className="error-messages"></div>
         <div className="code-information-container">
