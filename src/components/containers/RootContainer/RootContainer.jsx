@@ -23,9 +23,6 @@ class RootContainer extends React.Component {
     super(props);
   }
 
-  componentDidMount() {
-  }
-
   render() {
     return (
       <Provider {...stores}>

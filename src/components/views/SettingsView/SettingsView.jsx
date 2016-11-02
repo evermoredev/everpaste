@@ -64,7 +64,7 @@ class SettingsView extends React.Component {
         <div className="sample-code">
           {this.renderSampleCode()}
         </div>
-        <div className="settings-header">Current Theme: {this.props.StyleStore.themeDisplayName}</div>
+        <div className="settings-sub-header">Current Theme: {this.props.StyleStore.themeDisplayName}</div>
         <div className="theme-container">
           {this.renderThemesList()}
         </div>

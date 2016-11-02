@@ -20,7 +20,7 @@ class LayoutContainer extends React.Component {
     } else {
       return (
         <div className={StyleStore.theme}>
-          <div className="main-container hljs">
+          <div className="main-container">
             <div className="view-container">
               {children}
             </div>

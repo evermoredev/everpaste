@@ -64,12 +64,13 @@ ul {
 /* Root Container */
 .main-container {
   height: calc(100% - 16px);
+  background: #282c34;
   .title-container {
     padding: 15px 50px;
     display: block;
     color: inherit;
     input {
-      color: inherit;
+      color: #abb2bf;
       font-family: $primary-font;
       font-size: 20px;
       background: transparent;
@@ -90,7 +91,7 @@ ul {
         border-bottom: 1px solid #5891cb;
         box-shadow: none;
         outline: none;
-        color: inherit;
+        color: #56b6c2;
       }
     }
   }
@@ -109,7 +110,7 @@ ul {
     label {
       padding-left: 10px;
       padding-right: 15px;
-      color: inherit;
+      color: #abb2bf;
     }
   }
   .text-container {
@@ -118,6 +119,7 @@ ul {
     textarea {
       height: 80%;
       background: transparent;
+      color: #abb2bf;
       width: 100%;
       font-family: $code-font;
       border: 1px solid gray;
@@ -128,6 +130,7 @@ ul {
       &:active {
         outline: none;
         border: 1px solid #5891cb;
+        color: #56b6c2;
       }
       &::-webkit-input-placeholder {
         font-family: $primary-font;
@@ -137,7 +140,11 @@ ul {
         font-size: 30px;
         position: relative;
         top: -10px;
-        color: inherit;
+        color: #abb2bf;
+        &:focus,
+        &:active {
+          color: #56b6c2;
+        }
       }
     }
   }
@@ -163,6 +170,15 @@ ul {
 
 .settings-header {
   text-align: center;
+  padding-top: 15px;
+  color: #abb2bf;
+  padding-top: 20px;
+}
+
+.settings-sub-header {
+  text-align: center;
+  color: #abb2bf;
+  padding-top: 15px;
 }
 
 .theme-container {
@@ -175,4 +191,10 @@ ul {
 .theme-selection {
   width: 200px;
   height: 25px;
+  color: #abb2bf;
+  transition: 0.2s;
+  cursor: pointer;
+  &:hover {
+    color: white;
+  }
 }
