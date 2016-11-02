@@ -21,7 +21,6 @@ class LayoutContainer extends React.Component {
       return (
         <div className={StyleStore.theme}>
           <div className="main-container hljs">
-            <HeaderLayout {...this.props} />
             <div className="view-container">
               {children}
             </div>

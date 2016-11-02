@@ -4,11 +4,13 @@ import axios from 'axios';
 
 import { HeaderLayout } from 'components/layouts';
 
-@observer(['ViewsStore', 'StyleStore'])
+@observer(['GlobalStore', 'ViewsStore', 'StyleStore'])
 class ReadView extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.props.GlobalStore.currentView = 'ReadView';
 
     this.state = {
       title: '',
@@ -24,13 +26,6 @@ class ReadView extends React.Component {
     this.getDoc(this.props.params.key);
   }
 
-  handleThemeChange = (event) => {
-    this.props.StyleStore.setTheme(event.target.value);
-    this.setState({
-      currentTheme: event.target.value
-    });
-  };
-
   getDoc = (key) => {
     axios
       .get(`/api/${key}`)
@@ -41,6 +36,7 @@ class ReadView extends React.Component {
         this.setState(newState);
         // Store the text that get's loaded in case they click edit.
         this.props.ViewsStore.readViewText = res.data.rawText;
+        this.props.GlobalStore.readViewDocKey = key;
       })
       .catch(error => {
         console.log(error);
@@ -50,7 +46,7 @@ class ReadView extends React.Component {
   render() {
     return (
       <div className="code-container">
-        <HeaderLayout docKey={this.state.key} />
+        <HeaderLayout docKey={this.state.docKey} />
         <div className="error-messages"></div>
         <div className="code-information-container">
           <div className="unselectable code-title">
@@ -58,25 +54,6 @@ class ReadView extends React.Component {
             {this.state.name &&
             <span className="from-name">from {this.state.name}</span>
             }
-          </div>
-          <div className="code-theme-selector">
-            <div>
-              <label htmlFor="code-theme">
-                Current Theme:
-              </label>
-              <select
-                name="code-theme"
-                value={this.state.currentTheme}
-                onChange={this.handleThemeChange}
-              >
-                <option value="dracula-theme">Dracula</option>
-                <option value="agate-theme">Agate</option>
-                <option value="atom-one-dark-theme">Atom Dark</option>
-                <option value="androidstudio-theme">Android Studio</option>
-                <option value="atelier-forest-light-theme">Atelier Light</option>
-                <option value="brown-paper-theme">Brown Paper</option>
-              </select>
-            </div>
           </div>
         </div>
         <div className="code-document">

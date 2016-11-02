@@ -2,7 +2,8 @@ import { observable } from 'mobx';
 
 class GlobalStore {
 
-  @observable currentView = 'Paste';
+  @observable currentView = '';
+  @observable docKey='';
 
 }
 

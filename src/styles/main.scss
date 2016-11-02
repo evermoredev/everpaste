@@ -160,3 +160,19 @@ ul {
   position: relative;
   top: 10px;
 }
+
+.settings-header {
+  text-align: center;
+}
+
+.theme-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 30px;
+}
+
+.theme-selection {
+  width: 200px;
+  height: 25px;
+}
