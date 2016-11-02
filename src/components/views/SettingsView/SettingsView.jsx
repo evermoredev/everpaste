@@ -20,7 +20,7 @@ class SettingsView extends React.Component {
     <div
       key={idx}
       className={`${t.className} theme-selection`}
-      onClick={() => this.handleThemeChange(event, t.className)}>
+      onClick={(event) => this.handleThemeChange(event, t.className)}>
         {t.name}
     </div>
   );
