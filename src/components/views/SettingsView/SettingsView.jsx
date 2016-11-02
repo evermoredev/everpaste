@@ -27,7 +27,7 @@ class SettingsView extends React.Component {
 
   renderSampleCode = () => {
     return (
-      <div className="code-document">
+      <div className="settings-code-document">
         <pre>
           <code>
             <table className="code-table hljs">
