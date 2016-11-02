@@ -17,8 +17,7 @@ class ReadView extends React.Component {
       text: '',
       name: '',
       docKey: '',
-      loaded: false,
-      currentTheme: 'dracula-theme'
+      loaded: false
     };
   }
 
@@ -43,23 +42,39 @@ class ReadView extends React.Component {
       });
   };
 
+  renderCodeBlock = () => {
+    if (this.state.text) {
+      return (
+        <pre>
+          <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
+        </pre>
+      )
+    } else {
+      return (
+        <div className="loader">
+          <span>{'{'}</span>
+          <span>{'}'}</span>
+        </div>
+      )
+    }
+  };
+
   render() {
+    console.log('this.state', this.state);
     return (
       <div className="code-container hljs">
         <HeaderLayout docKey={this.state.docKey} />
         <div className="error-messages"></div>
         <div className="code-information-container">
           <div className="unselectable code-title">
-            {this.state.title || 'Untitled'}
-            {this.state.name &&
+          {this.state.title || 'Untitled'}
+          {this.state.name &&
             <span className="from-name">from {this.state.name}</span>
-            }
+          }
           </div>
         </div>
         <div className="code-document">
-        <pre>
-          <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
-        </pre>
+          {this.renderCodeBlock()}
         </div>
       </div>
     );
