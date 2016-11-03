@@ -77,7 +77,6 @@ class PasteView extends React.Component {
             onChange={this.handleChange}
           />
         </div>
-
         <div className="option-container">
           <form className="pure-form">
             <fieldset>
@@ -115,19 +114,19 @@ class PasteView extends React.Component {
               </label>
               <label htmlFor="expiration">
                 Expiration:
+                <select
+                  className="input-dark"
+                  name="expiration"
+                  value={this.state.expiration}
+                  onChange={this.handleChange}
+                >
+                  <option value="forever">Forever</option>
+                  <option value="1 weeks">1 Week</option>
+                  <option value="1 days">1 Day</option>
+                  <option value="6 hours">6 Hours</option>
+                  <option value="30 minutes">30 Minutes</option>
+                </select>
               </label>
-              <select
-                className="input-dark"
-                name="expiration"
-                value={this.state.expiration}
-                onChange={this.handleChange}
-              >
-                <option value="forever">Forever</option>
-                <option value="1 weeks">1 Week</option>
-                <option value="1 days">1 Day</option>
-                <option value="6 hours">6 Hours</option>
-                <option value="30 minutes">30 Minutes</option>
-              </select>
             </fieldset>
           </form>
         </div>

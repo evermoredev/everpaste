@@ -75,7 +75,7 @@ ul {
   height: calc(100% - 16px);
   background: #282c34;
   .title-container {
-    display: block;
+    display: flex;
     color: inherit;
     input {
       color: #abb2bf;
@@ -85,7 +85,7 @@ ul {
       box-shadow: none;
       width: 100%;
       border: none;
-      padding: 10px;
+      padding: 15px;
       text-align: center;
       border-bottom-width: 1px;
       border-bottom-style: solid;
@@ -110,6 +110,8 @@ ul {
   }
   .pure-form {
     margin: 0;
+    width: 100%;
+    text-align: center;
     .pure-radio {
       display: inline;
       margin-right: 7px;
@@ -118,18 +120,17 @@ ul {
       padding-left: 10px;
       padding-right: 15px;
       color: #abb2bf;
+      display: inline-block;
+    }
+    select {
+      margin-left: 10px;
     }
   }
   .text-container {
     text-align: center;
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    top: 160px;
     padding: 15px;
-    right: 0;
     textarea {
-      height: 100%;
+      height: calc(100vh - 239px);
       background: transparent;
       color: #abb2bf;
       width: 100%;
@@ -164,6 +165,8 @@ ul {
 
 .paste-view {
   padding: 15px;
+  display: flex;
+  flex-direction: column
 }
 
 .code-information-container {
