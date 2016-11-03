@@ -64,6 +64,15 @@ ul {
 
 .code-table {
   line-height: .8;
+  overflow: hidden;
+}
+
+tr.code-row {
+  word-break: break-all;
+  word-break: break-word;
+}
+td.line-number {
+  white-space: nowrap;
 }
 
 .settings-code-document {
