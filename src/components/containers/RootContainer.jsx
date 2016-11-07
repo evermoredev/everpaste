@@ -12,7 +12,9 @@ import { Miss, Match, BrowserRouter } from 'react-router';
 import { Provider } from 'mobx-react';
 import * as stores from 'stores/';
 
-import LayoutContainer from '../LayoutContainer/LayoutContainer.jsx';
+import { StandardLayout } from 'components/layouts';
+import MatchRoute from 'core/modules/match_route';
+
 import {
   HelpView,
   PasteView,
@@ -34,20 +36,19 @@ class RootContainer extends React.Component {
     return (
       <Provider {...stores}>
         <BrowserRouter>
-          <LayoutContainer>
-            <Match pattern="/" component={PasteView} exactly={true} />
+          <div>
+            <MatchRoute pattern="/" layout={StandardLayout} component={PasteView} exactly={true} />
             <Match pattern="/:key" render={(matchProps) => (
-                <div>
-                  <Match pattern="/settings" component={SettingsView} />
-                  <Match pattern="/list" component={PublicListView} />
-                  <Match pattern="/help" component={HelpView} />
-                  <Miss render={() => <ReadView {...matchProps} /> } />
-                </div>
-              )
-            } />
+              <div>
+                <MatchRoute pattern="/settings" layout={StandardLayout} component={SettingsView} />
+                <MatchRoute pattern="/list" layout={StandardLayout} component={PublicListView} />
+                <MatchRoute pattern="/help" layout={StandardLayout} component={HelpView} />
+                <MatchRoute pattern="/:key" layout={StandardLayout} component={ReadView} />
+              </div>
+            )} />
             <Match pattern="/edit/:key" component={PasteView} />
-            <Miss component={NotFoundView} />
-          </LayoutContainer>
+            {/*<MatchRoute layout={StandardLayout} component={NotFoundView} />*/}
+          </div>
         </BrowserRouter>
       </Provider>
     );

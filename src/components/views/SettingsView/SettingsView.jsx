@@ -1,16 +1,17 @@
 import React from 'react';
 import { observer } from 'mobx-react';
+import SettingsViewStore from './SettingsViewStore';
 
-import { HeaderLayout } from 'components/layouts';
-
-@observer(['GlobalStore', 'StyleStore'])
+@observer(['GlobalStore', 'StyleStore', 'ViewsStore'])
 class SettingsView extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.props.GlobalStore.currentView = 'SettingsView';
   }
+
+  componentWillMount() {
+    this.store = new SettingsViewStore(this.props);
+  };
 
   handleThemeChange = (event, className) => {
     this.props.StyleStore.setTheme(className);
@@ -47,7 +48,7 @@ class SettingsView extends React.Component {
                 <tr className="code-row"><td className="line-number unselectable">13</td><td className="code-col">&nbsp;&nbsp;&nbsp;&nbsp;System.<span className="hljs-keyword">out</span>.println(<span className="hljs-string">"Hello "</span> + name + <span className="hljs-string">"!"</span>); </td></tr>
                 <tr className="code-row"><td className="line-number unselectable">14</td><td className="code-col">&nbsp;&nbsp;}</td></tr>
                 <tr className="code-row"><td className="line-number unselectable">15</td><td className="code-col">}</td></tr>
-                <tr className="code-row"><td className="line-number unselectable">16</td><td className="code-col"></td></tr>
+                <tr className="code-row"><td className="line-number unselectable">16</td><td className="code-col"> </td></tr>
               </tbody>
             </table>
           </code>
@@ -59,7 +60,6 @@ class SettingsView extends React.Component {
   render() {
     return(
       <div className="settings-view">
-        <HeaderLayout />
         <h2 className="settings-header">Select a Theme Below</h2>
         <div className="sample-code">
           {this.renderSampleCode()}

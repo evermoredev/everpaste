@@ -1,75 +1,46 @@
 import React from 'react';
 import { observer } from 'mobx-react';
-import axios from 'axios';
-
-import { HeaderLayout } from 'components/layouts';
+import ReadViewStore from './ReadViewStore';
 
 @observer(['GlobalStore', 'ViewsStore', 'StyleStore'])
 class ReadView extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.props.GlobalStore.currentView = 'ReadView';
-
-    this.state = {
-      title: '',
-      text: '',
-      name: '',
-      docKey: '',
-      loaded: false
-    };
   }
 
-  componentDidMount() {
-    this.getDoc(this.props.params.key);
+  componentWillMount() {
+    this.store = new ReadViewStore(this.props);
+    this.store.getDoc(this.props.params.key);
   }
-
-  getDoc = (key) => {
-    axios
-      .get(`/api/${key}`)
-      .then(res => {
-        // Clone the old state so that we only setState once
-        const newState =
-          Object.assign({}, this.state, res.data);
-        this.setState(newState);
-        // Store the text that get's loaded in case they click edit.
-        this.props.ViewsStore.readViewText = res.data.rawText;
-        this.props.GlobalStore.docKey = key;
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
 
   renderCodeBlock = () => {
-    if (this.state.text) {
+    if (this.store.text) {
       return (
         <pre>
-          <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
+          <code dangerouslySetInnerHTML={{ __html: this.store.text }} />
         </pre>
       )
     } else {
       return (
         <div className="loader hljs">
-          <span>{`{`}</span>
-          <span>{`}`}</span>
+          <span>&#123;</span>
+          <span>&#125;</span>
         </div>
       )
     }
   };
 
   render() {
-    console.log('this.state', this.state);
     return (
       <div className="code-container hljs">
-        <HeaderLayout docKey={this.state.docKey} />
+        {/*<HeaderLayout docKey={this.state.docKey} />*/}
         <div className="error-messages"></div>
         <div className="code-information-container">
           <div className="unselectable code-title">
-          {this.state.title || 'Untitled'}
-          {this.state.name &&
-            <span className="from-name">from {this.state.name}</span>
+          {this.store.title || 'Untitled'}
+          {this.store.name &&
+            <span className="from-name">from {this.store.name}</span>
           }
           </div>
         </div>

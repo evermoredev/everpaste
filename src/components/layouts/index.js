@@ -1,5 +1,1 @@
-import HeaderLayout from './HeaderLayout/HeaderLayout.jsx';
-
-export {
-  HeaderLayout
-}
+export StandardLayout from './StandardLayout.jsx';
