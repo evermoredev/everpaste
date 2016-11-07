@@ -9,12 +9,10 @@ class HeaderBlockStore {
   }
 
   @observable mobileNavigationClass = 'mobile-navigation';
-  @observable hasEditButton = !!this.props.ViewsStore.current.editButton;
 
   @action
   saveButton = (event) => {
     event.preventDefault();
-    console.log('save button being clicked');
     if (this.props.ViewsStore.current.saveButton) {
       this.props.ViewsStore.current.saveButton();
     }

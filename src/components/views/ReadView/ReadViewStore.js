@@ -8,7 +8,6 @@ class ReadViewStore {
 
     this.props.ViewsStore.current = {
       currentView: 'ReadView',
-      text: this.text,
       docKey: this.docKey
     };
   }
@@ -27,6 +26,9 @@ class ReadViewStore {
         this.text = res.data.text;
         this.name = res.data.name;
         this.docKey = res.data.docKey;
+        // Set the text on the ViewsStore current object in case they edit
+        this.props.ViewsStore.current.text = res.data.rawText;
+        this.props.ViewsStore.current.docKey = res.data.docKey;
       })
       .catch(error => {
         console.log(error);

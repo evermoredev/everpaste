@@ -1,13 +1,13 @@
 import React from 'react';
 import { observer } from 'mobx-react';
 
-@observer(['GlobalStore'])
+@observer(['AppStore'])
 class NotFoundView extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.props.GlobalStore.currentView = 'NotFoundView';
+    this.props.AppStore.currentView = 'NotFoundView';
   }
 
   render() {

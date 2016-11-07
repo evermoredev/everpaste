@@ -8,12 +8,13 @@
  */
 
 import React from 'react';
-import { Miss, Match, BrowserRouter } from 'react-router';
+import { Match, BrowserRouter } from 'react-router';
 import { Provider } from 'mobx-react';
 import * as stores from 'stores/';
 
 import { StandardLayout } from 'components/layouts';
 import MatchRoute from 'core/modules/match_route';
+import MissRoute from 'core/modules/miss_route';
 
 import {
   HelpView,
@@ -40,14 +41,14 @@ class RootContainer extends React.Component {
             <MatchRoute pattern="/" layout={StandardLayout} component={PasteView} exactly={true} />
             <Match pattern="/:key" render={(matchProps) => (
               <div>
-                <MatchRoute pattern="/settings" layout={StandardLayout} component={SettingsView} />
-                <MatchRoute pattern="/list" layout={StandardLayout} component={PublicListView} />
+                <MatchRoute pattern="/edit" layout={StandardLayout} component={PasteView} />
                 <MatchRoute pattern="/help" layout={StandardLayout} component={HelpView} />
-                <MatchRoute pattern="/:key" layout={StandardLayout} component={ReadView} />
+                <MatchRoute pattern="/list" layout={StandardLayout} component={PublicListView} />
+                <MatchRoute pattern="/settings" layout={StandardLayout} component={SettingsView} />
+                <MissRoute layout={StandardLayout} component={ReadView} matchProps={matchProps} />
               </div>
             )} />
-            <Match pattern="/edit/:key" component={PasteView} />
-            {/*<MatchRoute layout={StandardLayout} component={NotFoundView} />*/}
+            <MissRoute layout={StandardLayout} component={NotFoundView} />
           </div>
         </BrowserRouter>
       </Provider>

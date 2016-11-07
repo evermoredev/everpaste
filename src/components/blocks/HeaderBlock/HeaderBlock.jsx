@@ -1,11 +1,10 @@
 import React from 'react';
-import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router';
 
 import HeaderBlockStore from './HeaderBlockStore';
 
-@observer(['GlobalStore','ViewsStore'])
+@observer(['AppStore','ViewsStore'])
 class HeaderBlock extends React.Component {
 
   constructor(props) {
@@ -18,7 +17,7 @@ class HeaderBlock extends React.Component {
 
   renderLink = (options) => {
     return (
-      <Link to={options.to}>
+      <Link to={{ pathname: options.to, state: options.state || {} }}>
         <i className={options.iconClass} />
         <span className="navigation-tooltip">
           {options.tooltip}
@@ -36,12 +35,15 @@ class HeaderBlock extends React.Component {
             <h1>{document.title}</h1>
           </div>
         </Link>
+
         <div className="right-nav">
+
           <div className="mobile-navicon">
             <a href="#" onClick={this.store.handleMobileNaviconClick}>
               <i className="fa fa-bars" />
             </a>
           </div>
+
           <ul className={this.store.mobileNavigationClass}>
             <li><Link to="/"><i className="fa fa-plus" />New</Link></li>
             <li>
@@ -49,13 +51,13 @@ class HeaderBlock extends React.Component {
             </li>
             <li>
               <Link to={{ pathname: '/', state: { editLink: true }}}
-                    isActive={() => this.props.GlobalStore.currentView == 'EditView'}
+                    isActive={() => this.props.ViewsStore.currentView == 'EditView'}
               >
                 <i className="fa fa-pencil" />Edit</Link>
             </li>
             <li>
               <a onClick={this.handleRawLink}
-                 href={`/raw/${this.props.GlobalStore.docKey || ''}`}
+                 href={`/raw/${this.props.ViewsStore.docKey || ''}`}
                  target={'_blank'}
               >
                 <i className="fa fa-files-o" />Raw
@@ -68,6 +70,7 @@ class HeaderBlock extends React.Component {
             </li>
             <li className="mobile-overlay" />
           </ul>
+
           <ul className='desktop-navicon'>
             <li>
               {this.renderLink({to: '/', iconClass: 'fa fa-plus', tooltip: 'New'})}
@@ -76,18 +79,11 @@ class HeaderBlock extends React.Component {
               {this.renderLink({to: '/', iconClass: 'fa fa-floppy-o', tooltip: 'Save'})}
             </li>
             <li>
-              <Link to={{ pathname: '/', state: { editLink: true }}}
-                    isActive={() => this.props.GlobalStore.currentView == 'EditView'}
-              >
-                <i className="fa fa-pencil" />
-                <span className="navigation-tooltip">
-                  Edit
-                </span>
-              </Link>
+              {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', tooltip: 'Edit', state: { editLink: true }})}
             </li>
             <li>
               <a onClick={this.handleRawLink}
-                 href={`/raw/${this.props.GlobalStore.docKey || ''}`}
+                 href={`/raw/${this.props.ViewsStore.docKey || ''}`}
                  target={'_blank'}
               >
                 <i className="fa fa-files-o" />
@@ -97,7 +93,7 @@ class HeaderBlock extends React.Component {
               </a>
             </li>
             <li>
-              {this.renderLink({to: '/Settings', iconClass: 'fa fa-gear', tooltip: 'Settings'})}
+              {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', tooltip: 'Settings'})}
             </li>
           </ul>
         </div>

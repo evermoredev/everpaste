@@ -2,11 +2,12 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import ReadViewStore from './ReadViewStore';
 
-@observer(['GlobalStore', 'ViewsStore', 'StyleStore'])
+@observer(['AppStore', 'ViewsStore', 'StyleStore'])
 class ReadView extends React.Component {
 
   constructor(props) {
     super(props);
+    console.log('ReadView constructor', props);
   }
 
   componentWillMount() {
@@ -34,7 +35,6 @@ class ReadView extends React.Component {
   render() {
     return (
       <div className="code-container hljs">
-        {/*<HeaderLayout docKey={this.state.docKey} />*/}
         <div className="error-messages"></div>
         <div className="code-information-container">
           <div className="unselectable code-title">

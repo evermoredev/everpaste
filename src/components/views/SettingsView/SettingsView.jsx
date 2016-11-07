@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react';
 import SettingsViewStore from './SettingsViewStore';
 
-@observer(['GlobalStore', 'StyleStore', 'ViewsStore'])
+@observer(['AppStore', 'StyleStore', 'ViewsStore'])
 class SettingsView extends React.Component {
 
   constructor(props) {
