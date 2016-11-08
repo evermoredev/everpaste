@@ -6,14 +6,17 @@ class HeaderBlockStore {
   constructor(props) {
     this.props = props;
     this.isMobileNavigationToggled = true;
+    console.log('HeaderBlockStore constructor');
   }
 
   @observable mobileNavigationClass = 'mobile-navigation';
 
   @action
   saveButton = (event) => {
+    console.log('-------------------------');
     event.preventDefault();
     if (this.props.ViewsStore.current.saveButton) {
+      console.log('THERE IS A SAVE BUTTON');
       this.props.ViewsStore.current.saveButton();
     }
   };
