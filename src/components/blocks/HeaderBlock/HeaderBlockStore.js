@@ -14,11 +14,13 @@ class HeaderBlockStore {
   @action
   saveButton = (event) => {
     console.log('-------------------------');
-    event.preventDefault();
-    if (this.props.ViewsStore.current.saveButton) {
-      console.log('THERE IS A SAVE BUTTON');
-      this.props.ViewsStore.current.saveButton();
-    }
+    // console.log(this.props.ViewsStore.current.saveButton);
+    // if (this.props.ViewsStore.current.saveButton) {
+    //   console.log('THERE IS A SAVE BUTTON');
+    //   this.props.ViewsStore.current.saveButton();
+    // }
+    this.props.ViewsStore.current.saveButton();
+
   };
 
   @action

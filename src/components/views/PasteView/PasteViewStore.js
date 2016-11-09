@@ -10,10 +10,10 @@ class PasteViewStore {
     this.defaultTxt = this.props.pathname == '/edit' ?
       this.props.ViewsStore.current.text : '';
 
-    this.props.ViewsStore.current = {
+    this.props.ViewsStore.current = observable({
       currentView: 'PasteView',
       saveButton: this.saveButton
-    };
+    });
 
     this.errors = [];
   }
@@ -28,10 +28,10 @@ class PasteViewStore {
   @action
   handleChange = (event) => this[event.target.name] = event.target.value;
 
-  @autorun @action
+  @action
   getErrors = () => this.errors;
 
-  @autorun @action
+  @action
   saveButton = () => {
     // Do some validation and formatting
     console.log('save button pressed');

@@ -25,7 +25,11 @@ class ViewsStore {
    * individual view changes. For example, a counter variable that keeps track
    * of how many times a single View component has been created.
    */
-  @observable current = {};
+  @observable current = {
+    currentView: '',
+    docKey: '',
+    saveButton: '',
+  };
 
 }
 
