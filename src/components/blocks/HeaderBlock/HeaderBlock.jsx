@@ -13,19 +13,14 @@ class HeaderBlock extends React.Component {
   }
 
   componentWillMount() {
-    console.log('HeaderBlock componentWillMount');
     this.store = new HeaderBlockStore(this.props);
   }
 
-  componentWillUpdate(nextProps) {
-    console.log('HeaderBlock componentWillUpdate');
+  componentWillReceiveProps(nextProps) {
     this.store = new HeaderBlockStore(nextProps);
-    console.log(this.store);
-    console.log(this.props);
   }
 
   componentWillReact() {
-    console.log('HeaderBlockStore componentWillReact');
     this.store = new HeaderBlockStore(this.props);
   }
 
@@ -90,17 +85,19 @@ class HeaderBlock extends React.Component {
               {this.renderLink({to: '/', iconClass: 'fa fa-plus', tooltip: 'New'})}
             </li>
             <li onClick={() => this.props.ViewsStore.current.saveButton()}>
+              <a>
                 <i className="fa fa-floppy-o" />
                 <span className="navigation-tooltip">
                     Save
                 </span>
+              </a>
             </li>
             <li>
               {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', tooltip: 'Edit', state: { editLink: true }})}
             </li>
             <li>
               <a onClick={this.handleRawLink}
-                 href={`/raw/${this.props.ViewsStore.current.docKey || ''}`}
+                 href={`/raw/${this.props.ViewsStore.current.docKey || '#'}`}
                  target={'_blank'}
               >
                 <i className="fa fa-files-o" />

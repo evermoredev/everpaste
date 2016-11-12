@@ -31,7 +31,7 @@ class ReadViewStore {
         this.props.ViewsStore.current.docKey = res.data.docKey;
       })
       .catch(error => {
-        console.log(error);
+        window.location = '/404';
       });
   };
 

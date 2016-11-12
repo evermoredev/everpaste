@@ -9,18 +9,23 @@ class PasteView extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log('PasteView props', props);
   }
 
   componentWillMount() {
-    console.log('Creating new PasteViewStore');
     this.store = new PasteViewStore(this.props);
   };
+
+  // componentWillReceiveProps(nextProps) {
+  //   this.store = new PasteViewStore(nextProps);
+  // }
+  //
+  // componentWillReact() {
+  //   this.store = new PasteViewStore(this.props);
+  // }
 
   render() {
     return (
       <div className="paste-view">
-        {console.log('this.store.redirect:', this.store.redirect)}
         {this.store.redirect && <Redirect to={`/${this.store.redirect}`} />}
         <div className="error-messages">{this.store.getErrors()}</div>
         <div className="title-container">

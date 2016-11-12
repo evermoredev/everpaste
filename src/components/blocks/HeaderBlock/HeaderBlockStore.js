@@ -6,26 +6,18 @@ class HeaderBlockStore {
   constructor(props) {
     this.props = props;
     this.isMobileNavigationToggled = true;
-    console.log('HeaderBlockStore constructor');
   }
 
   @observable mobileNavigationClass = 'mobile-navigation';
 
   @action
   saveButton = (event) => {
-    console.log('-------------------------');
-    // console.log(this.props.ViewsStore.current.saveButton);
-    // if (this.props.ViewsStore.current.saveButton) {
-    //   console.log('THERE IS A SAVE BUTTON');
-    //   this.props.ViewsStore.current.saveButton();
-    // }
     this.props.ViewsStore.current.saveButton();
-
   };
 
   @action
   handleRawLink = (event) => {
-    if (this.props.ViewsStore.currentView != 'ReadView' || !this.props.ViewsStore.docKey) {
+    if (this.props.ViewsStore.current.currentView != 'ReadView' || !this.props.ViewsStore.current.docKey) {
       event.preventDefault();
     }
   };

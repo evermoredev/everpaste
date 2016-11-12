@@ -45,6 +45,7 @@ class RootContainer extends React.Component {
                 <MatchRoute pattern="/help" layout={StandardLayout} component={HelpView} />
                 <MatchRoute pattern="/list" layout={StandardLayout} component={PublicListView} />
                 <MatchRoute pattern="/settings" layout={StandardLayout} component={SettingsView} />
+                <MatchRoute pattern="/404" layout={StandardLayout} component={NotFoundView} />
                 <MissRoute layout={StandardLayout} component={ReadView} matchProps={matchProps} />
               </div>
             )} />

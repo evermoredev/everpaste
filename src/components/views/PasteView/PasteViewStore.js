@@ -1,4 +1,4 @@
-import { action, observable, autorun } from 'mobx';
+import { action, observable, autorun, asReference } from 'mobx';
 import axios from 'axios';
 
 class PasteViewStore {
@@ -12,7 +12,7 @@ class PasteViewStore {
 
     this.props.ViewsStore.current = observable({
       currentView: 'PasteView',
-      saveButton: this.saveButton
+      saveButton: asReference(this.saveButton)
     });
 
     this.errors = [];

@@ -7,12 +7,15 @@ class ReadView extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log('ReadView constructor', props);
   }
 
   componentWillMount() {
     this.store = new ReadViewStore(this.props);
     this.store.getDoc(this.props.params.key);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.store = new ReadViewStore(nextProps);
   }
 
   renderCodeBlock = () => {

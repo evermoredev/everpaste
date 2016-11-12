@@ -29,6 +29,7 @@ class ViewsStore {
     currentView: '',
     docKey: '',
     saveButton: '',
+    text: ''
   };
 
 }

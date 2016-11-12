@@ -14,8 +14,7 @@ class NotFoundView extends React.Component {
     return (
       <div className="not-found">
         <div>
-          {`So incredibly sorry! It seems the page you are looking for
-        could not be found!`}
+
         </div>
       </div>
     );
