@@ -6,10 +6,10 @@ class ReadViewStore {
   constructor(props) {
     this.props = props;
 
-    this.props.ViewsStore.current = {
+    this.props.ViewsStore.current = observable({
       currentView: 'ReadView',
       docKey: this.docKey
-    };
+    });
   }
 
   @observable title = '';

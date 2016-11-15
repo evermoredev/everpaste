@@ -17,12 +17,13 @@ class HeaderBlock extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log('HeaderBlock will receive props');
     this.store = new HeaderBlockStore(nextProps);
   }
 
-  componentWillReact() {
-    this.store = new HeaderBlockStore(this.props);
-  }
+  // componentWillReact() {
+  //   this.store = new HeaderBlockStore(this.props);
+  // }
 
   renderLink = (options) => {
     return (
@@ -84,7 +85,7 @@ class HeaderBlock extends React.Component {
             <li>
               {this.renderLink({to: '/', iconClass: 'fa fa-plus', tooltip: 'New'})}
             </li>
-            <li onClick={() => this.props.ViewsStore.current.saveButton()}>
+            <li onClick={this.store.saveButton}>
               <a>
                 <i className="fa fa-floppy-o" />
                 <span className="navigation-tooltip">

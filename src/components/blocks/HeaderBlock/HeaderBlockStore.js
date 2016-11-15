@@ -10,8 +10,9 @@ class HeaderBlockStore {
 
   @observable mobileNavigationClass = 'mobile-navigation';
 
-  @action
+  @action @observable
   saveButton = (event) => {
+    event.preventDefault();
     this.props.ViewsStore.current.saveButton();
   };
 

@@ -16,11 +16,8 @@ class PasteView extends React.Component {
   };
 
   // componentWillReceiveProps(nextProps) {
+  //   console.log('PasteView component will receive props');
   //   this.store = new PasteViewStore(nextProps);
-  // }
-  //
-  // componentWillReact() {
-  //   this.store = new PasteViewStore(this.props);
   // }
 
   render() {
