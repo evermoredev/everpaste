@@ -38,7 +38,7 @@ class ReadView extends React.Component {
         this.props.GlobalStore.docKey = key;
       })
       .catch(error => {
-        console.log(error);
+        window.location = '/404';
       });
   };
 
@@ -60,7 +60,6 @@ class ReadView extends React.Component {
   };
 
   render() {
-    console.log('this.state', this.state);
     return (
       <div className="code-container hljs">
         <HeaderLayout docKey={this.state.docKey} />

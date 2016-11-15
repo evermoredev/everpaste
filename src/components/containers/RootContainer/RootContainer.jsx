@@ -41,6 +41,7 @@ class RootContainer extends React.Component {
                   <Match pattern="/settings" component={SettingsView} />
                   <Match pattern="/list" component={PublicListView} />
                   <Match pattern="/help" component={HelpView} />
+                  <Match pattern="/404" component={NotFoundView} />
                   <Miss render={() => <ReadView {...matchProps} /> } />
                 </div>
               )
