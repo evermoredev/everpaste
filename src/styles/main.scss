@@ -43,6 +43,8 @@ ul {
 .error-messages {
   color: red;
   text-align: center;
+  position: absolute;
+  transform: translateX(150%);
 }
 
 .code-title {
@@ -101,6 +103,8 @@ td.line-number {
       text-align: center;
       border-bottom-width: 1px;
       border-bottom-style: solid;
+      position: relative;
+      top: 8px;
       border-bottom-color: #abb2bf;
       transition: .4s;
       &::-webkit-input-placeholder {
