@@ -13,7 +13,6 @@ class PasteViewStore {
     this.defaultTitle = this.props.pathname == '/edit' ?
       this.props.ViewsStore.current.title : '';
 
-    this.errors = [];
     this.setCurrentView();
   }
 
@@ -23,6 +22,7 @@ class PasteViewStore {
   @observable expiration = '1 days';
   @observable privacyPublic = true;
   @observable redirect = '';
+  @observable errors = [];
 
   @action
   setCurrentView = () => {
