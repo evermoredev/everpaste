@@ -1,80 +1,35 @@
 import React  from 'react';
 import { observer } from 'mobx-react';
-import axios from 'axios';
 import Redirect from 'react-router/Redirect'
 
-import { HeaderLayout } from 'components/layouts';
+import PasteViewStore from './PasteViewStore';
 
-@observer(['GlobalStore', 'ViewsStore'])
+@observer(['AppStore', 'ViewsStore'])
 class PasteView extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.props.GlobalStore.currentView = 'PasteView';
-
-    // If we got here from the edit link, let's copy over the stored text
-    let defaultTxt = this.props.location.state && this.props.location.state.editLink ?
-      this.props.ViewsStore.readViewText : '';
-
-    this.state = {
-      title: '',
-      name: '',
-      text: defaultTxt || '',
-      expiration: '1 days',
-      privacyPublic: true,
-      errors: [],
-      redirect: '',
-    };
-
-    // Reset the text stored from ReadView
-    this.props.ViewsStore.readViewText = '';
   }
 
-  handleChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value });
+  componentWillMount() {
+    this.store = new PasteViewStore(this.props);
   };
 
-  saveButton = () => {
-    let { title, text, name, privacyPublic, expiration } = this.state;
-    // Do some validation and formatting
-    let errors = [];
-    if (!text || text.length < 3) {
-      errors.push("Please enter some text to save.");
-    }
-
-    if (errors.length) {
-      this.setState({ errors });
-    } else {
-      axios.post('/api', {
-        title, text, name, expiration, privacyPublic
-      }).then(res => {
-        this.setState({redirect: res.data.key});
-      }).catch(err => {
-        errors.push(err);
-        this.setState({ errors });
-      })
-    }
-  };
-
-  handlePrivacyRadio = (event) => {
-    this.setState({
-      privacyPublic: event.currentTarget.value === 'public'
-    })
-  };
+  componentWillReact() {
+    this.store.setCurrentView();
+  }
 
   render() {
     return (
       <div className="paste-view">
-        {this.state.redirect && <Redirect to={`/${this.state.redirect}`} />}
-        <HeaderLayout saveButton={this.saveButton} />
-        <div className="error-messages">{this.state.errors}</div>
+        {this.store.redirect && <Redirect to={`/${this.store.redirect}`} />}
+        <div className="error-messages">{this.store.getErrors()}</div>
         <div className="title-container">
           <input
             placeholder="Enter a Title"
             name="title"
-            value={this.state.title}
-            onChange={this.handleChange}
+            value={this.store.title}
+            onChange={this.store.handleChange}
           />
         </div>
         <div className="option-container">
@@ -86,8 +41,8 @@ class PasteView extends React.Component {
                   type="radio"
                   name="public"
                   value="public"
-                  checked={this.state.privacyPublic}
-                  onChange={this.handlePrivacyRadio}
+                  checked={this.store.privacyPublic}
+                  onChange={this.store.handlePrivacyRadio}
                 />
                 Public
               </label>
@@ -97,8 +52,8 @@ class PasteView extends React.Component {
                   type="radio"
                   name="private"
                   value="private"
-                  checked={!this.state.privacyPublic}
-                  onChange={this.handlePrivacyRadio}
+                  checked={!this.store.privacyPublic}
+                  onChange={this.store.handlePrivacyRadio}
                 />
                 Private
               </label>
@@ -107,9 +62,9 @@ class PasteView extends React.Component {
                   className="input-dark"
                   type="text"
                   name="name"
-                  value={this.state.name}
+                  value={this.store.name}
                   placeholder="Name (Optional)"
-                  onChange={this.handleChange}
+                  onChange={this.store.handleChange}
                 />
               </label>
               <label htmlFor="expiration">
@@ -117,8 +72,8 @@ class PasteView extends React.Component {
                 <select
                   className="input-dark"
                   name="expiration"
-                  value={this.state.expiration}
-                  onChange={this.handleChange}
+                  value={this.store.expiration}
+                  onChange={this.store.handleChange}
                 >
                   <option value="forever">Forever</option>
                   <option value="1 weeks">1 Week</option>
@@ -135,8 +90,8 @@ class PasteView extends React.Component {
             className="hljs"
             name="text"
             placeholder="  Paste Text Here"
-            defaultValue={this.state.text}
-            onChange={this.handleChange}
+            defaultValue={this.store.text}
+            onChange={this.store.handleChange}
             spellCheck="false"
           />
         </div>

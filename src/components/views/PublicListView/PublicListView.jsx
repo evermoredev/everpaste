@@ -1,7 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { HeaderLayout } from 'components/layouts';
-
 
 class PublicListView extends React.Component {
 
@@ -41,7 +39,6 @@ class PublicListView extends React.Component {
   render() {
     return (
       <div className="public-list-view">
-        <HeaderLayout />
         {this.renderDocsList()}
       </div>
     );

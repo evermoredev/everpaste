@@ -1,21 +1,34 @@
 import React from 'react';
+import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import { Link } from 'react-router';
 
-@observer(['GlobalStore','HeaderLayoutStore'])
-class HeaderLayout extends React.Component {
+import HeaderBlockStore from './HeaderBlockStore';
+
+@observer(['AppStore','ViewsStore'])
+class HeaderBlock extends React.Component {
 
   constructor(props) {
     super(props);
   }
 
-  saveButton = () => this.props.saveButton ? this.props.saveButton() : false;
-  editButton = () => this.props.editButton ? this.props.editButton() : false;
+  componentWillMount() {
+    this.store = new HeaderBlockStore(this.props);
+  }
 
-  handleRawLink = (event) => {
-    if (this.props.GlobalStore.currentView != 'ReadView' || !this.props.GlobalStore.docKey) {
-      event.preventDefault();
-    }
+  componentWillReact() {
+    console.log(this.props);
+  }
+
+  renderLink = (options) => {
+    return (
+      <Link to={{ pathname: options.to, state: options.state || {} }}>
+        <i className={options.iconClass} />
+        <span className="navigation-tooltip">
+          {options.tooltip}
+        </span>
+      </Link>
+    );
   };
 
   render() {
@@ -27,26 +40,29 @@ class HeaderLayout extends React.Component {
             <h1>{document.title}</h1>
           </div>
         </Link>
+
         <div className="right-nav">
+
           <div className="mobile-navicon">
-            <a href="#" onClick={this.props.HeaderLayoutStore.handleMobileNaviconClick}>
+            <a href="#" onClick={this.store.handleMobileNaviconClick}>
               <i className="fa fa-bars" />
             </a>
           </div>
-          <ul className={this.props.HeaderLayoutStore.mobileNavigationClass}>
+
+          <ul className={this.store.mobileNavigationClass}>
             <li><Link to="/"><i className="fa fa-plus" />New</Link></li>
             <li>
               <a href="#"><i className="fa fa-floppy-o" />Save</a>
             </li>
             <li>
               <Link to={{ pathname: '/', state: { editLink: true }}}
-                    isActive={() => this.props.GlobalStore.currentView == 'EditView'}
+                    isActive={() => this.props.ViewsStore.currentView == 'EditView'}
               >
-              <i className="fa fa-pencil" />Edit</Link>
+                <i className="fa fa-pencil" />Edit</Link>
             </li>
             <li>
               <a onClick={this.handleRawLink}
-                 href={`/raw/${this.props.GlobalStore.docKey || ''}`}
+                 href={`/raw/${this.props.ViewsStore.docKey || ''}`}
                  target={'_blank'}
               >
                 <i className="fa fa-files-o" />Raw
@@ -59,38 +75,24 @@ class HeaderLayout extends React.Component {
             </li>
             <li className="mobile-overlay" />
           </ul>
+
           <ul className='desktop-navicon'>
             <li>
-              <Link to="/">
-                <i className="fa fa-plus" />
-                <span className="navigation-tooltip">
-                  New
-                </span>
-              </Link>
+              {this.renderLink({to: '/', iconClass: 'fa fa-plus', tooltip: 'New'})}
             </li>
-            <li>
-              <a href="#" onClick={this.saveButton}>
+            <li onClick={this.store.saveButton}>
+              <a>
                 <i className="fa fa-floppy-o" />
                 <span className="navigation-tooltip">
-                  Save
+                    Save
                 </span>
               </a>
             </li>
             <li>
-              <Link to={{ pathname: '/', state: { editLink: true }}}
-                    isActive={() => this.props.GlobalStore.currentView == 'EditView'}
-              >
-                <i className="fa fa-pencil" />
-                 <span className="navigation-tooltip">
-                  Edit
-                </span>
-              </Link>
+              {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', tooltip: 'Edit', state: { editLink: true }})}
             </li>
-            <li>
-              <a onClick={this.handleRawLink}
-                href={`/raw/${this.props.GlobalStore.docKey || ''}`}
-                target={'_blank'}
-              >
+            <li onClick={this.store.rawButton}>
+              <a>
                 <i className="fa fa-files-o" />
                 <span className="navigation-tooltip">
                   Raw
@@ -98,12 +100,7 @@ class HeaderLayout extends React.Component {
               </a>
             </li>
             <li>
-              <Link to="/settings">
-                <i className="fa fa-gear" />
-                <span className="navigation-tooltip">
-                  Settings
-                </span>
-              </Link>
+              {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', tooltip: 'Settings'})}
             </li>
           </ul>
         </div>
@@ -113,4 +110,4 @@ class HeaderLayout extends React.Component {
 
 }
 
-export default HeaderLayout;
+export default HeaderBlock;

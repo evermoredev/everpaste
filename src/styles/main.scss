@@ -43,6 +43,9 @@ ul {
 .error-messages {
   color: red;
   text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-47%);
 }
 
 .code-title {
@@ -79,6 +82,9 @@ td.line-number {
   padding-top: 10px;
 }
 
+.main-nav {
+  z-index: 10;
+}
 /* Root Container */
 .main-container {
   height: calc(100% - 16px);
@@ -98,6 +104,8 @@ td.line-number {
       text-align: center;
       border-bottom-width: 1px;
       border-bottom-style: solid;
+      position: relative;
+      top: 8px;
       border-bottom-color: #abb2bf;
       transition: .4s;
       &::-webkit-input-placeholder {

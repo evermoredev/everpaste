@@ -60,12 +60,9 @@ app.get('/raw/:id', (req, res) => docHandler.handleRawGet(req.params.id, res));
 
 // Catch-all to send to the webapp
 app.get('*', (req, res, next) => {
-  console.log("Send the requested route through to client-side routing.");
-  console.log(req.originalUrl);
   // If the route matches a static route we know about, pass it through
   // Otherwise, we'll pass the route to the react app
   if ((/^\/(js|img)\//).test(req.originalUrl)) {
-    console.log('Passing through');
     next();
   } else {
     // render the app
