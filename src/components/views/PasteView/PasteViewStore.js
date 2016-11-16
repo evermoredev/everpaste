@@ -1,10 +1,15 @@
 import { action, observable, autorun, asReference } from 'mobx';
 import axios from 'axios';
+import cookie from 'cookie';
 
 class PasteViewStore {
 
   constructor(props) {
     this.props = props;
+
+    this.cookies = cookie.parse(document.cookie);
+    this.defaultExpiration = this.cookies.expiration || '1 days';
+    this.defaultName = this.cookies.name || '';
 
     // If we got here from the edit link, let's copy over the stored text
     this.defaultTxt = this.props.pathname == '/edit' ?
@@ -16,10 +21,10 @@ class PasteViewStore {
     this.setCurrentView();
   }
 
-  @observable title = this.defaultTitle;
-  @observable name = '';
-  @observable text = this.defaultTxt;
-  @observable expiration = '1 days';
+  @observable title = this.defaultTitle || '';
+  @observable name = this.defaultName || '';
+  @observable text = this.defaultTxt || '';
+  @observable expiration = this.defaultExpiration;
   @observable privacyPublic = true;
   @observable redirect = '';
   @observable errors = [];
@@ -50,6 +55,9 @@ class PasteViewStore {
     if (errors.length) {
       this.errors = errors;
     } else {
+      // Set the cookies
+      document.cookie = cookie.serialize('name', String(this.name));
+      document.cookie = cookie.serialize('expiration', String(this.expiration));
       axios.post('/api', {
         title: this.title,
         text: this.text,
