@@ -21,7 +21,7 @@ class HeaderBlockStore {
   @action
   rawButton = (event) => {
     if (this.props.ViewsStore.current.currentView == 'ReadView' && this.props.ViewsStore.current.docKey) {
-      window.open(`${window.location.host}/raw/${this.props.ViewsStore.current.docKey}`, '_blank');
+      window.open(`/raw/${this.props.ViewsStore.current.docKey}`, '_blank');
     }
   };
 
