@@ -39,7 +39,7 @@ class RootContainer extends React.Component {
         <BrowserRouter>
           <div>
             <MatchRoute pattern="/" layout={StandardLayout} component={PasteView} exactly={true} />
-            <Match pattern="/:key" render={(matchProps) => (
+            <Match pattern="/:docKey" render={(matchProps) => (
               <div>
                 <MatchRoute pattern="/edit" layout={StandardLayout} component={PasteView} />
                 <MatchRoute pattern="/help" layout={StandardLayout} component={HelpView} />

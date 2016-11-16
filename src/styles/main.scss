@@ -79,6 +79,9 @@ td.line-number {
   padding-top: 10px;
 }
 
+.main-nav {
+  z-index: 10;
+}
 /* Root Container */
 .main-container {
   height: calc(100% - 16px);

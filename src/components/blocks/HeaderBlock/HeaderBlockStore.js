@@ -10,16 +10,18 @@ class HeaderBlockStore {
 
   @observable mobileNavigationClass = 'mobile-navigation';
 
-  @action @observable
+  @action
   saveButton = (event) => {
     event.preventDefault();
-    this.props.ViewsStore.current.saveButton();
+    if (this.props.ViewsStore.current.saveButton) {
+      this.props.ViewsStore.current.saveButton();
+    }
   };
 
   @action
-  handleRawLink = (event) => {
-    if (this.props.ViewsStore.current.currentView != 'ReadView' || !this.props.ViewsStore.current.docKey) {
-      event.preventDefault();
+  rawButton = (event) => {
+    if (this.props.ViewsStore.current.currentView == 'ReadView' && this.props.ViewsStore.current.docKey) {
+      window.open(`${window.location.host}/raw/${this.props.ViewsStore.current.docKey}`, '_blank');
     }
   };
 

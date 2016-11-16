@@ -11,11 +11,11 @@ class ReadView extends React.Component {
 
   componentWillMount() {
     this.store = new ReadViewStore(this.props);
-    this.store.getDoc(this.props.params.key);
+    this.store.getDoc(this.props.params.docKey);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.store = new ReadViewStore(nextProps);
+  componentWillReact() {
+    this.store.setCurrentView();
   }
 
   renderCodeBlock = () => {

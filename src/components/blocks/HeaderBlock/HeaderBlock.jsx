@@ -16,14 +16,9 @@ class HeaderBlock extends React.Component {
     this.store = new HeaderBlockStore(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log('HeaderBlock will receive props');
-    this.store = new HeaderBlockStore(nextProps);
+  componentWillReact() {
+    console.log(this.props);
   }
-
-  // componentWillReact() {
-  //   this.store = new HeaderBlockStore(this.props);
-  // }
 
   renderLink = (options) => {
     return (
@@ -96,11 +91,8 @@ class HeaderBlock extends React.Component {
             <li>
               {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', tooltip: 'Edit', state: { editLink: true }})}
             </li>
-            <li>
-              <a onClick={this.handleRawLink}
-                 href={`/raw/${this.props.ViewsStore.current.docKey || '#'}`}
-                 target={'_blank'}
-              >
+            <li onClick={this.store.rawButton}>
+              <a>
                 <i className="fa fa-files-o" />
                 <span className="navigation-tooltip">
                   Raw

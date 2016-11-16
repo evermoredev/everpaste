@@ -5,11 +5,7 @@ class ReadViewStore {
 
   constructor(props) {
     this.props = props;
-
-    this.props.ViewsStore.current = observable({
-      currentView: 'ReadView',
-      docKey: this.docKey
-    });
+    this.setCurrentView();
   }
 
   @observable title = '';
@@ -18,17 +14,26 @@ class ReadViewStore {
   @observable docKey = '';
 
   @action
-  getDoc = (key) => {
+  setCurrentView = () => {
+    this.props.ViewsStore.current = observable({
+      currentView: 'ReadView',
+      docKey: this.docKey
+    });
+  };
+
+  @action
+  getDoc = (docKey) => {
     axios
-      .get(`/api/${key}`)
+      .get(`/api/${docKey}`)
       .then(res => {
         this.title = res.data.title;
         this.text = res.data.text;
         this.name = res.data.name;
-        this.docKey = res.data.docKey;
+        this.docKey = res.data.key;
         // Set the text on the ViewsStore current object in case they edit
         this.props.ViewsStore.current.text = res.data.rawText;
-        this.props.ViewsStore.current.docKey = res.data.docKey;
+        this.props.ViewsStore.current.docKey = res.data.key;
+        this.props.ViewsStore.current.title = res.data.title;
       })
       .catch(error => {
         window.location = '/404';

@@ -10,20 +10,27 @@ class PasteViewStore {
     this.defaultTxt = this.props.pathname == '/edit' ?
       this.props.ViewsStore.current.text : '';
 
+    this.defaultTitle = this.props.pathname == '/edit' ?
+      this.props.ViewsStore.current.title : '';
+
+    this.errors = [];
+    this.setCurrentView();
+  }
+
+  @observable title = this.defaultTitle;
+  @observable name = '';
+  @observable text = this.defaultTxt;
+  @observable expiration = '1 days';
+  @observable privacyPublic = true;
+  @observable redirect = '';
+
+  @action
+  setCurrentView = () => {
     this.props.ViewsStore.current = observable({
       currentView: 'PasteView',
       saveButton: asReference(this.saveButton)
     });
-
-    this.errors = [];
-  }
-
-  @observable title = '';
-  @observable name = '';
-  @observable text = this.defaultTxt || '';
-  @observable expiration = '1 days';
-  @observable privacyPublic = true;
-  @observable redirect = '';
+  };
 
   @action
   handleChange = (event) => this[event.target.name] = event.target.value;
@@ -50,7 +57,6 @@ class PasteViewStore {
         expiration: this.expiration,
         privacyPublic: this.privacyPublic
       }).then(res => {
-        console.log('saveButton response:', res.data);
         this.redirect = res.data.key;
       })
         .catch(err => {

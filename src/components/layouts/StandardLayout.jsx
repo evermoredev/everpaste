@@ -14,7 +14,7 @@ class StandardLayout extends React.Component {
 
     return (
       <div className={`main-container ${StyleStore.theme}`}>
-        <HeaderBlock />
+        <HeaderBlock key={Date.now()} />
         <div className="view-container">
           {children}
         </div>
