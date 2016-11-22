@@ -1,5 +1,6 @@
 import winston from 'winston';
 import express from 'express';
+import bodyParser from 'body-parser';
 import http from 'http';
 import path from 'path';
 import limiter from 'connect-ratelimit';
@@ -41,6 +42,12 @@ if (config.logging) {
 const app = express();
 
 app.use(express.static(__dirname + '/public'));
+
+// for parsing application/json
+// TODO: add to config
+app.use(bodyParser.json({ limit: '50mb' }));
+// for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Rate limit all requests
 if (config.rateLimits) {

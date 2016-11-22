@@ -74,81 +74,54 @@ class DocHandler {
     }
   }
 
-  handlePost(req, res) {
-    let cancelled = false, data;
-
-    const onSuccess = async () => {
-
-      /**
-       * Do some validation
-       **/
-      const errors = [];
-
-      if (data.text.length > this.maxLength) {
-        winston.warn('Document exceeds max length.', {maxLength: this.maxLength});
-        errors.push('Document exceeds max length.');
-      }
-      if (!data.text) {
-        winston.warn('No text data for document.');
-        errors.push('No text data for document.');
-      }
-
-      if (errors.length) {
-        cancelled = true;
-        res.writeHead(400, DocHandler.contentType.json);
-        res.end(JSON.stringify(errors));
-        return;
-      }
-
-      /**
-       * Do some formatting
-       **/
-      // Make sure public is a boolean
-      data.public = !!data.privacyPublic;
-      // Create expiration timestamp
-      data.expiration =
-        (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
-          postgresTimestamp(data.expiration) : null;
-
-      // Generate a new key
-      const key = await this.chooseKey();
-      // Insert the query
-      const queryInserted = await this.store.insert(key, data);
-
-      if (queryInserted) {
-        winston.verbose('Added document: ', { key });
-        res.writeHead(200, DocHandler.contentType.json);
-        res.end(JSON.stringify({ key }));
-      } else {
-        winston.verbose('Error adding document: ', { key });
-        res.writeHead(500, DocHandler.contentType.json);
-        res.end(JSON.stringify({ message: 'Error adding document.' }));
-      }
-    };
+  async handlePost(req, res) {
+    let data = req.body;
 
     /**
-     * Handle the initial POST request
+     * Do some validation
      **/
-    req.on('data', (reqData) => {
-      try {
-        data = JSON.parse(reqData);
-      } catch(e) {
-        data = {
-          text: (reqData || '').toString()
-        }
-      }
-    });
-    req.on('end', () => {
-      if (cancelled) { return; }
-      onSuccess();
-    });
-    req.on('error', (error) => {
-      winston.error('connection error: ' + error.message);
+    const errors = [];
+
+    if (data.text.length > this.maxLength) {
+      winston.warn('Document exceeds max length.', {maxLength: this.maxLength});
+      errors.push('Document exceeds max length.');
+    }
+    if (!data.text) {
+      winston.warn('No text data for document.');
+      errors.push('No text data for document.');
+    }
+
+    if (errors.length) {
+      res.writeHead(400, DocHandler.contentType.json);
+      res.end(JSON.stringify(errors));
+      return;
+    }
+
+    /**
+     * Do some formatting
+     **/
+    // Make sure public is a boolean
+    data.public = !!data.privacyPublic;
+    // Create expiration timestamp
+    data.expiration =
+      (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
+        postgresTimestamp(data.expiration) : null;
+
+    // Generate a new key
+    const key = await this.chooseKey();
+    // Insert the query
+    const queryInserted = await this.store.insert(key, data);
+
+    if (queryInserted) {
+      winston.verbose('Added document: ', { key });
+      res.writeHead(200, DocHandler.contentType.json);
+      res.end(JSON.stringify({ key }));
+    } else {
+      winston.verbose('Error adding document: ', { key });
       res.writeHead(500, DocHandler.contentType.json);
-      res.end(JSON.stringify({ message: 'Connection error.' }));
-      cancelled = true;
-    });
-  }
+      res.end(JSON.stringify({ message: 'Error adding document.' }));
+    }
+  };
 
   /**
    * Create a random key that doesn't already exist in the database.

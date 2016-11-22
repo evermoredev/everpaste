@@ -50,28 +50,36 @@ class HeaderBlock extends React.Component {
           </div>
 
           <ul className={this.store.mobileNavigationClass}>
-            <li><Link to="/"><i className="fa fa-plus" />New</Link></li>
             <li>
-              <a href="#"><i className="fa fa-floppy-o" />Save</a>
+              {this.renderLink({to: '/', iconClass: 'fa fa-plus', tooltip: 'New'})}
             </li>
-            <li>
-              <Link to={{ pathname: '/', state: { editLink: true }}}
-                    isActive={() => this.props.ViewsStore.currentView == 'EditView'}
-              >
-                <i className="fa fa-pencil" />Edit</Link>
-            </li>
-            <li>
-              <a onClick={this.handleRawLink}
-                 href={`/raw/${this.props.ViewsStore.docKey || ''}`}
-                 target={'_blank'}
-              >
-                <i className="fa fa-files-o" />Raw
+            <li onClick={this.store.saveButton}>
+              <a>
+                <i className="fa fa-floppy-o" />
+                <span className="navigation-tooltip">
+                    Save
+                </span>
               </a>
             </li>
             <li>
-              <Link to="/settings">
-                <i className="fa fa-gear" />Settings
-              </Link>
+              {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', tooltip: 'Edit', state: { editLink: true }})}
+            </li>
+            <li onClick={this.store.rawButton}>
+              <a>
+                <i className="fa fa-files-o" />
+                <span className="navigation-tooltip">
+                  Raw
+                </span>
+              </a>
+            </li>
+            <li>
+              {this.renderLink({to: '/public', iconClass: 'fa fa-globe', tooltip: 'Public'})}
+            </li>
+            <li>
+              {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', tooltip: 'Settings'})}
+            </li>
+            <li>
+              {this.renderLink({to: '/help', iconClass: 'fa fa-question', tooltip: 'Help'})}
             </li>
             <li className="mobile-overlay" />
           </ul>
@@ -100,7 +108,13 @@ class HeaderBlock extends React.Component {
               </a>
             </li>
             <li>
+              {this.renderLink({to: '/public', iconClass: 'fa fa-globe', tooltip: 'Public'})}
+            </li>
+            <li>
               {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', tooltip: 'Settings'})}
+            </li>
+            <li>
+              {this.renderLink({to: '/help', iconClass: 'fa fa-question', tooltip: 'Help'})}
             </li>
           </ul>
         </div>

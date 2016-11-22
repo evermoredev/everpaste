@@ -27,6 +27,7 @@
   "main": "everpaste",
   "dependencies": {
     "axios": "^0.15.2",
+    "body-parser": "^1.15.2",
     "busboy": "^0.2.13",
     "connect-ratelimit": "0.0.7",
     "cookie": "^0.3.1",

@@ -6,12 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+- Public list view of pastes
+- Help view
 
 ### Changed
 
 ### Fixed
+- Raw link
+- Resolved server issues with larger pastes
 
 ### Removed
+
+### Known Issues 
+- Selecting all from ReadView is picking up line numbers
 
 ## [0.2.0] - 2016-11-16
 ### Added

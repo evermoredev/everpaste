@@ -16,14 +16,14 @@ const config = {
   /**
    * Document information and static assets
    * @title Will appear in the header and as window title
-   * @maxLength int Maximum characters for a Paste
+   * @maxLength int Maximum characters for a Paste, currently set to 50mb
    * @staticMaxAge int Caching age for static documents
    *
    * To change the favicon, simply replace the one in the public/ directory
    * The logo in the header can be replaced in public/img
    */
   "title": "My PasteBin",
-  "maxLength": 500000,
+  "maxLength": 50000000,
   "staticMaxAge": 86400,
 
   /**
