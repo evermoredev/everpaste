@@ -74,6 +74,9 @@ tr.code-row {
   word-break: break-all;
   word-break: break-word;
 }
+td.code-col {
+  white-space: pre-wrap;
+}
 td.line-number {
   white-space: nowrap;
 }

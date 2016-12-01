@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Raw link
 - Resolved server issues with larger pastes
+- Retained white-space in ReadView
 
 ### Removed
 
