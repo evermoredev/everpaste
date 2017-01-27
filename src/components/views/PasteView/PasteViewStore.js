@@ -25,7 +25,7 @@ class PasteViewStore {
   @observable name = this.defaultName || '';
   @observable text = this.defaultTxt || '';
   @observable expiration = this.defaultExpiration;
-  @observable privacyPublic = true;
+  @observable privacyPublic = !!this.cookies.public;
   @observable redirect = '';
   @observable errors = [];
 
@@ -55,9 +55,16 @@ class PasteViewStore {
     if (errors.length) {
       this.errors = errors;
     } else {
-      // Set the cookies
-      document.cookie = cookie.serialize('name', String(this.name));
-      document.cookie = cookie.serialize('expiration', String(this.expiration));
+      // Set the cookies with a maxAge of 10 years
+      document.cookie = cookie.serialize('name', String(this.name), {
+        maxAge: 315360000
+      });
+      document.cookie = cookie.serialize('expiration', String(this.expiration), {
+        maxAge: 315360000
+      });
+      document.cookie = cookie.serialize('public', String(this.privacyPublic), {
+        maxAge: 315360000
+      });
       axios.post('/api', {
         title: this.title,
         text: this.text,

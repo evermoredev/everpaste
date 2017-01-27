@@ -24,7 +24,7 @@ class PublicListViewStore {
     axios
       .get('/api/list')
       .then(res => {
-        this.docList = res.data;
+        this.docList = res.data.reverse();
         this.loading = false;
       })
       .catch(error => {

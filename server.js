@@ -45,7 +45,7 @@ app.use(express.static(__dirname + '/public'));
 
 // for parsing application/json
 // TODO: add to config
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: config.maxLength }));
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 

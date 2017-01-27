@@ -23,7 +23,7 @@ const config = {
    * The logo in the header can be replaced in public/img
    */
   "title": "My PasteBin",
-  "maxLength": 50000000,
+  "maxLength": "50mb",
   "staticMaxAge": 86400,
 
   /**

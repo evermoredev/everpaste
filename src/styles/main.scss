@@ -16,6 +16,7 @@ body {
 
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 
 pre {
@@ -233,7 +234,24 @@ td.line-number {
   transition: 0.2s;
   cursor: pointer;
   &:hover {
-    color: white;
+    background-color: lighten(20%);
+  }
+}
+
+.public-list-view {
+  text-align: center;
+  text-decoration: none;
+  a {
+    color: inherit;
+  }
+  .from-name {
+    padding: 5px;
+  }
+  .title {
+    font-size: 1.2em;
+  }
+  .created {
+    font-size: .9em;
   }
 }
 

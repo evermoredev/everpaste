@@ -95,7 +95,9 @@ class StyleStore {
 
   @action
   setTheme = (themeName) => {
-    document.cookie = cookie.serialize('theme', String(themeName));
+    document.cookie = cookie.serialize('theme', String(themeName), {
+      maxAge: 315360000
+    });
     this.theme = themeName;
     this.themeDisplayName = this.getThemeDisplayName(this.theme);
   };

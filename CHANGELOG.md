@@ -5,21 +5,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Known Issues / TODOs
+- Selecting all from ReadView is picking up line numbers
+- Public view needs styling
+- Highlight nav items when active, grey out disabled buttons per view
+- Remove axios and use native fetch
+- Scrollbar issue in public list view
+
+## [0.3.0] - 2017-01-27
 ### Added
 - Public list view of pastes
-- Help view
-
-### Changed
+- Help view pulling changelog from github
+- Added Public/Private option to saved user preferences
 
 ### Fixed
-- Raw link
+- Raw link function in header
 - Resolved server issues with larger pastes
 - Retained white-space in ReadView
-
-### Removed
-
-### Known Issues 
-- Selecting all from ReadView is picking up line numbers
+- Cursor pointer style for nav links
+- Cookie expiration
 
 ## [0.2.0] - 2016-11-16
 ### Added

@@ -35,14 +35,14 @@ class PublicListView extends React.Component {
         <div className="doc-list-item" key={idx}>
           <Link to={`/${d.key}`}>
             <div className="public-paste">
-              <span className="title">
+              <span className="title hljs-keyword">
                 {d.title || 'Untitled'}
               </span>
               {d.name &&
-                <span className="from-name">from {d.name}</span>
+                <span className="from-name hljs-title">from {d.name}</span>
               }
-              <span className="created">
-                {moment(d.created).fromNow()}
+              <span className="created hljs-string">
+                ({moment(d.created).fromNow()})
               </span>
             </div>
           </Link>
@@ -54,8 +54,10 @@ class PublicListView extends React.Component {
 
   render() {
     return (
-      <div className="public-list-view">
-        {this.renderDocsList()}
+      <div className="public-list-view hljs">
+        <div className="code-document">
+          {this.renderDocsList()}
+        </div>
       </div>
     );
   }
