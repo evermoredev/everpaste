@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- CORS headers
+
 ### Known Issues / TODOs
 - Selecting all from ReadView is picking up line numbers
 - Public view needs styling
