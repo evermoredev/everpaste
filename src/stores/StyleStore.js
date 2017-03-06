@@ -1,4 +1,3 @@
-import { observable, action } from 'mobx';
 import cookie from 'cookie';
 
 class StyleStore {
@@ -88,12 +87,10 @@ class StyleStore {
     this.cookies = cookie.parse(document.cookie);
     this.defaultTheme = this.cookies.theme || 'atom-one-dark-theme';
     this.defaultThemeDisplayName = this.getThemeDisplayName(this.defaultTheme);
+    this.theme = this.defaultTheme;
+    this.themeDisplayName = this.defaultThemeDisplayName;
   }
 
-  @observable theme = this.defaultTheme;
-  @observable themeDisplayName = this.defaultThemeDisplayName;
-
-  @action
   setTheme = (themeName) => {
     document.cookie = cookie.serialize('theme', String(themeName), {
       maxAge: 315360000
@@ -102,7 +99,8 @@ class StyleStore {
     this.themeDisplayName = this.getThemeDisplayName(this.theme);
   };
 
-  getThemeDisplayName = (theme) => this.themes.filter(t => t.className == theme)[0].name;
+  getThemeDisplayName = (theme) =>
+    this.themes.filter(t => t.className == theme)[0].name;
 
 }
 

@@ -1,0 +1,33 @@
+.public-list-view {
+  color: white;
+  text-decoration: none;
+  .view-container {
+    padding: 5px;
+  }
+  a {
+    color: inherit;
+  }
+  .public-list-item {
+    div {
+      display: inline;
+    }
+    &:hover {
+      background: #145d7b;
+      border-left: solid 2px #036579;
+    }
+  }
+  .from-name {
+    padding-right: 5px;
+    color: #daa520;
+  }
+  .title {
+    padding-right: 5px;
+    font-size: 1.2em;
+    color: #faebd7;
+  }
+  .created {
+    font-size: .9em;
+    color: #faebd7;
+    font-style: italic;
+  }
+}

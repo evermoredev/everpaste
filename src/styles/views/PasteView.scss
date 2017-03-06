@@ -1,0 +1,105 @@
+.paste-view {
+  flex: auto;
+  overflow: auto;
+  .view-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .title-container {
+    display: flex;
+    color: inherit;
+    input {
+      color: #abb2bf;
+      font-family: $primary-font;
+      font-size: 20px;
+      background: transparent;
+      box-shadow: none;
+      width: 100%;
+      border: none;
+      padding: 15px;
+      text-align: center;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      position: relative;
+      top: 8px;
+      border-bottom-color: #abb2bf;
+      transition: .4s;
+      &::-webkit-input-placeholder {
+        color: inherit;
+      }
+      &:focus,
+      &:active {
+        border-bottom: 1px solid #5891cb;
+        box-shadow: none;
+        outline: none;
+        color: #56b6c2;
+      }
+    }
+  }
+  .input-dark {
+    box-shadow: none !important;
+    color: #abb2bf;
+    background: transparent !important;
+  }
+
+  .option-container {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 10px;
+  }
+
+  .pure-form {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    .pure-radio {
+      display: inline;
+      margin-right: 7px;
+    }
+    label {
+      padding-left: 10px;
+      padding-right: 15px;
+      color: #abb2bf;
+      display: inline-block;
+    }
+    select {
+      margin-left: 10px;
+    }
+  }
+  .text-container {
+    text-align: center;
+    padding: 15px;
+    textarea {
+      height: calc(100vh - 239px);
+      background: transparent;
+      color: #abb2bf;
+      width: 100%;
+      font-family: $code-font;
+      border: 1px solid #abb2bf;
+      transition: .4s;
+      padding: 20px;
+      border-radius: 3px;
+      &:focus,
+      &:active {
+        outline: none;
+        border: 1px solid #5891cb;
+        color: #56b6c2;
+      }
+      &::-webkit-input-placeholder {
+        font-family: $primary-font;
+        font-style: normal;
+        font-weight: normal;
+        text-decoration: inherit;
+        font-size: 30px;
+        position: relative;
+        top: -10px;
+        color: #abb2bf;
+        &:focus,
+        &:active {
+          color: #56b6c2;
+        }
+      }
+    }
+  }
+}

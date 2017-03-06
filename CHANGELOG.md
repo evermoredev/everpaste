@@ -5,15 +5,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-### Added
-- CORS headers
 
 ### Known Issues / TODOs
 - Selecting all from ReadView is picking up line numbers
 - Public view needs styling
-- Highlight nav items when active, grey out disabled buttons per view
 - Remove axios and use native fetch
-- Scrollbar issue in public list view
+- Replace window.locations with React router redirects
+
+## [0.4.0] - 2017-03-06
+### Added
+- Added CORS headers
+- Added a view for Not Found
+
+### Changed
+- Using react context for state
+- Updated public view styling
+- Modularized scss and cleaned up flex issues
+
+### Fixed
+- Disabled header links depending on view
+- Cleaned up lots of redundancies in code
+- Scrolling issue in public list view
+- Issue with remembering public/private option
+
+### Removed
+- Removed MobX and replaced with React context for state management
 
 ## [0.3.0] - 2017-01-27
 ### Added

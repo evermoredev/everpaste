@@ -8,13 +8,9 @@
  */
 
 import React from 'react';
-import { Match, BrowserRouter } from 'react-router';
-import { Provider } from 'mobx-react';
-import * as stores from 'stores/';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import { StandardLayout } from 'components/layouts';
-import MatchRoute from 'core/modules/match_route';
-import MissRoute from 'core/modules/miss_route';
+import { StyleStore } from '../../stores';
 
 import {
   HelpView,
@@ -27,35 +23,39 @@ import {
 
 class RootContainer extends React.Component {
 
-  static displayName = 'RootContainer';
-
   constructor(props) {
     super(props);
   }
 
+  getChildContext() {
+    return {
+      styleStore: StyleStore,
+      currentPaste: {}
+    }
+  }
+
   render() {
     return (
-      <Provider {...stores}>
-        <BrowserRouter>
-          <div>
-            <MatchRoute pattern="/" layout={StandardLayout} component={PasteView} exactly={true} />
-            <Match pattern="/:docKey" render={(matchProps) => (
-              <div>
-                <MatchRoute pattern="/edit" layout={StandardLayout} component={PasteView} />
-                <MatchRoute pattern="/help" layout={StandardLayout} component={HelpView} />
-                <MatchRoute pattern="/public" layout={StandardLayout} component={PublicListView} />
-                <MatchRoute pattern="/settings" layout={StandardLayout} component={SettingsView} />
-                <MatchRoute pattern="/404" layout={StandardLayout} component={NotFoundView} />
-                <MissRoute layout={StandardLayout} component={ReadView} matchProps={matchProps} />
-              </div>
-            )} />
-            <MissRoute layout={StandardLayout} component={NotFoundView} />
-          </div>
-        </BrowserRouter>
-      </Provider>
+      <Router>
+          <Switch>
+            <Route path="/" exact component={PasteView} />
+            <Route path="/edit" component={PasteView} />
+            <Route path="/help" component={HelpView} />
+            <Route path="/public" component={PublicListView} />
+            <Route path="/settings" component={SettingsView} />
+            <Route path="/404" component={NotFoundView} />
+            <Route path="/:docKey" component={ReadView} />
+            <Route component={NotFoundView} />
+          </Switch>
+      </Router>
     );
   }
 
 }
+
+RootContainer.childContextTypes = {
+  styleStore: React.PropTypes.object,
+  currentPaste: React.PropTypes.object
+};
 
 export default RootContainer;
