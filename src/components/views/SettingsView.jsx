@@ -1,23 +1,18 @@
 import React from 'react';
-import { observer } from 'mobx-react';
-import SettingsViewStore from './SettingsViewStore';
+import { HeaderBlock } from '../blocks';
 
-@observer(['AppStore', 'StyleStore', 'ViewsStore'])
 class SettingsView extends React.Component {
 
   constructor(props) {
     super(props);
   }
 
-  componentWillMount() {
-    this.store = new SettingsViewStore(this.props);
-  };
-
   handleThemeChange = (event, className) => {
-    this.props.StyleStore.setTheme(className);
+    this.context.styleStore.setTheme(className);
+    this.forceUpdate();
   };
 
-  renderThemesList = () => this.props.StyleStore.themes.map((t, idx) =>
+  renderThemesList = () => this.context.styleStore.themes.map((t, idx) =>
     <div
       key={idx}
       className={`${t.className} theme-selection`}
@@ -59,19 +54,24 @@ class SettingsView extends React.Component {
 
   render() {
     return(
-      <div className="settings-view">
-        <h2 className="settings-header">Select a Theme Below</h2>
-        <div className="sample-code">
-          {this.renderSampleCode()}
-        </div>
-        <div className="settings-sub-header">Current Theme: {this.props.StyleStore.themeDisplayName}</div>
-        <div className="theme-container">
-          {this.renderThemesList()}
+      <div className={`settings-view flex-container ${this.context.styleStore.theme}`}>
+        <HeaderBlock disabled={{ raw: true, edit: true, save: true }} />
+        <div className="view-container">
+          <h2 className="settings-header">Select a Code Theme Below</h2>
+          <div className="sample-code">{this.renderSampleCode()}</div>
+          <div className="settings-sub-header">
+            Current Theme: {this.context.styleStore.themeDisplayName}
+          </div>
+          <div className="theme-container">{this.renderThemesList()}</div>
         </div>
       </div>
     );
   }
 
 }
+
+SettingsView.contextTypes = {
+  styleStore: React.PropTypes.object
+};
 
 export default SettingsView;

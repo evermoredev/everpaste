@@ -1,0 +1,29 @@
+@import './PasteView';
+@import './PublicListView';
+@import './SettingsView';
+
+/* Root Container */
+
+
+.paste-view,.public-list-view{
+  display: flex;
+  flex-direction: column
+}
+
+.code-information-container {
+  display: flex;
+  justify-content: space-around;
+  padding: 3px;
+  .code-theme-selector {
+    label {
+      padding-right: 5px;
+      font-family: $primary-font;
+      font-weight: bold;
+    }
+  }
+}
+
+.code-container {
+  position: relative;
+  top: 10px;
+}

@@ -5,12 +5,13 @@
 /* Themes */
 @import 'themes/index.scss';
 
-/* Layouts */
-@import 'layouts/header.scss';
+/* Blocks */
+@import 'blocks/HeaderBlock';
+
+/* Views */
+@import 'views/index.scss';
 
 body {
-  padding-top: 50px;
-  margin:0;
   background: #282c34;
 }
 
@@ -26,6 +27,17 @@ pre {
 ul {
   padding: 0;
 }
+
+.flex-container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  .view-container {
+    flex: auto;
+    overflow: auto;
+  }
+}
+
 
 .unselectable {
   -webkit-touch-callout: none;
@@ -86,175 +98,6 @@ td.line-number {
   padding-top: 10px;
 }
 
-.main-nav {
-  z-index: 10;
-}
-/* Root Container */
-.main-container {
-  height: calc(100% - 16px);
-  background: #282c34;
-  .title-container {
-    display: flex;
-    color: inherit;
-    input {
-      color: #abb2bf;
-      font-family: $primary-font;
-      font-size: 20px;
-      background: transparent;
-      box-shadow: none;
-      width: 100%;
-      border: none;
-      padding: 15px;
-      text-align: center;
-      border-bottom-width: 1px;
-      border-bottom-style: solid;
-      position: relative;
-      top: 8px;
-      border-bottom-color: #abb2bf;
-      transition: .4s;
-      &::-webkit-input-placeholder {
-        color: inherit;
-      }
-      &:focus,
-      &:active {
-        border-bottom: 1px solid #5891cb;
-        box-shadow: none;
-        outline: none;
-        color: #56b6c2;
-      }
-    }
-  }
-  .option-container {
-    display: flex;
-    justify-content: space-around;
-    padding-top: 10px;
-  }
-  .pure-form {
-    margin: 0;
-    width: 100%;
-    text-align: center;
-    .pure-radio {
-      display: inline;
-      margin-right: 7px;
-    }
-    label {
-      padding-left: 10px;
-      padding-right: 15px;
-      color: #abb2bf;
-      display: inline-block;
-    }
-    select {
-      margin-left: 10px;
-    }
-  }
-  .text-container {
-    text-align: center;
-    padding: 15px;
-    textarea {
-      height: calc(100vh - 239px);
-      background: transparent;
-      color: #abb2bf;
-      width: 100%;
-      font-family: $code-font;
-      border: 1px solid #abb2bf;
-      transition: .4s;
-      padding: 20px;
-      border-radius: 3px;
-      &:focus,
-      &:active {
-        outline: none;
-        border: 1px solid #5891cb;
-        color: #56b6c2;
-      }
-      &::-webkit-input-placeholder {
-        font-family: $primary-font;
-        font-style: normal;
-        font-weight: normal;
-        text-decoration: inherit;
-        font-size: 30px;
-        position: relative;
-        top: -10px;
-        color: #abb2bf;
-        &:focus,
-        &:active {
-          color: #56b6c2;
-        }
-      }
-    }
-  }
-}
-
-.paste-view,.public-list-view{
-  padding: 15px;
-  display: flex;
-  flex-direction: column
-}
-
-.code-information-container {
-  display: flex;
-  justify-content: space-around;
-  padding: 3px;
-  .code-theme-selector {
-    label {
-      padding-right: 5px;
-      font-family: $primary-font;
-      font-weight: bold;
-    }
-  }
-}
-
-.code-container {
-  position: relative;
-  top: 10px;
-}
-
-.settings-header {
-  text-align: center;
-  color: #abb2bf;
-  padding-top: 20px;
-}
-
-.settings-sub-header {
-  text-align: center;
-  color: #abb2bf;
-  padding-top: 15px;
-}
-
-.theme-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 30px;
-}
-
-.theme-selection {
-  width: 200px;
-  height: 25px;
-  color: #abb2bf;
-  transition: 0.2s;
-  cursor: pointer;
-  &:hover {
-    background-color: lighten(20%);
-  }
-}
-
-.public-list-view {
-  text-align: center;
-  text-decoration: none;
-  a {
-    color: inherit;
-  }
-  .from-name {
-    padding: 5px;
-  }
-  .title {
-    font-size: 1.2em;
-  }
-  .created {
-    font-size: .9em;
-  }
-}
-
 /* Loader Animation */
 .loader {
   font-family: Consolas, Menlo, Monaco, monospace;
@@ -270,12 +113,6 @@ td.line-number {
       animation-delay: 0.4s;
     }
   }
-}
-
-.input-dark {
-  box-shadow: none !important;
-  color: #abb2bf;
-  background: transparent !important;
 }
 
 @keyframes pulse {

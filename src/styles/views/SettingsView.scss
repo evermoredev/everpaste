@@ -1,0 +1,30 @@
+.settings-view {
+  .settings-header {
+    text-align: center;
+    color: #abb2bf;
+  }
+
+  .settings-sub-header {
+    text-align: center;
+    color: #abb2bf;
+    padding-top: 15px;
+  }
+
+  .theme-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 30px;
+  }
+
+  .theme-selection {
+    width: 200px;
+    height: 25px;
+    color: #abb2bf;
+    transition: 0.2s;
+    cursor: pointer;
+    &:hover {
+      background-color: lighten(20%);
+    }
+  }
+}
