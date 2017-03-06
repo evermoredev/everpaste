@@ -29,13 +29,11 @@ class HelpView extends React.Component {
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
-        <div className="view-container">
-          <div className="code-container hljs" style={{ paddingLeft: 30 }}>
-            <div
-              className="code-document"
-              dangerouslySetInnerHTML={{__html: marked(this.state.text) }}
-            >
-            </div>
+        <div className="view-container" style={{ paddingLeft: 30, color: 'white' }}>
+          <div
+            className="code-document"
+            dangerouslySetInnerHTML={{__html: marked(this.state.text) }}
+          >
           </div>
         </div>
       </div>
