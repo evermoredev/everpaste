@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Remove axios and use native fetch
 - Replace window.locations with React router redirects
 
+## [0.5.0] - 2017-03-06
+- Fixed breaking issue with packages & updated other packages
+- Fixed double scroll issue in help view
+
 ## [0.4.0] - 2017-03-06
 ### Added
 - Added CORS headers
