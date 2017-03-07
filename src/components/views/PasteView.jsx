@@ -2,6 +2,8 @@ import React  from 'react';
 import { HeaderBlock } from '../blocks';
 import axios from 'axios';
 import { setCookie, getCookie } from '../../modules/cookies';
+import CryptoJS from 'crypto-js';
+import { privacyOptions } from '../../config/constants';
 
 class PasteView extends React.Component {
 
@@ -21,7 +23,8 @@ class PasteView extends React.Component {
       name: getCookie('name') || '',
       text: this.rawTxtFromEdit || '',
       expiration: getCookie('expiration') || '1 days',
-      privacyPublic: getCookie('public') == 'true',
+      privacyOption: this.getPrivacyOption(getCookie('privacyOption')),
+      secretKey: '',
       errors: ''
     };
 
@@ -37,7 +40,10 @@ class PasteView extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
 
   handlePrivacyRadio = (event) =>
-    this.setState({ privacyPublic: event.currentTarget.value === 'public' });
+    this.setState({ privacyOption: event.currentTarget.value });
+
+  getPrivacyOption = (option) =>
+    (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
 
   saveButton = () => {
     // Do some validation and formatting
@@ -46,15 +52,24 @@ class PasteView extends React.Component {
       errors.push('Please enter more text to save.');
     }
 
-    const { name, title, text, expiration, privacyPublic } = this.state;
+    let { name, title, text, expiration, privacyOption } = this.state;
+
+    if (this.state.privacyOption == privacyOptions.encrypted) {
+      if (!this.state.secretKey) {
+        errors.push('Please enter a secret key for encryption.')
+      } else {
+        text = CryptoJS.AES.encrypt(this.state.text, this.state.secretKey).toString();
+      }
+    }
+
     if (errors.length) {
       this.setState({ errors });
     } else {
       setCookie('name', name);
       setCookie('expiration', expiration);
-      setCookie('public', privacyPublic);
+      setCookie('privacyOption', privacyOption);
       axios.post('/api', {
-        title, text, name, expiration, privacyPublic
+        title, text, name, expiration, privacyOption
       }).then(res => {
         window.location = '/' + res.data.key;
       }).catch(err => {
@@ -72,7 +87,10 @@ class PasteView extends React.Component {
   }
 
   render() {
-    console.log(this.state.privacyPublic);
+    const cipherText = CryptoJS.AES.encrypt(this.state.text, 'my key');
+    const decryptedText = CryptoJS.AES.decrypt(cipherText.toString(), 'my key');
+    console.log(this.state.privacyOption);
+
     return (
       <div className={`paste-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock
@@ -92,53 +110,91 @@ class PasteView extends React.Component {
             <div className="option-container">
               <form className="pure-form">
                 <fieldset>
-                  <label htmlFor="public">
-                    <input
-                      className="pure-radio"
-                      type="radio"
-                      name="public"
-                      value="public"
-                      checked={this.state.privacyPublic}
-                      onChange={this.handlePrivacyRadio}
-                    />
-                    Public
-                  </label>
-                  <label htmlFor="private">
-                    <input
-                      className="pure-radio"
-                      type="radio"
-                      name="private"
-                      value="private"
-                      checked={!this.state.privacyPublic}
-                      onChange={this.handlePrivacyRadio}
-                    />
-                    Private
-                  </label>
-                  <label htmlFor="name">
-                    <input
-                      className="input-dark"
-                      type="text"
-                      name="name"
-                      value={this.state.name}
-                      placeholder="Name (Optional)"
-                      onChange={this.handleChange}
-                    />
-                  </label>
-                  <label htmlFor="expiration">
-                    Expiration:
-                    <select
-                      className="input-dark"
-                      name="expiration"
-                      value={this.state.expiration}
-                      onChange={this.handleChange}
-                    >
-                      <option value="forever">Forever</option>
-                      <option value="1 weeks">1 Week</option>
-                      <option value="1 days">1 Day</option>
-                      <option value="6 hours">6 Hours</option>
-                      <option value="30 minutes">30 Minutes</option>
-                    </select>
-                  </label>
+                  <div style={{ display: 'inline-block', textAlign: 'right', width: '50%' }}>
+                    <div>
+                      <label htmlFor="name">
+                        Name:
+                        <input
+                          style={{ marginLeft: '10px' }}
+                          className="input-dark"
+                          type="text"
+                          name="name"
+                          value={this.state.name}
+                          placeholder="Name (Optional)"
+                          onChange={this.handleChange}
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <label htmlFor="expiration">
+                        Expiration:
+                        <select
+                          style={{ width: "187px" }}
+                          className="input-dark"
+                          name="expiration"
+                          value={this.state.expiration}
+                          onChange={this.handleChange}
+                        >
+                          <option value="forever">Forever</option>
+                          <option value="1 weeks">1 Week</option>
+                          <option value="1 days">1 Day</option>
+                          <option value="6 hours">6 Hours</option>
+                          <option value="30 minutes">30 Minutes</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                  <div style={{ display: 'inline-block', textAlign: 'left', width: '50%' }}>
+                    <div>
+                    <label htmlFor="public">
+                      <input
+                        className="pure-radio"
+                        type="radio"
+                        name="public"
+                        value={privacyOptions.public}
+                        checked={this.state.privacyOption == privacyOptions.public}
+                        onChange={this.handlePrivacyRadio}
+                      />
+                      Public
+                    </label>
+                    <label htmlFor="private">
+                      <input
+                        style={{ marginLeft: '10px' }}
+                        className="pure-radio"
+                        type="radio"
+                        name="private"
+                        value={privacyOptions.private}
+                        checked={this.state.privacyOption == privacyOptions.private}
+                        onChange={this.handlePrivacyRadio}
+                      />
+                      Private
+                    </label>
+                    </div>
+                    <div>
+                    <label htmlFor="encrypt">
+                      <input
+                        className="pure-radio"
+                        type="radio"
+                        name="encrypt"
+                        value={privacyOptions.encrypted}
+                        checked={this.state.privacyOption == privacyOptions.encrypted}
+                        onChange={this.handlePrivacyRadio}
+                      />
+                      Private w/AES
+                      {this.state.privacyOption == privacyOptions.encrypted ?
+                        <input
+                          style={{ marginLeft: '10px' }}
+                          className="input-dark"
+                          name="secretKey"
+                          value={this.state.secretKey}
+                          placeholder="Secret Key"
+                          onChange={this.handleChange}
+                        /> : ''
+                      }
+                    </label>
+                    </div>
+                  </div>
+
                 </fieldset>
               </form>
             </div>

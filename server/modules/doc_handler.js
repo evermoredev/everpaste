@@ -10,6 +10,7 @@ import highlighter from './highlighter';
 import PostgresStore from './postgres_store';
 import KeyGenerator from './key_generator';
 import Config from '../../config';
+import { privacyOptions } from '../config/constants';
 import { postgresTimestamp } from './_helpers';
 
 class DocHandler {
@@ -100,8 +101,9 @@ class DocHandler {
     /**
      * Do some formatting
      **/
-    // Make sure public is a boolean
-    data.public = !!data.privacyPublic;
+    // Make sure privacyOption is a proper value
+    data.privacyOption = (Object.keys(privacyOptions).includes(data.privacyOption)) ?
+      data.privacyOption : privacyOptions.public;
     // Create expiration timestamp
     data.expiration =
       (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
