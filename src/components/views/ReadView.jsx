@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { HeaderBlock } from '../blocks';
+import { privacyOptions } from '../../config/constants';
 
 class ReadView extends React.Component {
 
@@ -11,7 +12,9 @@ class ReadView extends React.Component {
       title: '',
       text: '',
       name: '',
-      docKey: ''
+      docKey: '',
+      privacyOption: '',
+      secretKey: ''
     }
   }
 
@@ -28,14 +31,10 @@ class ReadView extends React.Component {
           text: res.data.text,
           rawText: res.data.rawText,
           name: res.data.name,
-          docKey: res.data.key
+          docKey: res.data.key,
+          privacyOption: res.data.privacyoption
         });
         this.context.currentPaste = this.state;
-        // TODO:
-        // Set the text on the ViewsStore current object in case they edit
-        // this.props.ViewsStore.current.text = res.data.rawText;
-        // this.props.ViewsStore.current.docKey = res.data.key;
-        // this.props.ViewsStore.current.title = res.data.title;
       })
       .catch(error => {
         window.location = '/404';
@@ -70,20 +69,45 @@ class ReadView extends React.Component {
           currentPaste={this.state}
           disabled={{ }}
         />
-        <div className="view-container hljs">
-          <div className="error-messages"></div>
-          <div className="code-information-container">
-            <div className="unselectable code-title">
-            {this.state.title || 'Untitled'}
-            {this.state.name &&
-              <span className="from-name">from {this.state.name}</span>
-            }
+        {this.state.privacyOption == privacyOptions.encrypted ?
+            <div className="view-container">
+              <h3 className="white-text">
+                This document is encrypted. Please enter Secret Key below.
+              </h3>
+              <form className="pure-form">
+                <fieldset>
+                    <div>
+                      <label htmlFor="secretKey">
+                        <input
+                          style={{ marginLeft: '10px' }}
+                          className="input-dark"
+                          type="text"
+                          name="name"
+                          value={this.state.secretKey}
+                          placeholder="Secret Key"
+                          onChange={this.handleChange}
+                        />
+                      </label>
+                    </div>
+                </fieldset>
+              </form>
             </div>
-          </div>
-          <div className="code-document">
-            {this.renderCodeBlock()}
-          </div>
-        </div>
+          :
+            <div className="view-container hljs">
+              <div className="error-messages"></div>
+              <div className="code-information-container">
+                <div className="unselectable code-title">
+                  {this.state.title || 'Untitled'}
+                  {this.state.name &&
+                  <span className="from-name">from {this.state.name}</span>
+                  }
+                </div>
+              </div>
+              <div className="code-document">
+                {this.renderCodeBlock()}
+              </div>
+            </div>
+        }
       </div>
     );
   }
