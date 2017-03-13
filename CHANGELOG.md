@@ -6,11 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Known Issues / TODOs
+### Known Issues
 - Selecting all from ReadView is picking up line numbers
-- Public view needs styling
+
+### TODOs
 - Remove axios and use native fetch
 - Replace window.locations with React router redirects
+
+## [0.6.0] - 2017-03-13
+### Added
+- AES Encryption option
+
+### Changed
+- Moved the highlighting module to the client
 
 ## [0.5.0] - 2017-03-06
 - Fixed breaking issue with packages & updated other packages

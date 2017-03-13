@@ -87,10 +87,6 @@ class PasteView extends React.Component {
   }
 
   render() {
-    const cipherText = CryptoJS.AES.encrypt(this.state.text, 'my key');
-    const decryptedText = CryptoJS.AES.decrypt(cipherText.toString(), 'my key');
-    console.log(this.state.privacyOption);
-
     return (
       <div className={`paste-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock
