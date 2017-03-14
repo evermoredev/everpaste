@@ -36,20 +36,4 @@ WorkingDirectory=/var/www/myapp
 WantedBy=multi-user.target
 ```
 
-Check out the `config.example.json` for more information.
-
-## TODO's
-
-#### Version 1 Milestones
-
-- [ ] Update README.md / Docs
-- [x] Update styles for better readability in ReadView
-- [ ] Add public panel to main screen
-- [ ] Update api for better `curl` post requests/responses
-- [x] Add from name input in options box
-- [x] Enable expiration functionality
-- [ ] Update not found routing
-- [ ] Add settings section to change theme and save to cookie
-- [ ] More comments in code
-- [ ] Enable travis
-- [x] Edit functionality
+Check out the `server/config/config.example.js` for more information.

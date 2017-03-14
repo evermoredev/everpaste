@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import axios from 'axios';
 import { HeaderBlock } from '../blocks';
+import { Condition } from '../../modules/components';
 
 class PublicListView extends React.Component {
 
@@ -29,7 +30,7 @@ class PublicListView extends React.Component {
         });
       })
       .catch(error => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -46,15 +47,9 @@ class PublicListView extends React.Component {
         <div className="public-list-item" key={idx}>
           <Link to={`/${d.key}`}>
             <div className="public-paste">
-              <div className="title">
-                {d.title || 'Untitled'}
-              </div>
-              {d.name &&
-                <div className="from-name">from {d.name}</div>
-              }
-              <div className="created">
-                ({moment(d.created).fromNow()})
-              </div>
+              <Condition value={d.title} className="title" default="Untitled" />
+              <Condition value={d.name} className="from-name" />
+              <div className="created">({moment(d.created).fromNow()})</div>
             </div>
           </Link>
         </div>

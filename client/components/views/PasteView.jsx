@@ -3,7 +3,8 @@ import { HeaderBlock } from '../blocks';
 import axios from 'axios';
 import { setCookie, getCookie } from '../../modules/cookies';
 import CryptoJS from 'crypto-js';
-import { privacyOptions } from '../../config/constants';
+import { privacyOptions } from '../../../shared/config/constants';
+import { Condition } from '../../modules/components';
 
 class PasteView extends React.Component {
 
@@ -177,16 +178,19 @@ class PasteView extends React.Component {
                         onChange={this.handlePrivacyRadio}
                       />
                       Private w/AES
-                      {this.state.privacyOption == privacyOptions.encrypted ?
+                      <Condition
+                        style={{ display: 'inherit' }}
+                        condition={this.state.privacyOption == privacyOptions.encrypted}>
                         <input
                           style={{ marginLeft: '10px' }}
                           className="input-dark"
                           name="secretKey"
+                          type="password"
                           value={this.state.secretKey}
                           placeholder="Secret Key"
                           onChange={this.handleChange}
-                        /> : ''
-                      }
+                        />
+                      </Condition>
                     </label>
                     </div>
                   </div>

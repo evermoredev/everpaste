@@ -1,13 +1,18 @@
 import winston from 'winston';
 import express from 'express';
+import webpack from 'webpack';
 import bodyParser from 'body-parser';
 import http from 'http';
+import https from 'https';
 import path from 'path';
 import limiter from 'connect-ratelimit';
 
 import docHandler from './server/modules/doc_handler';
 
-import config from './config';
+import config from './server/config/config';
+import webpackConfig from './server/config/webpack.config';
+
+const compiler = webpack(webpackConfig);
 
 /**
  * Tell any CSS tooling (such as Material UI) to use all vendor
@@ -20,10 +25,16 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 global.__IS_DEVELOPMENT__ = process.env.NODE_ENV === 'development';
 global.__IS_CLIENT__ = false;
 global.__IS_SERVER__ = true;
+const isDeveloping = process.env.NODE_ENV !== 'production';
+
 
 // Load the configuration and set some defaults
 config.port = process.env.PORT || config.port || 7777;
 config.host = process.env.HOST || config.host || 'localhost';
+
+// Create the app, setup the webpack middleware
+const app = express();
+app.use(express.static(__dirname + '/public'));
 
 // Set up the logger
 if (config.logging) {
@@ -38,10 +49,6 @@ if (config.logging) {
     winston.add(winston.transports[type], detail);
   }
 }
-
-const app = express();
-
-app.use(express.static(__dirname + '/public'));
 
 // for parsing application/json
 // TODO: add to config
@@ -89,9 +96,18 @@ app.get('*', (req, res, next) => {
   }
 });
 
-http.createServer(app).listen(config.port, config.host, (err, result) => {
-  if (err) {
-    console.log(err);
-  }
-  winston.info('listening on ' + config.host + ':' + config.port);
-});
+if (isDeveloping) {
+  http.createServer(app).listen(config.port, config.host, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    winston.info('Development: listening on ' + config.host + ':' + config.port);
+  });
+} else {
+  http.createServer(app).listen(config.port, config.host, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    winston.info('Production: listening on ' + config.host + ':' + config.port);
+  });
+}

@@ -7,8 +7,8 @@
  */
 
 import postgres from 'pg';
-import Config from '../../config';
-import { privacyOptions } from '../config/constants';
+import Config from '../config/config';
+import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
 
 class PostgresStore {

@@ -1,13 +1,6 @@
 import moment from 'moment';
 
-const htmlEscapeStr = str => {
-  return str.replace(/&/g, '&amp;')
-    .replace(/>/g, '&gt;')
-    .replace(/</g, '&lt;')
-    .replace(/"/g, '&quot;');
-};
-
-const postgresTimestamp = (addTime, subtractTime) => {
+export const postgresTimestamp = (addTime, subtractTime) => {
   let timestamp = moment();
   if (addTime) {
     addTime = addTime.split(' ');
@@ -19,5 +12,3 @@ const postgresTimestamp = (addTime, subtractTime) => {
   }
   return timestamp.format('YYYY-MM-DD h:mm:ss');
 };
-
-export { htmlEscapeStr, postgresTimestamp };

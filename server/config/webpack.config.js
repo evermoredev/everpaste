@@ -1,28 +1,34 @@
-const path = require('path');
 const webpack = require('webpack');
+const path = require('path');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Config = require('./config.js');
 
-const webpackConfig = {
+
+module.exports = {
   devtool: 'eval',
   entry: {
     app: [
-      './src/index.jsx'
+      path.join(__dirname, '../../client/index.jsx')
     ]
   },
   output: {
-    path: path.join(__dirname, 'public/js'),
-    filename: '[name].[hash].js'
+    path: path.join(__dirname, '../../public/js'),
+    filename: '[name].[hash].js',
+    publicPath: '/js'
   },
   resolve: {
-    extensions: ['', '.js', '.jsx', '.json'],
+    extensions: ['', '.js', '.jsx'],
     root: [
-      path.resolve('./src')
+      path.resolve('../../client')
     ]
   },
   plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, './src/index.ejs'),
+      template: path.join(__dirname, '../../client/index.ejs'),
       filename: '../index.html',
       hash: false,
       title: Config.default.title,
@@ -33,12 +39,16 @@ const webpackConfig = {
       }
     })
   ],
+  historyApiFallback: true,
   module: {
     loaders: [
       {
         test: /\.jsx?$/,
         loaders: ['babel'],
-        include: path.join(__dirname, './src')
+        include: [
+          path.join(__dirname, '../../client'),
+          path.join(__dirname, '../../shared')
+        ]
       },
       {
         test: /\.[s]css$/,
@@ -60,5 +70,3 @@ const webpackConfig = {
     ];
   }
 };
-
-module.exports = webpackConfig;

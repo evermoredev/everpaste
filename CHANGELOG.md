@@ -8,17 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Known Issues
 - Selecting all from ReadView is picking up line numbers
+- Language extensions not working
 
 ### TODOs
 - Remove axios and use native fetch
 - Replace window.locations with React router redirects
 
-## [0.6.0] - 2017-03-13
+## [0.6.0] - 2017-03-14
 ### Added
-- AES Encryption option
+- AES Encryption option added
+- Created <Condition /> component to clean up jsx
 
 ### Changed
 - Moved the highlighting module to the client
+- Renamed /src directory to /client
+- Added /shared directory for shared config and modules
+  Will make using same client/server validation a lot easier
+- Moved most config items from project root to /server/config
 
 ## [0.5.0] - 2017-03-06
 - Fixed breaking issue with packages & updated other packages

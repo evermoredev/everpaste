@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import { HeaderBlock } from '../blocks';
-import { privacyOptions } from '../../config/constants';
+import { privacyOptions } from '../../../shared/config/constants';
 import CryptoJS from 'crypto-js';
 import highlighter from '../../modules/highlighter';
-import Condition from '../../modules/components/Condition';
+import { Condition } from '../../modules/components';
 
 class ReadView extends React.Component {
 
@@ -42,7 +42,6 @@ class ReadView extends React.Component {
     axios
       .get(`/api/${docKey}`)
       .then(res => {
-        console.log('state,',this.state);
         let { title, text, name, docKey } = res.data,
             privacyOption = res.data.privacyoption,
             { rawDisabled, editDisabled } = this.state;
@@ -57,27 +56,29 @@ class ReadView extends React.Component {
         this.setState({
           title, text, name, docKey, privacyOption, lang, rawDisabled, editDisabled
         });
-        console.log('state,',this.state);
-
         this.context.currentPaste = this.state;
       })
       .catch(error => {
-        console.log(error);
+        // console.log(error);
         window.location = '/404';
       });
   };
 
   handleSecretKeySubmit = (e) => {
     e.preventDefault();
-    const decryptedText =
-      CryptoJS.AES.decrypt(this.state.text, this.state.secretKey)
+    let decryptedText;
+
+    try {
+      decryptedText = CryptoJS.AES.decrypt(this.state.text, this.state.secretKey)
         .toString(CryptoJS.enc.Utf8);
+    } catch(e) {
+      this.setState({ error: 'The secret key is incorrect.' });
+      return;
+    }
 
     // if decryptedText is empty, the key was wrong
     if (!decryptedText) {
-      this.setState({
-        error: 'The secret key is incorrect.'
-      });
+      this.setState({ error: 'The secret key is incorrect.' });
     } else {
       this.setState({
         privacyOption: privacyOptions.private,
@@ -126,21 +127,21 @@ class ReadView extends React.Component {
 
         <Condition
           condition={this.state.privacyOption == privacyOptions.encrypted}
-          className="view-container" style={{ margin: '0 auto' }}>
+          className="view-container" style={{ margin: '0 auto', textAlign: 'center' }}>
           <h3 style={{ width: '100%', color: 'white' }}>
             This document is encrypted. Please enter Secret Key below.
-            <Condition condition={this.state.error} style={{ color: 'red' }}>
-              {this.state.error}
-            </Condition>
           </h3>
-          <form className="pure-form" onSubmit={this.handleSecretKeySubmit} >
+          <form
+            className="pure-form"
+            style={{ textAlign: 'center' }}
+            onSubmit={this.handleSecretKeySubmit} >
             <fieldset>
                 <div>
                   <label htmlFor="secretKey">
                     <input
                       style={{ marginLeft: '10px' }}
                       className="input-dark"
-                      type="text"
+                      type="password"
                       name="secretKey"
                       value={this.state.secretKey}
                       placeholder="Secret Key"
@@ -150,6 +151,7 @@ class ReadView extends React.Component {
                 </div>
             </fieldset>
           </form>
+          <Condition value={this.state.error} style={{ color: 'red' }} />
         </Condition>
 
         <Condition
@@ -158,10 +160,10 @@ class ReadView extends React.Component {
           <div className="error-messages"></div>
           <div className="code-information-container">
             <div className="unselectable code-title">
-              {this.state.title || 'Untitled'}
-              {this.state.name &&
-              <span className="from-name">from {this.state.name}</span>
-              }
+              <Condition value={this.state.title} default="Untitled" />
+              <Condition condition={this.state.name}>
+                <span className="from-name">from {this.state.name}</span>
+              </Condition>
             </div>
           </div>
           <div className="code-document">

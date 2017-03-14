@@ -19,7 +19,7 @@ import {
   ReadView,
   SettingsView,
   NotFoundView
-} from 'components/views';
+} from '../../components/views';
 
 class RootContainer extends React.Component {
 
