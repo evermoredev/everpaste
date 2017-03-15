@@ -48,15 +48,22 @@ class DocHandler {
   async handleRawGet(docKey, res) {
     const { key, lang } = DocHandler.splitDocKey(docKey);
     const data = await this.store.getByKey(key);
+
+    const fail = () => {
+        winston.warn('Raw document not found.', { key });
+        res.writeHead(404, DocHandler.contentType.json);
+        res.end(JSON.stringify({ message: 'Document not found.' }));
+    };
+
     if (data && data.text) {
+      // Don't return raw docs that are encrypted
+      if (data.privacy == privacyOptions.encrypted) fail();
       winston.verbose('Retrieved raw document', { key });
       res.writeHead(200, DocHandler.contentType.plain);
       res.end(data.text);
-    } else {
-      winston.warn('Raw document not found', { key });
-      res.writeHead(404, DocHandler.contentType.json);
-      res.end(JSON.stringify({ message: 'Document not found.' }));
     }
+
+    fail();
   }
 
   async handleGetList(req, res) {
@@ -98,9 +105,9 @@ class DocHandler {
     /**
      * Do some formatting
      **/
-    // Make sure privacyOption is a proper value
-    data.privacyOption = (Object.keys(privacyOptions).includes(data.privacyOption)) ?
-      data.privacyOption : privacyOptions.public;
+    // Make sure privacy is a proper value
+    data.privacy = (Object.keys(privacyOptions).includes(data.privacy)) ?
+      data.privacy : privacyOptions.public;
     // Create expiration timestamp
     data.expiration =
       (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
