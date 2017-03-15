@@ -72,8 +72,13 @@ class ReadView extends React.Component {
     let decryptedText;
 
     try {
-      decryptedText = CryptoJS.AES.decrypt(this.state.text, this.state.secretKey)
-        .toString(CryptoJS.enc.Utf8);
+      let bstring = atob(this.state.secretKey);
+      let length = bstring.length;
+      let bytes = new Uint8Array(length);
+      for (let i = 0; i < length; i++) {
+        bytes[i] = bstring.charCodeAt(i);
+      }
+      decryptedText = CryptoJS.AES.decrypt(this.state.text, bytes).toString(CryptoJS.enc.Utf8);
     } catch(e) {
       this.setState({ error: 'The secret key is incorrect.' });
       return;
@@ -116,11 +121,10 @@ class ReadView extends React.Component {
 
   rawButton = () => {
     const win = window.open("", '_blank');
-    win.document.body.innerHTML = this.state.rawText;
+    win.document.body.innerHTML = '<pre>' + this.state.rawText + '</pre>';
   };
 
   render() {
-    console.log('rerender with:', this.state.docKey);
     return (
       <div className={`read-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock

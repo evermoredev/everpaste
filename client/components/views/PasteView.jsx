@@ -5,6 +5,7 @@ import { setCookie, getCookie } from '../../modules/cookies';
 import CryptoJS from 'crypto-js';
 import { privacyOptions } from '../../../shared/config/constants';
 import { Condition } from '../../modules/components';
+import { Redirect } from 'react-router-dom';
 
 class PasteView extends React.Component {
 
@@ -25,8 +26,8 @@ class PasteView extends React.Component {
       text: this.rawTxtFromEdit || '',
       expiration: getCookie('expiration') || '1 days',
       privacy: this.getPrivacyOption(getCookie('privacy')),
-      secretKey: '',
-      errors: ''
+      errors: '',
+      redirect: null
     };
 
     this.initialState = this.state;
@@ -47,20 +48,20 @@ class PasteView extends React.Component {
     (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
 
   saveButton = () => {
+
     // Do some validation and formatting
     const errors = [];
     if (!this.hasText()) {
       errors.push('Please enter more text to save.');
     }
 
-    let { name, title, text, expiration, privacy } = this.state;
+    let { name, title, text, expiration, privacy, secretKey } = this.state;
 
     if (this.state.privacy == privacyOptions.encrypted) {
-      if (!this.state.secretKey) {
-        errors.push('Please enter a secret key for encryption.')
-      } else {
-        text = CryptoJS.AES.encrypt(this.state.text, this.state.secretKey).toString();
-      }
+      let arr = new Uint8Array(1024);
+      window.crypto.getRandomValues(arr);
+      secretKey = btoa(String.fromCharCode(...arr));
+      text = CryptoJS.AES.encrypt(this.state.text, secretKey).toString();
     }
 
     if (errors.length) {
@@ -72,7 +73,15 @@ class PasteView extends React.Component {
       axios.post('/api', {
         title, text, name, expiration, privacy
       }).then(res => {
-        window.location = '/' + res.data.key;
+        // If there is a secretKey let's redirect them to a page that shows
+        // the docKey and the secretKey, otherwise send them directly to the new paste
+        let redirect = (secretKey) ? {
+            pathname: `/saved`,
+            state: { docKey: res.data.key, secretKey }
+          } : {
+            pathname: `/${res.data.key}`
+          };
+        this.setState({ redirect });
       }).catch(err => {
           errors.push(err);
           this.setState({ errors });
@@ -88,6 +97,11 @@ class PasteView extends React.Component {
   }
 
   render() {
+    if (this.state.redirect) {
+      return (
+        <Redirect to={this.state.redirect} />
+      );
+    }
     return (
       <div className={`paste-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock
@@ -178,19 +192,6 @@ class PasteView extends React.Component {
                         onChange={this.handlePrivacyRadio}
                       />
                       Private w/AES
-                      <Condition
-                        style={{ display: 'inherit' }}
-                        condition={this.state.privacy == privacyOptions.encrypted}>
-                        <input
-                          style={{ marginLeft: '10px' }}
-                          className="input-dark"
-                          name="secretKey"
-                          type="password"
-                          value={this.state.secretKey}
-                          placeholder="Secret Key"
-                          onChange={this.handleChange}
-                        />
-                      </Condition>
                     </label>
                     </div>
                   </div>
