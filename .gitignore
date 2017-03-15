@@ -4,6 +4,6 @@ node_modules/
 *.swo
 *.DS_Store
 .idea/
-config.js
+server/config/config.js
 public/js/app.*.js
 public/index.html

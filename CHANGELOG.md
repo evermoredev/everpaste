@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### TODOs
 - Remove axios and use native fetch
 - Replace window.locations with React router redirects
+- Any way to do React Hot Loader with other api endpoints?
+- Raw text display rework (because of AES)
+- Work on optimized webpack.production.config.js
+- Autorun migrations on server start
 
 ## [0.6.0] - 2017-03-14
 ### Added
