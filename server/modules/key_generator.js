@@ -1,7 +1,7 @@
 /**
  * Creates random keys to identify documents
  */
-import Config from '../../config';
+import Config from '../config/config';
 
 class RandomKeyGenerator {
 

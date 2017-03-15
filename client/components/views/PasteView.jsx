@@ -1,0 +1,223 @@
+import React  from 'react';
+import { HeaderBlock } from '../blocks';
+import axios from 'axios';
+import { setCookie, getCookie } from '../../modules/cookies';
+import CryptoJS from 'crypto-js';
+import { privacyOptions } from '../../../shared/config/constants';
+import { Condition } from '../../modules/components';
+
+class PasteView extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    if (this.props.location.state && this.props.location.state.currentPaste) {
+      this.rawTxtFromEdit = this.props.location.state.currentPaste.rawText;
+      this.titleFromEdit = this.props.location.state.currentPaste.title;
+      this.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
+    }
+
+    this.state = {
+      age: Date.now(),
+      from: this.docKeyFromEdit,
+      title: this.titleFromEdit || '',
+      name: getCookie('name') || '',
+      text: this.rawTxtFromEdit || '',
+      expiration: getCookie('expiration') || '1 days',
+      privacyOption: this.getPrivacyOption(getCookie('privacyOption')),
+      secretKey: '',
+      errors: ''
+    };
+
+    this.initialState = this.state;
+  }
+
+  /**
+   * Determines if the paste has enough text to be saved
+   */
+  hasText = () => (this.state.text && this.state.text.length >= 3);
+
+  handleChange = (event) =>
+    this.setState({ [event.target.name]: event.target.value });
+
+  handlePrivacyRadio = (event) =>
+    this.setState({ privacyOption: event.currentTarget.value });
+
+  getPrivacyOption = (option) =>
+    (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
+
+  saveButton = () => {
+    // Do some validation and formatting
+    const errors = [];
+    if (!this.hasText()) {
+      errors.push('Please enter more text to save.');
+    }
+
+    let { name, title, text, expiration, privacyOption } = this.state;
+
+    if (this.state.privacyOption == privacyOptions.encrypted) {
+      if (!this.state.secretKey) {
+        errors.push('Please enter a secret key for encryption.')
+      } else {
+        text = CryptoJS.AES.encrypt(this.state.text, this.state.secretKey).toString();
+      }
+    }
+
+    if (errors.length) {
+      this.setState({ errors });
+    } else {
+      setCookie('name', name);
+      setCookie('expiration', expiration);
+      setCookie('privacyOption', privacyOption);
+      axios.post('/api', {
+        title, text, name, expiration, privacyOption
+      }).then(res => {
+        window.location = '/' + res.data.key;
+      }).catch(err => {
+          errors.push(err);
+          this.setState({ errors });
+        });
+    }
+  };
+
+  componentWillReceiveProps(nextProps, nextState) {
+    if (nextProps.location.state && nextProps.location.state.clicked) {
+      this.setState(this.initialState);
+      this.setState({ age: Date.now() });
+    }
+  }
+
+  render() {
+    return (
+      <div className={`paste-view flex-container ${this.context.styleStore.theme}`}>
+        <HeaderBlock
+          saveButton={this.saveButton}
+          disabled={{ raw: true, edit: true, save: !this.hasText() }}
+        />
+        <div className="view-container">
+            <div className="error-messages">{this.state.errors}</div>
+            <div className="title-container">
+              <input
+                placeholder="Enter a Title"
+                name="title"
+                value={this.state.title}
+                onChange={this.handleChange}
+              />
+            </div>
+            <div className="option-container">
+              <form className="pure-form">
+                <fieldset>
+                  <div style={{ display: 'inline-block', textAlign: 'right', width: '50%' }}>
+                    <div>
+                      <label htmlFor="name">
+                        Name:
+                        <input
+                          style={{ marginLeft: '10px' }}
+                          className="input-dark"
+                          type="text"
+                          name="name"
+                          value={this.state.name}
+                          placeholder="Name (Optional)"
+                          onChange={this.handleChange}
+                        />
+                      </label>
+                    </div>
+                    <div>
+                      <label htmlFor="expiration">
+                        Expiration:
+                        <select
+                          style={{ width: "187px" }}
+                          className="input-dark"
+                          name="expiration"
+                          value={this.state.expiration}
+                          onChange={this.handleChange}
+                        >
+                          <option value="forever">Forever</option>
+                          <option value="1 weeks">1 Week</option>
+                          <option value="1 days">1 Day</option>
+                          <option value="6 hours">6 Hours</option>
+                          <option value="30 minutes">30 Minutes</option>
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                  <div style={{ display: 'inline-block', textAlign: 'left', width: '50%' }}>
+                    <div>
+                    <label htmlFor="public">
+                      <input
+                        className="pure-radio"
+                        type="radio"
+                        name="public"
+                        value={privacyOptions.public}
+                        checked={this.state.privacyOption == privacyOptions.public}
+                        onChange={this.handlePrivacyRadio}
+                      />
+                      Public
+                    </label>
+                    <label htmlFor="private">
+                      <input
+                        style={{ marginLeft: '10px' }}
+                        className="pure-radio"
+                        type="radio"
+                        name="private"
+                        value={privacyOptions.private}
+                        checked={this.state.privacyOption == privacyOptions.private}
+                        onChange={this.handlePrivacyRadio}
+                      />
+                      Private
+                    </label>
+                    </div>
+                    <div>
+                    <label htmlFor="encrypt">
+                      <input
+                        className="pure-radio"
+                        type="radio"
+                        name="encrypt"
+                        value={privacyOptions.encrypted}
+                        checked={this.state.privacyOption == privacyOptions.encrypted}
+                        onChange={this.handlePrivacyRadio}
+                      />
+                      Private w/AES
+                      <Condition
+                        style={{ display: 'inherit' }}
+                        condition={this.state.privacyOption == privacyOptions.encrypted}>
+                        <input
+                          style={{ marginLeft: '10px' }}
+                          className="input-dark"
+                          name="secretKey"
+                          type="password"
+                          value={this.state.secretKey}
+                          placeholder="Secret Key"
+                          onChange={this.handleChange}
+                        />
+                      </Condition>
+                    </label>
+                    </div>
+                  </div>
+
+                </fieldset>
+              </form>
+            </div>
+            <div className="text-container">
+                <textarea
+                  key={this.state.age}
+                  className="hljs"
+                  name="text"
+                  placeholder="  Paste Text Here"
+                  defaultValue={this.state.text}
+                  onChange={this.handleChange}
+                  spellCheck="false"
+                />
+            </div>
+        </div>
+      </div>
+    );
+  }
+
+}
+
+PasteView.contextTypes = {
+  styleStore: React.PropTypes.object
+};
+
+export default PasteView;

@@ -6,10 +6,10 @@
  */
 
 import winston from 'winston';
-import highlighter from './highlighter';
 import PostgresStore from './postgres_store';
 import KeyGenerator from './key_generator';
-import Config from '../../config';
+import Config from '../config/config';
+import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
 
 class DocHandler {
@@ -36,8 +36,6 @@ class DocHandler {
     const { key, lang } = DocHandler.splitDocKey(docKey);
     const data = await this.store.getByKey(key);
     if (data && data.text) {
-      data.rawText = data.text;
-      data.text = highlighter(data.text, { lang });
       winston.verbose('Retrieved document', { key });
       res.end(JSON.stringify(data));
     } else {
@@ -100,8 +98,9 @@ class DocHandler {
     /**
      * Do some formatting
      **/
-    // Make sure public is a boolean
-    data.public = !!data.privacyPublic;
+    // Make sure privacyOption is a proper value
+    data.privacyOption = (Object.keys(privacyOptions).includes(data.privacyOption)) ?
+      data.privacyOption : privacyOptions.public;
     // Create expiration timestamp
     data.expiration =
       (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?

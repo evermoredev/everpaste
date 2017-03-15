@@ -6,11 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Known Issues / TODOs
+### Known Issues
 - Selecting all from ReadView is picking up line numbers
-- Public view needs styling
+- Language extensions not working
+
+### TODOs
 - Remove axios and use native fetch
 - Replace window.locations with React router redirects
+- Any way to do React Hot Loader with other api endpoints?
+- Raw text display rework (because of AES)
+- Work on optimized webpack.production.config.js
+- Autorun migrations on server start
+
+## [0.6.0] - 2017-03-14
+### Added
+- AES Encryption option added
+- Created <Condition /> component to clean up jsx
+
+### Changed
+- Moved the highlighting module to the client
+- Renamed /src directory to /client
+- Added /shared directory for shared config and modules
+  Will make using same client/server validation a lot easier
+- Moved most config items from project root to /server/config
 
 ## [0.5.0] - 2017-03-06
 - Fixed breaking issue with packages & updated other packages

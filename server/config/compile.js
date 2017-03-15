@@ -4,6 +4,7 @@ import webpackConfig from './webpack.config.js';
 
 // Delete previous built files
 const exec = require('child_process').exec;
+// This is relative to where you start the server
 const command = 'rm ./public/js/app.* && rm ./public/index.html';
 
 exec(command, (error) => {

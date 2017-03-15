@@ -1,7 +1,6 @@
 import React from 'react';
 import { HeaderBlock } from '../blocks';
 
-
 class NotFoundView extends React.Component {
 
   constructor(props) {
