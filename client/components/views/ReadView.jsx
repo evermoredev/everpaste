@@ -14,10 +14,11 @@ class ReadView extends React.Component {
     this.state = {
       title: '',
       text: '',
+      rawText: '',
       name: '',
       docKey: '',
       lang: '',
-      privacyOption: '',
+      privacy: '',
       secretKey: '',
 
       rawDisabled: true,
@@ -42,20 +43,22 @@ class ReadView extends React.Component {
     axios
       .get(`/api/${docKey}`)
       .then(res => {
-        let { title, text, name, docKey } = res.data,
-            privacyOption = res.data.privacyoption,
+        let { title, text, name, privacy } = res.data,
+            rawText,
             { rawDisabled, editDisabled } = this.state;
 
         // Set some things up based on whether or not this text is encrypted
         // Like only highlighting text if it's not encrypted
-        if (privacyOption != privacyOptions.encrypted) {
+        if (privacy != privacyOptions.encrypted) {
+          rawText = text;
           text = highlighter(text);
-          rawDisabled = true;
-          editDisabled = true;
+          rawDisabled = false;
+          editDisabled = false;
         }
         this.setState({
-          title, text, name, docKey, privacyOption, lang, rawDisabled, editDisabled
+          title, text, rawText, name, docKey, privacy, lang, rawDisabled, editDisabled
         });
+        console.log(this.state.docKey);
         this.context.currentPaste = this.state;
       })
       .catch(error => {
@@ -81,7 +84,8 @@ class ReadView extends React.Component {
       this.setState({ error: 'The secret key is incorrect.' });
     } else {
       this.setState({
-        privacyOption: privacyOptions.private,
+        privacy: privacyOptions.private,
+        rawText: decryptedText,
         text: highlighter(decryptedText, this.state.lang),
         secretKey: '',
         rawDisabled: false,
@@ -110,10 +114,13 @@ class ReadView extends React.Component {
     }
   };
 
-  rawButton = () =>
-    window.open(`/raw/${this.state.docKey}`, '_blank');
+  rawButton = () => {
+    const win = window.open("", '_blank');
+    win.document.body.innerHTML = this.state.rawText;
+  };
 
   render() {
+    console.log('rerender with:', this.state.docKey);
     return (
       <div className={`read-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock
@@ -126,7 +133,7 @@ class ReadView extends React.Component {
         />
 
         <Condition
-          condition={this.state.privacyOption == privacyOptions.encrypted}
+          condition={this.state.privacy == privacyOptions.encrypted}
           className="view-container" style={{ margin: '0 auto', textAlign: 'center' }}>
           <h3 style={{ width: '100%', color: 'white' }}>
             This document is encrypted. Please enter Secret Key below.
@@ -155,7 +162,7 @@ class ReadView extends React.Component {
         </Condition>
 
         <Condition
-          condition={this.state.privacyOption != privacyOptions.encrypted}
+          condition={this.state.privacy != privacyOptions.encrypted}
           className="view-container hljs">
           <div className="error-messages"></div>
           <div className="code-information-container">

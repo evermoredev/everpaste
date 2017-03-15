@@ -19,8 +19,8 @@ class PostgresStore {
 
   insert(key, data, options = {}) {
     return new Promise(async (resolve, reject) => {
-      const queryString = 'INSERT INTO entries (key, text, privacyOption, name, title, expiration) VALUES ($1, $2, $3, $4, $5, $6)';
-      const queryKeys = [key, data.text, data.privacyOption, data.name, data.title, data.expiration];
+      const queryString = 'INSERT INTO entries (key, text, privacy, name, title, expiration) VALUES ($1, $2, $3, $4, $5, $6)';
+      const queryKeys = [key, data.text, data.privacy, data.name, data.title, data.expiration];
       await this.query(queryString, queryKeys);
       resolve(true);
       reject(false);
@@ -41,7 +41,7 @@ class PostgresStore {
   getList() {
     return new Promise(async (resolve, reject) => {
       const now = postgresTimestamp();
-      const queryString = 'SELECT * from entries where privacyOption = $1 and (expiration IS NULL or expiration > $2)';
+      const queryString = 'SELECT * from entries where privacy = $1 and (expiration IS NULL or expiration > $2)';
       const queryKeys = [privacyOptions.public, now];
       const { rows } = await this.query(queryString, queryKeys);
       resolve(rows.length ? rows : false);

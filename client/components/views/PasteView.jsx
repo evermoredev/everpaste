@@ -24,7 +24,7 @@ class PasteView extends React.Component {
       name: getCookie('name') || '',
       text: this.rawTxtFromEdit || '',
       expiration: getCookie('expiration') || '1 days',
-      privacyOption: this.getPrivacyOption(getCookie('privacyOption')),
+      privacy: this.getPrivacyOption(getCookie('privacy')),
       secretKey: '',
       errors: ''
     };
@@ -41,7 +41,7 @@ class PasteView extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
 
   handlePrivacyRadio = (event) =>
-    this.setState({ privacyOption: event.currentTarget.value });
+    this.setState({ privacy: event.currentTarget.value });
 
   getPrivacyOption = (option) =>
     (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
@@ -53,9 +53,9 @@ class PasteView extends React.Component {
       errors.push('Please enter more text to save.');
     }
 
-    let { name, title, text, expiration, privacyOption } = this.state;
+    let { name, title, text, expiration, privacy } = this.state;
 
-    if (this.state.privacyOption == privacyOptions.encrypted) {
+    if (this.state.privacy == privacyOptions.encrypted) {
       if (!this.state.secretKey) {
         errors.push('Please enter a secret key for encryption.')
       } else {
@@ -68,9 +68,9 @@ class PasteView extends React.Component {
     } else {
       setCookie('name', name);
       setCookie('expiration', expiration);
-      setCookie('privacyOption', privacyOption);
+      setCookie('privacy', privacy);
       axios.post('/api', {
-        title, text, name, expiration, privacyOption
+        title, text, name, expiration, privacy
       }).then(res => {
         window.location = '/' + res.data.key;
       }).catch(err => {
@@ -149,7 +149,7 @@ class PasteView extends React.Component {
                         type="radio"
                         name="public"
                         value={privacyOptions.public}
-                        checked={this.state.privacyOption == privacyOptions.public}
+                        checked={this.state.privacy == privacyOptions.public}
                         onChange={this.handlePrivacyRadio}
                       />
                       Public
@@ -161,7 +161,7 @@ class PasteView extends React.Component {
                         type="radio"
                         name="private"
                         value={privacyOptions.private}
-                        checked={this.state.privacyOption == privacyOptions.private}
+                        checked={this.state.privacy == privacyOptions.private}
                         onChange={this.handlePrivacyRadio}
                       />
                       Private
@@ -174,13 +174,13 @@ class PasteView extends React.Component {
                         type="radio"
                         name="encrypt"
                         value={privacyOptions.encrypted}
-                        checked={this.state.privacyOption == privacyOptions.encrypted}
+                        checked={this.state.privacy == privacyOptions.encrypted}
                         onChange={this.handlePrivacyRadio}
                       />
                       Private w/AES
                       <Condition
                         style={{ display: 'inherit' }}
-                        condition={this.state.privacyOption == privacyOptions.encrypted}>
+                        condition={this.state.privacy == privacyOptions.encrypted}>
                         <input
                           style={{ marginLeft: '10px' }}
                           className="input-dark"

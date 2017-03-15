@@ -14,9 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Remove axios and use native fetch
 - Replace window.locations with React router redirects
 - Any way to do React Hot Loader with other api endpoints?
-- Raw text display rework (because of AES)
 - Work on optimized webpack.production.config.js
 - Autorun migrations on server start
+- Better error reporting for problems on startup
 
 ## [0.6.0] - 2017-03-14
 ### Added
@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added /shared directory for shared config and modules
   Will make using same client/server validation a lot easier
 - Moved most config items from project root to /server/config
+- Breaking changes to database
+- Clicking raw from Header no longer makes trip to server
 
 ## [0.5.0] - 2017-03-06
 - Fixed breaking issue with packages & updated other packages
