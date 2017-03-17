@@ -1,12 +1,19 @@
 import React from 'react';
 import { HeaderBlock } from '../blocks';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
+import { Condition } from '../../modules/components';
 
 class SavedView extends React.Component {
 
   constructor(props) {
     super(props);
   }
+
+  copyToClipboard = (e) => {
+    this.textArea.select();
+    document.execCommand('copy');
+    e.target.focus();
+  };
 
   render() {
     let docKey, secretKey;
@@ -28,11 +35,23 @@ class SavedView extends React.Component {
           }}
         />
         <div className="view-container">
-          <div>
-            Paste: <a href={`/${docKey}`}>{docKey}</a>
+          <div className="text-center">
+            Document Key: <Link to={`/${docKey}`}>{docKey}</Link>
           </div>
-          <div>Secret Key:</div>
-          <div>${secretKey}</div>
+          <div className="text-center" style={{ marginTop: '10px' }}>
+            Secret Key
+            <Condition condition={document.execCommand && document.execCommand('copy')}>
+              <button onClick={this.copyToClipboard}>Copy</button>
+            </Condition>
+          </div>
+          <form className="pure-form">
+            <div className="text-container">
+              <textarea
+                ref={(textarea) => this.textArea = textarea}
+                readOnly value={secretKey}
+              />
+            </div>
+          </form>
         </div>
       </div>
     );

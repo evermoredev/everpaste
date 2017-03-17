@@ -73,12 +73,7 @@ class ReadView extends React.Component {
 
     try {
       let bstring = atob(this.state.secretKey);
-      let length = bstring.length;
-      let bytes = new Uint8Array(length);
-      for (let i = 0; i < length; i++) {
-        bytes[i] = bstring.charCodeAt(i);
-      }
-      decryptedText = CryptoJS.AES.decrypt(this.state.text, bytes).toString(CryptoJS.enc.Utf8);
+      decryptedText = CryptoJS.AES.decrypt(this.state.text, bstring).toString(CryptoJS.enc.Utf8);
     } catch(e) {
       this.setState({ error: 'The secret key is incorrect.' });
       return;

@@ -59,9 +59,12 @@ class PasteView extends React.Component {
 
     if (this.state.privacy == privacyOptions.encrypted) {
       let arr = new Uint8Array(1024);
-      window.crypto.getRandomValues(arr);
-      secretKey = btoa(String.fromCharCode(...arr));
-      text = CryptoJS.AES.encrypt(this.state.text, secretKey).toString();
+      // User the non armored key for encryption
+      let encryptKey = String.fromCharCode(...window.crypto.getRandomValues(arr));
+      // Create the user friendly/armored key for display
+      secretKey = btoa(encryptKey);
+      // Encrypt the text to be sent to the server
+      text = CryptoJS.AES.encrypt(this.state.text, encryptKey).toString();
     }
 
     if (errors.length) {
@@ -97,11 +100,8 @@ class PasteView extends React.Component {
   }
 
   render() {
-    if (this.state.redirect) {
-      return (
-        <Redirect to={this.state.redirect} />
-      );
-    }
+    if (this.state.redirect) return <Redirect to={this.state.redirect} />;
+
     return (
       <div className={`paste-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock
