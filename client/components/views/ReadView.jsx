@@ -5,6 +5,7 @@ import { privacyOptions } from '../../../shared/config/constants';
 import CryptoJS from 'crypto-js';
 import highlighter from '../../modules/highlighter';
 import { Condition } from '../../modules/components';
+import { Redirect } from 'react-router-dom';
 
 class ReadView extends React.Component {
 
@@ -23,7 +24,9 @@ class ReadView extends React.Component {
 
       rawDisabled: true,
       editDisabled: true,
-      error: ''
+      error: '',
+
+      redirect: null
     }
   }
 
@@ -62,8 +65,7 @@ class ReadView extends React.Component {
         this.context.currentPaste = this.state;
       })
       .catch(error => {
-        // console.log(error);
-        window.location = '/404';
+        this.state.redirect({ redirect: { pathname: '/404' } });
       });
   };
 
@@ -120,6 +122,8 @@ class ReadView extends React.Component {
   };
 
   render() {
+    if (this.state.redirect) return <Redirect to={this.state.redirect} />;
+
     return (
       <div className={`read-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock

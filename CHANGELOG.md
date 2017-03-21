@@ -12,11 +12,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### TODOs
 - Remove axios and use native fetch
-- Replace window.locations with React router redirects
 - Any way to do React Hot Loader with other api endpoints?
 - Work on optimized webpack.production.config.js
 - Autorun migrations on server start
 - Better error reporting for problems on startup
+- Handle larger files
+
+## [0.7.0] - 2017-03-20
+### Added
+- Saved view intermediary for copying AES key
+
+### Changed
+- Create AES key instead of user generated key
+
+### Fixed
+- Replace window.locations with React router redirects
 
 ## [0.6.0] - 2017-03-14
 ### Added

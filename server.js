@@ -66,6 +66,8 @@ if (config.rateLimits) {
  * Cross-origin requests
  */
 app.use((req, res, next) => {
+  console.log(req);
+  console.log(req.body);
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
