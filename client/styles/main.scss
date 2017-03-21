@@ -1,15 +1,15 @@
 /* Vendors */
-@import 'vendors/normalize';
-@import 'vendors/pure-forms';
+@import 'vendors/normalize.scss';
+@import 'vendors/pure-forms.scss';
 
 /* Helpers */
-@import 'helpers';
+@import 'helpers.scss';
 
 /* Themes */
-@import 'themes/index';
+@import 'themes/index.scss';
 
 /* Blocks */
-@import 'blocks/HeaderBlock';
+@import 'blocks/HeaderBlock.scss';
 
 /* Views */
 @import 'views/index.scss';

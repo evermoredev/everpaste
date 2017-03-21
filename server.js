@@ -1,6 +1,5 @@
 import winston from 'winston';
 import express from 'express';
-import webpack from 'webpack';
 import bodyParser from 'body-parser';
 import http from 'http';
 import https from 'https';
@@ -10,7 +9,10 @@ import limiter from 'connect-ratelimit';
 import docHandler from './server/modules/doc_handler';
 
 import config from './server/config/config';
+
+import webpack from 'webpack';
 import webpackConfig from './server/config/webpack.config';
+import WebpackDevServer from 'webpack-dev-server';
 
 const compiler = webpack(webpackConfig);
 
@@ -66,8 +68,6 @@ if (config.rateLimits) {
  * Cross-origin requests
  */
 app.use((req, res, next) => {
-  console.log(req);
-  console.log(req.body);
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -88,9 +88,11 @@ app.get('/raw/:id', (req, res) => docHandler.handleRawGet(req.params.id, res));
 
 // Catch-all to send to the webapp
 app.get('*', (req, res, next) => {
+  // For react-hot-loader
+  if ((/sockjs-node/g).test(req.originalUrl)) next();
   // If the route matches a static route we know about, pass it through
   // Otherwise, we'll pass the route to the react app
-  if ((/^\/(js|img)\//).test(req.originalUrl)) {
+  if ((/^\/(public|js|img)\//).test(req.originalUrl)) {
     next();
   } else {
     // render the app
@@ -99,12 +101,32 @@ app.get('*', (req, res, next) => {
 });
 
 if (isDeveloping) {
-  http.createServer(app).listen(config.port, config.host, (err, result) => {
+  new WebpackDevServer(webpack(webpackConfig), {
+    publicPath: webpackConfig.output.publicPath,
+    hot: true,
+    historyApiFallback: true,
+    proxy: { '*': 'http://localhost:4000' }
+  }).listen(4001, config.host, (err, res) => {
     if (err) {
       console.log(err);
     }
     winston.info('Development: listening on ' + config.host + ':' + config.port);
   });
+
+  // app.use(require('webpack-dev-middleware')(compiler, {
+  //   hot: true,
+  //   historyApiFallback: true,
+  //   proxy: { '*': 'http://localhost:4000' }
+  // }));
+  // app.use(require('webpack-hot-middleware')(compiler));
+  // const server = new http.Server(app);
+  // server.listen(4001, config.host, (err, res) => {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   winston.info('Development: listening on ' + config.host + ':' + config.port);
+  // });
+
 } else {
   http.createServer(app).listen(config.port, config.host, (err, result) => {
     if (err) {
