@@ -21,9 +21,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.7.0] - 2017-03-20
 ### Added
 - Saved view intermediary for copying AES key
+- Hot reloader now working for dev
 
 ### Changed
 - Create AES key instead of user generated key
+- Webpack upgraded to v2
 
 ### Fixed
 - Replace window.locations with React router redirects

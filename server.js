@@ -12,9 +12,7 @@ import config from './server/config/config';
 
 import webpack from 'webpack';
 import webpackConfig from './server/config/webpack.config';
-import WebpackDevServer from 'webpack-dev-server';
-
-const compiler = webpack(webpackConfig);
+const webpackCompiled = webpack(webpackConfig);
 
 /**
  * Tell any CSS tooling (such as Material UI) to use all vendor
@@ -27,6 +25,7 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 global.__IS_DEVELOPMENT__ = process.env.NODE_ENV === 'development';
 global.__IS_CLIENT__ = false;
 global.__IS_SERVER__ = true;
+
 const isDeveloping = process.env.NODE_ENV !== 'production';
 
 
@@ -84,48 +83,38 @@ app.use((req, res, next) => {
 app.post('/api', (req, res) => docHandler.handlePost(req, res));
 app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
 app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
-app.get('/raw/:id', (req, res) => docHandler.handleRawGet(req.params.id, res));
 
-// Catch-all to send to the webapp
-app.get('*', (req, res, next) => {
-  // For react-hot-loader
-  if ((/sockjs-node/g).test(req.originalUrl)) next();
-  // If the route matches a static route we know about, pass it through
-  // Otherwise, we'll pass the route to the react app
-  if ((/^\/(public|js|img)\//).test(req.originalUrl)) {
+app.use('*', (req, res, next) => {
+  // Allow these root paths to pass through otherwise serve the app (index.html)
+  if ((/^\/(sockjs-node|js|img)\//).test(req.originalUrl)) {
     next();
   } else {
-    // render the app
-    res.sendFile(path.join(__dirname + '/public/index.html'));
+    const filename = path.join(webpackCompiled.outputPath, 'index.html');
+    webpackCompiled.outputFileSystem.readFile(filename, (err, result) => {
+      if (err) {
+        return next(err);
+      }
+      res.set('content-type','text/html');
+      res.send(result);
+      res.end();
+    });
   }
 });
 
+
 if (isDeveloping) {
-  new WebpackDevServer(webpack(webpackConfig), {
+  app.use(require('webpack-dev-middleware')(webpackCompiled, {
     publicPath: webpackConfig.output.publicPath,
     hot: true,
-    historyApiFallback: true,
-    proxy: { '*': 'http://localhost:4000' }
-  }).listen(4001, config.host, (err, res) => {
+    historyApiFallback: true
+  }));
+  const server = new http.Server(app);
+  server.listen(config.port, config.host, (err, res) => {
     if (err) {
       console.log(err);
     }
     winston.info('Development: listening on ' + config.host + ':' + config.port);
   });
-
-  // app.use(require('webpack-dev-middleware')(compiler, {
-  //   hot: true,
-  //   historyApiFallback: true,
-  //   proxy: { '*': 'http://localhost:4000' }
-  // }));
-  // app.use(require('webpack-hot-middleware')(compiler));
-  // const server = new http.Server(app);
-  // server.listen(4001, config.host, (err, res) => {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   winston.info('Development: listening on ' + config.host + ':' + config.port);
-  // });
 
 } else {
   http.createServer(app).listen(config.port, config.host, (err, result) => {
