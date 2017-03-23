@@ -1,6 +1,9 @@
 /**
  * This config data is read by most of the server modules.
  * Rename this file to config.js before running for the first time.
+ *
+ * In some cases, environment variables will take precedence so be sure to
+ * pay attention to that.
  */
 
 const config = {
@@ -9,9 +12,26 @@ const config = {
    * Server information
    * @host String Application server host
    * @port Application server port
+   * @production Determine whether or not the application is in production mode.
+   * @development Will be in development mode for any other string
    */
-  "host": "0.0.0.0",
-  "port": 4000,
+  "host": process.env.HOST || "0.0.0.0",
+  "port": process.env.PORT || 4000,
+  "production": process.env.NODE_ENV == "production",
+  "development": process.env.NODE_ENV != "production",
+
+  /**
+   * The following are SSL options. Only uncomment this if you have
+   * already configured SSL on your machine. This will only be used for
+   * production environments.
+   *
+   * @sslEnabled Boolean Tells server.js to expect ssl configuration for production
+   */
+  "sslEnabled": true,
+  "sslPort": process.env.SSL_PORT || 443,
+  "certPrivateKey": "/etc/letsencrypt/live/mysite.com/privkey.pem",
+  "certChain": "/etc/letsencrypt/live/mysite.com/fullchain.pem",
+  "certCa": "/etc/letsencrypt/live/mysite.com/chain.pem",
 
   /**
    * Document information and static assets
@@ -71,7 +91,7 @@ const config = {
    */
   "storage": {
     "type": "postgres",
-    "connectionUrl": "postgres://username:password@dbhost:5432/dbname"
+    "connectionUrl": process.env.CONNECTION_URL || "postgres://username:password@dbhost:5432/dbname"
   }
 
 };

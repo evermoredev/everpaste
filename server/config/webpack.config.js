@@ -15,7 +15,7 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, '../../public'),
-    filename: 'js/[name].bundle.js',
+    filename: 'js/[name].[hash].js',
     publicPath: '/'
   },
   resolve: {
@@ -68,12 +68,10 @@ module.exports = {
     ]
   },
   plugins: [
-    // new webpack.optimize.UglifyJsPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../../client/index.ejs'),
-      // filename: '../index.html',
-      hash: false,
+      hash: true,
       title: config.default.title,
       favicon: config.default.favicon,
       logo: config.default.logo,

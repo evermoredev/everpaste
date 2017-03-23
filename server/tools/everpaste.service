@@ -1,0 +1,13 @@
+[Unit]
+Description=everpaste
+
+[Service]
+ExecStart=/usr/bin/npm run prod
+Restart=always
+User=root
+Group=root
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/everpaste
+
+[Install]
