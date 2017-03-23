@@ -7,14 +7,14 @@
  */
 
 import postgres from 'pg';
-import Config from '../config/config';
+import config from '../config/config';
 import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
 
 class PostgresStore {
 
   constructor() {
-    this.connectionUrl = Config.storage.connectionUrl;
+    this.connectionUrl = config.storage.connectionUrl;
   }
 
   insert(key, data, options = {}) {
@@ -70,4 +70,4 @@ class PostgresStore {
   }
 }
 
-export default new PostgresStore();
+export default PostgresStore;

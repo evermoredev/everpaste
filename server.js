@@ -1,39 +1,27 @@
 import winston from 'winston';
 import express from 'express';
-import webpack from 'webpack';
 import bodyParser from 'body-parser';
 import http from 'http';
 import https from 'https';
 import path from 'path';
 import limiter from 'connect-ratelimit';
 
-import docHandler from './server/modules/doc_handler';
-
 import config from './server/config/config';
+import DocHandler from './server/modules/doc_handler';
+
+import webpack from 'webpack';
 import webpackConfig from './server/config/webpack.config';
+import compile from './server/config/compile';
 
-const compiler = webpack(webpackConfig);
+// Prep webpack based on our environment
+const webpackPrepped = config.production ?
+  webpack(require('./server/config/webpack.production.config')) :
+  webpack(require('./server/config/webpack.config'));
 
-/**
- * Tell any CSS tooling (such as Material UI) to use all vendor
- * prefixes if the user agent is not known.
- */
-global.navigator = global.navigator || {};
-global.navigator.userAgent = global.navigator.userAgent || 'all';
-
-// Server-side only global environment variables
-global.__IS_DEVELOPMENT__ = process.env.NODE_ENV === 'development';
-global.__IS_CLIENT__ = false;
-global.__IS_SERVER__ = true;
-const isDeveloping = process.env.NODE_ENV !== 'production';
-
-
-// Load the configuration and set some defaults
-config.port = process.env.PORT || config.port || 7777;
-config.host = process.env.HOST || config.host || 'localhost';
-
-// Create the app, setup the webpack middleware
+// Create the app
 const app = express();
+const docHandler = new DocHandler();
+
 app.use(express.static(__dirname + '/public'));
 
 // Set up the logger
@@ -51,7 +39,6 @@ if (config.logging) {
 }
 
 // for parsing application/json
-// TODO: add to config
 app.use(bodyParser.json({ limit: config.maxLength }));
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -82,32 +69,66 @@ app.use((req, res, next) => {
 app.post('/api', (req, res) => docHandler.handlePost(req, res));
 app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
 app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
-app.get('/raw/:id', (req, res) => docHandler.handleRawGet(req.params.id, res));
 
-// Catch-all to send to the webapp
-app.get('*', (req, res, next) => {
-  // If the route matches a static route we know about, pass it through
-  // Otherwise, we'll pass the route to the react app
-  if ((/^\/(js|img)\//).test(req.originalUrl)) {
+app.use('*', (req, res, next) => {
+  // Allow these root paths to pass through otherwise serve the app (index.html)
+  if ((/^\/(sockjs-node|js|img)\//).test(req.originalUrl)) {
     next();
   } else {
-    // render the app
-    res.sendFile(path.join(__dirname + '/public/index.html'));
+    const filename = path.join(webpackPrepped.outputPath, 'index.html');
+    webpackPrepped.outputFileSystem.readFile(filename, (err, result) => {
+      if (err) return next(err);
+      res.set('content-type','text/html');
+      res.send(result);
+      res.end();
+    });
   }
 });
 
-if (isDeveloping) {
-  http.createServer(app).listen(config.port, config.host, (err, result) => {
-    if (err) {
-      console.log(err);
-    }
+/**
+ * Development mode
+ */
+if (config.development) {
+  app.use(require('webpack-dev-middleware')(webpackPrepped, {
+    publicPath: webpackConfig.output.publicPath,
+    hot: true,
+    historyApiFallback: true
+  }));
+  const server = new http.Server(app);
+  server.listen(config.port, config.host, (err, res) => {
+    if (err) winston.error(err);
     winston.info('Development: listening on ' + config.host + ':' + config.port);
   });
-} else {
-  http.createServer(app).listen(config.port, config.host, (err, result) => {
-    if (err) {
-      console.log(err);
-    }
-    winston.info('Production: listening on ' + config.host + ':' + config.port);
-  });
+
+}
+
+/**
+ * Production mode
+ */
+if (config.production) {
+  // remove old files and compile new ones
+  compile(webpackPrepped);
+  // With SSL enabled
+  if (config.sslEnabled) {
+    // Redirect to https
+    http.createServer((req, res) => {
+      res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
+      res.end();
+    }).listen(config.port);
+    // SSL Cert options
+    options = {
+      key: fs.readFileSync(config.certPrivateKey),
+      cert: fs.readFileSync(config.certChain),
+      ca: fs.readFileSync(config.certCa)
+    };
+    https.Server(options, app).listen(config.sslPort, (err, res) => {
+      if (err) winston.error(err);
+      winston.info('Production with SSL: listening on ' + config.host + ':' + config.sslPort);
+    });
+  } else {
+    http.createServer(app).listen(config.port, config.host, (err, res) => {
+      if (err) winston.error(err);
+      winston.info('Production: listening on ' + config.host + ':' + config.port);
+    });
+  }
 }

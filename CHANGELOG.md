@@ -9,14 +9,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - Selecting all from ReadView is picking up line numbers
 - Language extensions not working
+- Dev server serves production index.html file from disk if it exists
 
 ### TODOs
 - Remove axios and use native fetch
-- Replace window.locations with React router redirects
-- Any way to do React Hot Loader with other api endpoints?
-- Work on optimized webpack.production.config.js
 - Autorun migrations on server start
 - Better error reporting for problems on startup
+- Handle larger files
+- Add a script to generate and replace letsencrypt certs
+
+## [0.7.0] - 2017-03-20
+### Added
+- Saved view intermediary for copying AES key
+- Hot reloader now working for dev
+- /server/tools directory for helpful scripts/files
+- Separate config for production server
+- https support
+
+### Changed
+- Create AES key instead of user generated key
+- Webpack upgraded to v2
+- Breaking changes to config file
+
+### Fixed
+- Replace window.locations with React router redirects
 
 ## [0.6.0] - 2017-03-14
 ### Added

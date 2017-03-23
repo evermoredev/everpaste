@@ -1,13 +1,20 @@
 import './styles/main.scss';
+import 'react-hot-loader/patch';
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { RootContainer } from './components/containers';
 
-// Initial Render
-render(
-  <AppContainer>
-    <RootContainer />
-  </AppContainer>,
-  document.getElementById('root')
-);
+const rootEl = document.getElementById('root');
+const render = Component =>
+  ReactDOM.render(
+    <AppContainer>
+      <Component />
+    </AppContainer>,
+    rootEl
+  );
+
+render(RootContainer);
+if (module.hot)
+  module.hot.accept('./components/containers/RootContainer.jsx',
+    () => render(RootContainer));

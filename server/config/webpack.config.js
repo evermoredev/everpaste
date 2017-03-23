@@ -1,71 +1,83 @@
-const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
+const webpack = require('webpack'); //to access built-in plugins
 const path = require('path');
 
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Config = require('./config.js');
-
+const config = require('./config.js');
 
 module.exports = {
-  devtool: 'eval',
+  devtool: 'inline-source-map',
   entry: {
     app: [
+      'react-hot-loader/patch',
+      'webpack/hot/dev-server',
       path.join(__dirname, '../../client/index.jsx')
     ]
   },
   output: {
-    path: path.join(__dirname, '../../public/js'),
-    filename: '[name].[hash].js',
-    publicPath: '/js'
+    path: path.join(__dirname, '../../public'),
+    filename: 'js/[name].[hash].js',
+    publicPath: '/'
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
-    root: [
-      path.resolve('../../client')
+    extensions: ['.js', '.jsx', '.json'],
+    modules: [
+      path.join(__dirname, '../../client'),
+      'node_modules'
     ]
   },
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, '../../client/index.ejs'),
-      filename: '../index.html',
-      hash: false,
-      title: Config.default.title,
-      favicon: Config.default.favicon,
-      logo: Config.default.logo,
-      minify: {
-        collapseWhitespace: false
-      }
-    })
-  ],
-  historyApiFallback: true,
+
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.jsx?$/,
-        loaders: ['babel'],
+        test: /\.(js|jsx)$/,
+        use: 'babel-loader',
         include: [
           path.join(__dirname, '../../client'),
           path.join(__dirname, '../../shared')
+        ],
+        exclude: [
+          path.join(__dirname, '../../node_modules')
         ]
       },
       {
         test: /\.[s]css$/,
-        loaders: [
-          'style-loader',
-          'css-loader?importLoaders=1',
-          'postcss-loader?sourceMap=inline'
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              sourceMap: 'inline',
+              plugins: function() {
+                return [
+                  require('precss'),
+                  require('autoprefixer')
+                ]
+              }
+            }
+          }
         ]
       }
     ]
   },
-  postcss: function (webpack) {
-    return [
-      require('postcss-smart-import')({
-        addDependencyTo: webpack
-      }),
-      require('precss')(),
-      require('autoprefixer')(),
-    ];
-  }
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, '../../client/index.ejs'),
+      hash: true,
+      title: config.default.title,
+      favicon: config.default.favicon,
+      logo: config.default.logo,
+      minify: {
+        collapseWhitespace: false
+      }
+    })
+  ]
 };

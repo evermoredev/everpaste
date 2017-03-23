@@ -17,6 +17,7 @@ import {
   PasteView,
   PublicListView,
   ReadView,
+  SavedView,
   SettingsView,
   NotFoundView
 } from '../../components/views';
@@ -42,6 +43,7 @@ class RootContainer extends React.Component {
             <Route path="/edit" component={PasteView} />
             <Route path="/help" component={HelpView} />
             <Route path="/public" component={PublicListView} />
+            <Route path="/saved" component={SavedView} />
             <Route path="/settings" component={SettingsView} />
             <Route path="/404" component={NotFoundView} />
             <Route path="/:docKey" component={ReadView} />

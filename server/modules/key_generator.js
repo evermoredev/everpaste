@@ -1,13 +1,13 @@
 /**
  * Creates random keys to identify documents
  */
-import Config from '../config/config';
+import config from '../config/config';
 
 class RandomKeyGenerator {
 
   constructor() {
-    this.keyChars = Config.keyChars || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    this.keyLength = Config.keyLength || 10;
+    this.keyChars = config.keyGenerator.keyChars;
+    this.keyLength = config.keyGenerator.keyLength;
   }
 
   createKey() {
@@ -19,4 +19,4 @@ class RandomKeyGenerator {
   }
 }
 
-export default new RandomKeyGenerator();
+export default RandomKeyGenerator;

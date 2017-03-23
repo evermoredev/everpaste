@@ -17,23 +17,6 @@ sudo apt-get install build-essential
 sudo apt-get install postgresql postgresql-contrib
 ```
 
-`everpaste.service`
-
-```
-[Unit]
-Description=Everpaste
-
-[Service]
-ExecStart=/var/www/everpaste/node_modules/.bin/babel-node /var/www/everpaste/server.js
-Restart=always
-User=nobody
-Group=nobody
-Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
-WorkingDirectory=/var/www/myapp
-
-[Install]
-WantedBy=multi-user.target
-```
+Check out `server/tools` for helpful files and utilities.
 
 Check out the `server/config/config.example.js` for more information.

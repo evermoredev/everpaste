@@ -7,8 +7,8 @@
 
 import winston from 'winston';
 import PostgresStore from './postgres_store';
-import KeyGenerator from './key_generator';
-import Config from '../config/config';
+import RandomKeyGenerator from './key_generator';
+import config from '../config/config';
 import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
 
@@ -27,9 +27,9 @@ class DocHandler {
   };
 
   constructor() {
-    this.store = PostgresStore;
-    this.maxLength = Config.maxLength;
-    this.keyGenerator = KeyGenerator;
+    this.store = new PostgresStore();
+    this.maxLength = config.maxLength;
+    this.keyGenerator = new RandomKeyGenerator();
   }
 
   async handleGet(docKey, res, options = {}) {
@@ -146,4 +146,4 @@ class DocHandler {
 
 }
 
-export default new DocHandler();
+export default DocHandler;
