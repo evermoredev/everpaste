@@ -27,11 +27,11 @@ const config = {
    *
    * @sslEnabled Boolean Tells server.js to expect ssl configuration for production
    */
-  "sslEnabled": true,
-  "sslPort": process.env.SSL_PORT || 443,
-  "certPrivateKey": "/etc/letsencrypt/live/mysite.com/privkey.pem",
-  "certChain": "/etc/letsencrypt/live/mysite.com/fullchain.pem",
-  "certCa": "/etc/letsencrypt/live/mysite.com/chain.pem",
+  // "sslEnabled": true,
+  // "sslPort": process.env.SSL_PORT || 443,
+  // "certPrivateKey": "/etc/letsencrypt/live/mysite.com/privkey.pem",
+  // "certChain": "/etc/letsencrypt/live/mysite.com/fullchain.pem",
+  // "certCa": "/etc/letsencrypt/live/mysite.com/chain.pem",
 
   /**
    * Document information and static assets

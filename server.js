@@ -70,25 +70,27 @@ app.post('/api', (req, res) => docHandler.handlePost(req, res));
 app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
 app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
 
-app.use('*', (req, res, next) => {
-  // Allow these root paths to pass through otherwise serve the app (index.html)
-  if ((/^\/(sockjs-node|js|img)\//).test(req.originalUrl)) {
-    next();
-  } else {
-    const filename = path.join(webpackPrepped.outputPath, 'index.html');
-    webpackPrepped.outputFileSystem.readFile(filename, (err, result) => {
-      if (err) return next(err);
-      res.set('content-type','text/html');
-      res.send(result);
-      res.end();
-    });
-  }
-});
+// Allow these root paths to pass through otherwise serve the app (index.html)
+const passThrough = (url) => (/^\/(sockjs-node|js|img)\//).test(url);
 
 /**
  * Development mode
  */
 if (config.development) {
+  app.use('*', (req, res, next) => {
+    if (passThrough(req.originalUrl)) {
+      next();
+    } else {
+      const filename = path.join(webpackPrepped.outputPath, 'index.html');
+      webpackPrepped.outputFileSystem.readFile(filename, (err, result) => {
+        if (err) return next(err);
+        res.set('content-type','text/html');
+        res.send(result);
+        res.end();
+      });
+    }
+  });
+
   app.use(require('webpack-dev-middleware')(webpackPrepped, {
     publicPath: webpackConfig.output.publicPath,
     hot: true,
@@ -108,6 +110,13 @@ if (config.development) {
 if (config.production) {
   // remove old files and compile new ones
   compile(webpackPrepped);
+  app.use('*', (req, res, next) => {
+    if (passThrough(req.originalUrl)) {
+      next();
+    } else {
+      res.sendFile(path.join(__dirname + '/public/index.html'));
+    }
+  });
   // With SSL enabled
   if (config.sslEnabled) {
     // Redirect to https
