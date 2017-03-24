@@ -18,6 +18,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
 
+## [0.8.0] - 2017-03-24
+### Added
+- added start.sh script in /server/tools to use with everpaste.service
+
+### Changed
+- start with ssl config commented out in example
+- Updated React router 4 out of beta
+
+### Fixed
+- dev & prod needed different ways to serve the index file
+- fixed everpaste.service file
+
 ## [0.7.0] - 2017-03-20
 ### Added
 - Saved view intermediary for copying AES key

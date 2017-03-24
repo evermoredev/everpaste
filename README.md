@@ -17,6 +17,10 @@ sudo apt-get install build-essential
 sudo apt-get install postgresql postgresql-contrib
 ```
 
-Check out `server/tools` for helpful files and utilities.
+Set up your database and then copy `server/config/config.example.js` to `server/config/config.js` and alter the fields as necessary.
 
-Check out the `server/config/config.example.js` for more information.
+`npm start` will start a development server.
+
+`npm run prod` will start a production server.
+
+Check out `server/tools` for helpful files and utilities.

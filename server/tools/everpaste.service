@@ -2,12 +2,12 @@
 Description=everpaste
 
 [Service]
-ExecStart=/usr/bin/npm run prod
+ExecStart=/bin/bash /var/www/everpaste/server/tools/start.sh
 Restart=always
 User=root
 Group=root
 Environment=PATH=/usr/bin:/usr/local/bin
-Environment=NODE_ENV=production
-WorkingDirectory=/var/www/everpaste
+WorkingDirectory=/var/www/everpaste/server/tools
 
 [Install]
+WantedBy=multi-user.target

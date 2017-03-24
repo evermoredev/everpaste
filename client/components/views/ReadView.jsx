@@ -61,11 +61,10 @@ class ReadView extends React.Component {
         this.setState({
           title, text, rawText, name, docKey, privacy, lang, rawDisabled, editDisabled
         });
-        console.log(this.state.docKey);
         this.context.currentPaste = this.state;
       })
       .catch(error => {
-        this.state.redirect({ redirect: { pathname: '/404' } });
+        this.setState({ redirect: { pathname: '/404' } });
       });
   };
 
