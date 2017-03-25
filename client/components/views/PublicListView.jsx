@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import axios from 'axios';
+import { doRequest } from '../../modules/request';
 import { HeaderBlock } from '../blocks';
 import { Condition } from '../../modules/components';
 
@@ -21,11 +21,10 @@ class PublicListView extends React.Component {
   }
 
   getDocList = () => {
-    axios
-      .get('/api/list')
-      .then(res => {
+    doRequest({ url: '/api/list' })
+      .then(data => {
         this.setState({
-          docList: res.data.reverse(),
+          docList: data.reverse(),
           loading: false
         });
       })

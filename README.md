@@ -24,3 +24,19 @@ Set up your database and then copy `server/config/config.example.js` to `server/
 `npm run prod` will start a production server.
 
 Check out `server/tools` for helpful files and utilities.
+
+#### Posting data with curl
+
+`curl -d "text=$(cat myfile.txt)" http://location.of.pastebin/api`
+
+with some extra params:
+
+`curl -d "text=$(cat myfile.txt)&privacy=private&name=nate&title=my paste" http://location.of.pastebin/api`
+
+You'll receive the key in the response:
+
+`{ "key": "dcDmmasdwe" }`
+
+Your paste will now be available at:
+
+`http://location.of.pastebin/dcDmmasdwe`

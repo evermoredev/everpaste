@@ -18,6 +18,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
 
+## [0.9.0] -
+### Added
+- Can now post to api with curl
+
+### Removed
+- Removed axios package, replaced with xhr code
+
 ## [0.8.0] - 2017-03-24
 ### Added
 - added start.sh script in /server/tools to use with everpaste.service

@@ -1,6 +1,6 @@
 import React  from 'react';
 import { HeaderBlock } from '../blocks';
-import axios from 'axios';
+import { doRequest } from '../../modules/request';
 import { setCookie, getCookie } from '../../modules/cookies';
 import CryptoJS from 'crypto-js';
 import { privacyOptions } from '../../../shared/config/constants';
@@ -73,19 +73,23 @@ class PasteView extends React.Component {
       setCookie('name', name);
       setCookie('expiration', expiration);
       setCookie('privacy', privacy);
-      axios.post('/api', {
-        title, text, name, expiration, privacy
-      }).then(res => {
+      doRequest({
+        method: 'POST',
+        url: '/api',
+        params: { title, text, name, expiration, privacy }
+      }).then(data => {
+        console.log(data);
         // If there is a secretKey let's redirect them to a page that shows
         // the docKey and the secretKey, otherwise send them directly to the new paste
         let redirect = (secretKey) ? {
             pathname: `/saved`,
-            state: { docKey: res.data.key, secretKey }
+            state: { docKey: data.key, secretKey }
           } : {
-            pathname: `/${res.data.key}`
+            pathname: `/${data.key}`
           };
         this.setState({ redirect });
       }).catch(err => {
+          console.log(err);
           errors.push(err);
           this.setState({ errors });
         });

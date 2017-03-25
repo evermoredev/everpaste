@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import marked from 'marked';
+import { doRequest } from '../../modules/request';
 import { HeaderBlock } from '../blocks';
 
 class HelpView extends React.Component {
@@ -14,9 +14,9 @@ class HelpView extends React.Component {
   }
 
   componentWillMount() {
-      axios(`https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md`)
-      .then(res => {
-        this.setState({ text: res.data })
+      doRequest({ url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md` })
+      .then(data => {
+        this.setState({ text: data })
       })
       .catch(error => {
         this.setState({ text: 'Problem loading help from github.'})

@@ -1,9 +1,9 @@
 import React from 'react';
-import axios from 'axios';
 import { HeaderBlock } from '../blocks';
 import { privacyOptions } from '../../../shared/config/constants';
 import CryptoJS from 'crypto-js';
 import highlighter from '../../modules/highlighter';
+import { doRequest } from '../../modules/request';
 import { Condition } from '../../modules/components';
 import { Redirect } from 'react-router-dom';
 
@@ -43,12 +43,11 @@ class ReadView extends React.Component {
   };
 
   getDoc = (docKey, lang) => {
-    axios
-      .get(`/api/${docKey}`)
-      .then(res => {
-        let { title, text, name, privacy } = res.data,
-            rawText,
-            { rawDisabled, editDisabled } = this.state;
+    doRequest({ url: `/api/${docKey}`})
+      .then((data) => {
+        let { title, text, name, privacy } = data,
+            { rawDisabled, editDisabled } = this.state,
+            rawText;
 
         // Set some things up based on whether or not this text is encrypted
         // Like only highlighting text if it's not encrypted
@@ -59,11 +58,12 @@ class ReadView extends React.Component {
           editDisabled = false;
         }
         this.setState({
-          title, text, rawText, name, docKey, privacy, lang, rawDisabled, editDisabled
+          title, text, rawText, name, docKey,
+          privacy, lang, rawDisabled, editDisabled
         });
         this.context.currentPaste = this.state;
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ redirect: { pathname: '/404' } });
       });
   };

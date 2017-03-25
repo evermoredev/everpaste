@@ -38,10 +38,11 @@ if (config.logging) {
   }
 }
 
-// for parsing application/json
-app.use(bodyParser.json({ limit: config.maxLength }));
 // for parsing application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  limit: config.maxLength,
+  extended: true
+}));
 
 // Rate limit all requests
 if (config.rateLimits) {
