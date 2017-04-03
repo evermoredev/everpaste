@@ -5,38 +5,87 @@
     display: flex;
     flex-direction: column;
   }
-
-  .title-container {
+  .error-messages {
+    color: red;
+    text-align: center;
+    margin-top: 5px;
+  }
+  .options-container {
     display: flex;
-    color: inherit;
-    input {
-      color: #abb2bf;
-      font-family: $primary-font;
-      font-size: 20px;
-      background: transparent;
-      box-shadow: none;
-      width: 98%;
-      margin: 0 auto;
-      border: none;
-      padding: 15px;
-      text-align: center;
-      border-bottom-width: 1px;
-      border-bottom-style: solid;
-      position: relative;
-      top: 8px;
-      border-bottom-color: #abb2bf;
-      transition: .4s;
-      &::-webkit-input-placeholder {
-        color: inherit;
+    flex-direction: row;
+    flex-wrap: wrap;
+    color: white;
+    justify-content: center;
+    
+    .option {
+      display: flex;
+      text-align: left;
+      width: 290px;
+      vertical-align: baseline;
+      margin: 5px;
+      .label {
+        margin-top: auto;
       }
-      &:focus,
-      &:active {
-        border-bottom: 1px solid #5891cb;
-        box-shadow: none;
-        outline: none;
-        color: #56b6c2;
+      select {
+        margin-left: 10px;
+        width: 188px;
+        padding: 0.4em 0.6em;
+      }
+      input[name=title] {
+        margin-left: 10px;
+        width: 229px;
+        padding: 0.5em 0.6em;
+      }
+      input[name=name] {
+        margin-left: 10px;
+        width: 216px;
+        padding: 0.5em 0.6em;
       }
     }
+
+    .radio {
+      margin-right: 5px;
+    }
+    .radio-option {
+      margin-right: 13px;
+    }
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  input, select {
+    display: inline-block;
+    color: #abb2bf;
+    font-family: $primary-font;
+    font-size: 100%;
+    line-height: 1.15;
+    background: transparent;
+    box-shadow: none;
+    margin: 0 auto;
+    position: relative;
+    top: 8px;
+    transition: .4s;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    vertical-align: super;
+    box-sizing: border-box;
+    &::-webkit-input-placeholder {
+      color: inherit;
+    }
+    &:focus,
+    &:active {
+      border: 1px solid #5891cb;
+      box-shadow: none;
+      outline: none;
+      color: #56b6c2;
+    }
+  }
+
+  .text-container {
+    display: flex;
+    flex: auto;
   }
 
   .option-container {

@@ -81,7 +81,7 @@ class DocHandler {
 
   async handlePost(req, res) {
     let data = req.body;
-
+    console.log(req, data);
     /**
      * Do some validation
      **/

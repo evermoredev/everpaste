@@ -7,16 +7,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Known Issues
-- Selecting all from ReadView is picking up line numbers
-- Language extensions not working
 - Dev server serves production index.html file from disk if it exists
+- Changing scss files except for main.scss not triggering hot reload
 
 ### TODOs
-- Remove axios and use native fetch
 - Autorun migrations on server start
 - Better error reporting for problems on startup
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
+
+## [0.9.0] - 2017-04-03
+### Added
+- Can now post to api with curl
+
+### Changed
+- Removed resizing of text area
+- Fixed styles on paste view for mobile responsiveness
+
+### Removed
+- Removed axios package, replaced with xhr code
+- Removed all inline styles
+
+### Fixed
+- Language extensions
+- Selecting all from ReadView no longer picking up line numbers
 
 ## [0.8.0] - 2017-03-24
 ### Added

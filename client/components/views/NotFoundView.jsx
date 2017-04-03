@@ -13,8 +13,8 @@ class NotFoundView extends React.Component {
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
-        <div className="view-container" style={{ margin: '0 auto' }}>
-          <pre style={{ color: 'white' }}>
+        <div className="view-container">
+          <pre>
             <br /><br />
             &nbsp;&nbsp;&nbsp;The paste you're looking for<br />
             &nbsp;&nbsp;&nbsp;&nbsp;isn't hanging around here.<br /><br /><br />

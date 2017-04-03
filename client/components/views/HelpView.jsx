@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import marked from 'marked';
+import { doRequest } from '../../modules/request';
 import { HeaderBlock } from '../blocks';
 
 class HelpView extends React.Component {
@@ -14,9 +14,9 @@ class HelpView extends React.Component {
   }
 
   componentWillMount() {
-      axios(`https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md`)
-      .then(res => {
-        this.setState({ text: res.data })
+      doRequest({ url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md` })
+      .then(data => {
+        this.setState({ text: data })
       })
       .catch(error => {
         this.setState({ text: 'Problem loading help from github.'})
@@ -29,7 +29,7 @@ class HelpView extends React.Component {
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
-        <div className="view-container" style={{ paddingLeft: 30, color: 'white' }}>
+        <div className="view-container">
           <div>
             Please submit bug reports or feature requests to: <a href="https://github.com/evermoredev/everpaste/issues">EverPaste Repo</a>
           </div>
