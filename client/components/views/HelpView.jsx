@@ -29,7 +29,7 @@ class HelpView extends React.Component {
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
-        <div className="view-container" style={{ paddingLeft: 30, color: 'white' }}>
+        <div className="view-container">
           <div>
             Please submit bug reports or feature requests to: <a href="https://github.com/evermoredev/everpaste/issues">EverPaste Repo</a>
           </div>

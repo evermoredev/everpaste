@@ -3,8 +3,6 @@
  * wraps in columns to avoid the terrible horizontal scrolling that most
  * html views use when displaying code.
  *
- * TODO:
- *  - Auto highlighting
  */
 import hljs from 'highlight.js';
 import { htmlEscapeStr } from './_helpers';
@@ -27,17 +25,14 @@ const highlight = (code, options = {}) => {
   }
 
   // Add Line Numbers and wrap in a table
+  codeBuf =
+    codeBuf.replace(/^\s+/, (emptyStr) => emptyStr.replace(/\s/g, '&nbsp;'));
   let buf = '<table class="code-table hljs">';
   codeBuf.split('\n').forEach((s, i) => {
-    const whiteSpaceString =
-      s.replace(/^\s+/, (emptyString) => emptyString.replace(/\s/g, '&nbsp;'));
-
-    buf += `<tr class="code-row">`;
-    buf += `<td class="line-number unselectable">${i+1}</td>`;
-    buf += `<td class="code-col">${whiteSpaceString}</td>`;
-    buf += `</tr>`;
+    buf += `<tr class="code-row"><td class="line-number"></td><td class="code-col">${s}</td></tr>`;
   });
   buf += '</table>';
+
 
   return buf;
 };

@@ -53,7 +53,7 @@ class ReadView extends React.Component {
         // Like only highlighting text if it's not encrypted
         if (privacy != privacyOptions.encrypted) {
           rawText = text;
-          text = highlighter(text);
+          text = highlighter(text, { lang });
           rawDisabled = false;
           editDisabled = false;
         }
@@ -64,6 +64,7 @@ class ReadView extends React.Component {
         this.context.currentPaste = this.state;
       })
       .catch((error) => {
+        console.log(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -74,7 +75,8 @@ class ReadView extends React.Component {
 
     try {
       let bstring = atob(this.state.secretKey);
-      decryptedText = CryptoJS.AES.decrypt(this.state.text, bstring).toString(CryptoJS.enc.Utf8);
+      decryptedText = CryptoJS.AES.decrypt(this.state.text, bstring)
+        .toString(CryptoJS.enc.Utf8);
     } catch(e) {
       this.setState({ error: 'The secret key is incorrect.' });
       return;
@@ -87,7 +89,7 @@ class ReadView extends React.Component {
       this.setState({
         privacy: privacyOptions.private,
         rawText: decryptedText,
-        text: highlighter(decryptedText, this.state.lang),
+        text: highlighter(decryptedText, { lang: this.state.lang }),
         secretKey: '',
         rawDisabled: false,
         editDisabled: false,
@@ -124,7 +126,8 @@ class ReadView extends React.Component {
     if (this.state.redirect) return <Redirect to={this.state.redirect} />;
 
     return (
-      <div className={`read-view flex-container ${this.context.styleStore.theme}`}>
+      <div
+        className={`read-view flex-container ${this.context.styleStore.theme}`}>
         <HeaderBlock
           rawButton={this.rawButton}
           currentPaste={this.state}
@@ -136,7 +139,8 @@ class ReadView extends React.Component {
 
         <Condition
           condition={this.state.privacy == privacyOptions.encrypted}
-          className="view-container" style={{ margin: '0 auto', textAlign: 'center' }}>
+          className="view-container"
+          style={{ margin: '0 auto', textAlign: 'center' }}>
           <h3 style={{ width: '100%', color: 'white' }}>
             This document is encrypted. Please enter Secret Key below.
           </h3>

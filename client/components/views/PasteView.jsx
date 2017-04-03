@@ -113,107 +113,93 @@ class PasteView extends React.Component {
           disabled={{ raw: true, edit: true, save: !this.hasText() }}
         />
         <div className="view-container">
-            <div className="error-messages">{this.state.errors}</div>
-            <div className="title-container">
+          <Condition value={this.state.errors} className="error-messages" />
+          <div className="options-container">
+            <div className="option">
+              <span className="label">Title:</span>
               <input
-                placeholder="Enter a Title"
+                className="input-dark"
+                type="text"
                 name="title"
                 value={this.state.title}
+                placeholder="Untitled"
                 onChange={this.handleChange}
               />
             </div>
-            <div className="option-container">
-              <form className="pure-form">
-                <fieldset>
-                  <div style={{ display: 'inline-block', textAlign: 'right', width: '50%' }}>
-                    <div>
-                      <label htmlFor="name">
-                        Name:
-                        <input
-                          style={{ marginLeft: '10px' }}
-                          className="input-dark"
-                          type="text"
-                          name="name"
-                          value={this.state.name}
-                          placeholder="Name (Optional)"
-                          onChange={this.handleChange}
-                        />
-                      </label>
-                    </div>
-                    <div>
-                      <label htmlFor="expiration">
-                        Expiration:
-                        <select
-                          style={{ width: "187px" }}
-                          className="input-dark"
-                          name="expiration"
-                          value={this.state.expiration}
-                          onChange={this.handleChange}
-                        >
-                          <option value="forever">Forever</option>
-                          <option value="1 weeks">1 Week</option>
-                          <option value="1 days">1 Day</option>
-                          <option value="6 hours">6 Hours</option>
-                          <option value="30 minutes">30 Minutes</option>
-                        </select>
-                      </label>
-                    </div>
-                  </div>
-                  <div style={{ display: 'inline-block', textAlign: 'left', width: '50%' }}>
-                    <div>
-                    <label htmlFor="public">
-                      <input
-                        className="pure-radio"
-                        type="radio"
-                        name="public"
-                        value={privacyOptions.public}
-                        checked={this.state.privacy == privacyOptions.public}
-                        onChange={this.handlePrivacyRadio}
-                      />
-                      Public
-                    </label>
-                    <label htmlFor="private">
-                      <input
-                        style={{ marginLeft: '10px' }}
-                        className="pure-radio"
-                        type="radio"
-                        name="private"
-                        value={privacyOptions.private}
-                        checked={this.state.privacy == privacyOptions.private}
-                        onChange={this.handlePrivacyRadio}
-                      />
-                      Private
-                    </label>
-                    </div>
-                    <div>
-                    <label htmlFor="encrypt">
-                      <input
-                        className="pure-radio"
-                        type="radio"
-                        name="encrypt"
-                        value={privacyOptions.encrypted}
-                        checked={this.state.privacy == privacyOptions.encrypted}
-                        onChange={this.handlePrivacyRadio}
-                      />
-                      Private w/AES
-                    </label>
-                    </div>
-                  </div>
-
-                </fieldset>
-              </form>
+            <div className="option">
+              <span className="label">Name:</span>
+              <input
+                className="input-dark"
+                type="text"
+                name="name"
+                value={this.state.name}
+                placeholder="Name (Optional)"
+                onChange={this.handleChange}
+              />
             </div>
-            <div className="text-container">
-                <textarea
-                  key={this.state.age}
-                  className="hljs"
-                  name="text"
-                  placeholder="  Paste Text Here"
-                  defaultValue={this.state.text}
-                  onChange={this.handleChange}
-                  spellCheck="false"
+            <div className="option">
+              <span className="label">Expiration:</span>
+              <select
+                className="input-dark"
+                name="expiration"
+                value={this.state.expiration}
+                onChange={this.handleChange}
+              >
+                <option value="forever">Forever</option>
+                <option value="1 weeks">1 Week</option>
+                <option value="1 days">1 Day</option>
+                <option value="6 hours">6 Hours</option>
+                <option value="30 minutes">30 Minutes</option>
+              </select>
+            </div>
+            <div className="option">
+              <div className="radio-option">
+                <input
+                  className="radio"
+                  type="radio"
+                  name="public"
+                  value={privacyOptions.public}
+                  checked={this.state.privacy == privacyOptions.public}
+                  onChange={this.handlePrivacyRadio}
                 />
+                Public
+              </div>
+              <div className="radio-option">
+                <input
+                  className="radio"
+                  type="radio"
+                  name="private"
+                  value={privacyOptions.private}
+                  checked={this.state.privacy == privacyOptions.private}
+                  onChange={this.handlePrivacyRadio}
+                />
+                Private
+              </div>
+              <div className="radio-option">
+                <input
+                  className="radio"
+                  type="radio"
+                  name="encrypt"
+                  value={privacyOptions.encrypted}
+                  checked={this.state.privacy == privacyOptions.encrypted}
+                  onChange={this.handlePrivacyRadio}
+                />
+                Private w/AES
+              </div>
             </div>
+          </div>
+
+          <div className="text-container">
+            <textarea
+              key={this.state.age}
+              className="hljs"
+              name="text"
+              placeholder="  Paste Text Here"
+              defaultValue={this.state.text}
+              onChange={this.handleChange}
+              spellCheck="false"
+            />
+          </div>
         </div>
       </div>
     );

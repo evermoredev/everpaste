@@ -1,6 +1,8 @@
 @import './HelpView.scss';
+@import './NotFoundView.scss';
 @import './PasteView.scss';
 @import './PublicListView.scss';
+@import './ReadView.scss';
 @import './SavedView.scss';
 @import './SettingsView.scss';
 
@@ -36,30 +38,21 @@
   background: transparent !important;
 }
 
-.view-container {
-  .pure-form {
-    margin: 0;
-    width: 100%;
-    text-align: center;
-    .pure-radio {
-      display: inline;
-      margin-right: 7px;
-    }
-    label {
-      padding-left: 10px;
-      padding-right: 15px;
-      color: #abb2bf;
-      display: inline-block;
-    }
-    select {
-      margin-left: 10px;
-    }
+.flex-container {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  .view-container {
+    flex: auto;
+    overflow: auto;
   }
+}
+
+.view-container {
   .text-container {
     text-align: center;
     padding: 15px;
     textarea {
-      height: calc(100vh - 239px);
       background: transparent;
       color: #abb2bf;
       width: 100%;
