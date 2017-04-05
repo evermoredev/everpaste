@@ -1,6 +1,6 @@
 {
   "name": "everpaste",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": false,
   "description": "EverPaste Server",
   "keywords": [
@@ -39,9 +39,11 @@
     "marked": "^0.3.6",
     "mocha": "^3.2.0",
     "moment": "^2.17.1",
+    "multer": "^1.3.0",
     "pg": "^6.1.3",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
+    "react-dropzone": "^3.12.2",
     "react-router-dom": "^4.0.0",
     "serve-static": "^1.12.1",
     "should": "^11.2.0",

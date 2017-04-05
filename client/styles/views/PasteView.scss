@@ -51,8 +51,25 @@
     }
   }
 
+  .tab-options {
+    text-align: left;
+    span {
+      cursor: pointer;
+      color: #abb2bf;
+      padding: 5px 10px 0 5px;
+    }
+    span.active {
+      border: 1px solid #5891cb;
+      border-bottom: none;
+      box-shadow: none;
+      outline: none;
+      color: #56b6c2;
+    }
+  }
+
   textarea {
     resize: none;
+    flex: auto;
   }
 
   input, select {
@@ -86,8 +103,28 @@
   .text-container {
     display: flex;
     flex: auto;
+    flex-direction: column;
   }
 
+  .upload-container {
+    text-align: center;
+    padding: 15px;
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+    .dropzone {
+      display: flex;
+      flex: auto;
+      color: #abb2bf;
+      border: 2px dashed #ccc;
+      border-radius: 5px;
+      align-items: center;
+      font-size: 25px;
+      div {
+        margin: 0 auto;
+      }
+    }
+  }
   .option-container {
     display: flex;
     justify-content: space-around;

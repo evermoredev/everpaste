@@ -1,10 +1,14 @@
 import winston from 'winston';
 import express from 'express';
 import bodyParser from 'body-parser';
+import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import path from 'path';
 import limiter from 'connect-ratelimit';
+import multer from 'multer';
+
+let upload  = multer({ storage: multer.memoryStorage() }).any();
 
 import config from './server/config/config';
 import DocHandler from './server/modules/doc_handler';
@@ -38,6 +42,8 @@ if (config.logging) {
   }
 }
 
+app.use(bodyParser.json());
+
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
   limit: config.maxLength,
@@ -67,8 +73,23 @@ app.use((req, res, next) => {
  */
 
 // api calls for the server to handle
-app.post('/api', (req, res) => docHandler.handlePost(req, res));
+// app.post('/api', (req, res) => docHandler.handlePost(req, res));
+app.post('/api', (req, res) => {
+  upload(req, res, (err) => {
+    console.log('req.body', req.body);
+    console.log('req.body.text', req.body.text);
+    console.log('req.body.file', req.body.file);
+    console.log('req.file', req.file);
+    console.log('req.files', req.files);
+    console.log('req.headers', req.headers);
+
+    // console.log(req.files);
+    return docHandler.handlePost(req, res);
+
+  });
+});
 app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
+app.get('/api/file/:filename', (req, res) => docHandler.handleGetFile(req.params.filename, res));
 app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
 
 // Allow these root paths to pass through otherwise serve the app (index.html)

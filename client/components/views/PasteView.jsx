@@ -6,6 +6,7 @@ import CryptoJS from 'crypto-js';
 import { privacyOptions } from '../../../shared/config/constants';
 import { Condition } from '../../modules/components';
 import { Redirect } from 'react-router-dom';
+import Dropzone from 'react-dropzone';
 
 class PasteView extends React.Component {
 
@@ -18,16 +19,23 @@ class PasteView extends React.Component {
       this.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
     }
 
+    this.TAB_OPTIONS = {
+      text: 1,
+      upload: 2
+    };
+
     this.state = {
       age: Date.now(),
       from: this.docKeyFromEdit,
       title: this.titleFromEdit || '',
       name: getCookie('name') || '',
       text: this.rawTxtFromEdit || '',
+      file: null,
       expiration: getCookie('expiration') || '1 days',
       privacy: this.getPrivacyOption(getCookie('privacy')),
       errors: '',
-      redirect: null
+      redirect: null,
+      tabOption: this.TAB_OPTIONS.text
     };
 
     this.initialState = this.state;
@@ -44,18 +52,28 @@ class PasteView extends React.Component {
   handlePrivacyRadio = (event) =>
     this.setState({ privacy: event.currentTarget.value });
 
+  // Only save one file
+  // TODO: Shared validation
+  onDrop = (file) => {
+    if (file[0] && file[0].size > 50000000) {
+      this.setState({ errors: 'File size is too large.'});
+    } else {
+      this.state.file = file[0];
+      this.saveButton();
+    }
+  };
+
   getPrivacyOption = (option) =>
     (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
 
   saveButton = () => {
-
     // Do some validation and formatting
     const errors = [];
-    if (!this.hasText()) {
+    if (!this.hasText() && !this.state.file) {
       errors.push('Please enter more text to save.');
     }
 
-    let { name, title, text, expiration, privacy, secretKey } = this.state;
+    let { name, title, text, expiration, privacy, secretKey, file } = this.state;
 
     if (this.state.privacy == privacyOptions.encrypted) {
       let arr = new Uint8Array(1024);
@@ -76,9 +94,8 @@ class PasteView extends React.Component {
       doRequest({
         method: 'POST',
         url: '/api',
-        params: { title, text, name, expiration, privacy }
+        params: { title, text, name, expiration, privacy, file }
       }).then(data => {
-        console.log(data);
         // If there is a secretKey let's redirect them to a page that shows
         // the docKey and the secretKey, otherwise send them directly to the new paste
         let redirect = (secretKey) ? {
@@ -102,6 +119,24 @@ class PasteView extends React.Component {
       this.setState({ age: Date.now() });
     }
   }
+
+  TabOptions = () => (
+    <div className="tab-options">
+      <span
+        className={this.state.tabOption == this.TAB_OPTIONS.text ? 'active' : ''}
+        onClick={() => this.setState({ tabOption: this.TAB_OPTIONS.text })}>
+        Text
+      </span>
+      <span
+        className={this.state.tabOption == this.TAB_OPTIONS.upload ? 'active' : ''}
+        onClick={() => this.setState({
+          tabOption: this.TAB_OPTIONS.upload,
+          privacy: privacyOptions.public
+        })}>
+        File Upload
+      </span>
+    </div>
+  );
 
   render() {
     if (this.state.redirect) return <Redirect to={this.state.redirect} />;
@@ -175,31 +210,51 @@ class PasteView extends React.Component {
                 />
                 Private
               </div>
-              <div className="radio-option">
-                <input
-                  className="radio"
-                  type="radio"
-                  name="encrypt"
-                  value={privacyOptions.encrypted}
-                  checked={this.state.privacy == privacyOptions.encrypted}
-                  onChange={this.handlePrivacyRadio}
-                />
-                Private w/AES
-              </div>
+              <Condition condition={this.state.tabOption == this.TAB_OPTIONS.text}>
+                <div className="radio-option">
+                  <input
+                    className="radio"
+                    type="radio"
+                    name="encrypt"
+                    value={privacyOptions.encrypted}
+                    checked={this.state.privacy == privacyOptions.encrypted}
+                    onChange={this.handlePrivacyRadio}
+                  />
+                  Private w/AES
+                </div>
+              </Condition>
+
             </div>
           </div>
 
-          <div className="text-container">
-            <textarea
-              key={this.state.age}
-              className="hljs"
-              name="text"
-              placeholder="  Paste Text Here"
-              defaultValue={this.state.text}
-              onChange={this.handleChange}
-              spellCheck="false"
-            />
-          </div>
+          <Condition condition={this.state.tabOption == this.TAB_OPTIONS.text}>
+            <div className="text-container">
+              <this.TabOptions />
+              <textarea
+                key={this.state.age}
+                className="hljs"
+                name="text"
+                placeholder="  Paste Text Here"
+                defaultValue={this.state.text}
+                onChange={this.handleChange}
+                spellCheck="false"
+                onDragEnter={() => this.setState({tabOption: this.TAB_OPTIONS.upload})}
+              />
+            </div>
+          </Condition>
+
+          <Condition condition={this.state.tabOption == this.TAB_OPTIONS.upload}>
+            <div className="upload-container">
+              <this.TabOptions />
+              <Dropzone className="dropzone" onDrop={this.onDrop} multiple={false}>
+                <div>
+                  <div>Drag a file here or click to open dialogue.</div>
+                  <div>(Files will be deleted regularly to conserve storage.)</div>
+                </div>
+              </Dropzone>
+            </div>
+          </Condition>
+
         </div>
       </div>
     );

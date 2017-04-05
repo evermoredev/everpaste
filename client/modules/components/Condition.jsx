@@ -53,13 +53,10 @@ class Condition extends React.Component {
 
     // Option 2: If the condition exists
     if ('condition' in this.props) {
-      return (condition) ?
-        <span
-          key={key}
-          style={style}
-          className={className}>
-          {this.props.children}
-        </span> : null;
+      if (!React.isValidElement(this.props.children)) {
+        throw Error('Children of <Condition> component must have a wrapping parent.');
+      }
+      return (condition) ? this.props.children : null;
     }
 
     throw Error('Condition element needs either a value or condition prop.');

@@ -19,8 +19,8 @@ class PostgresStore {
 
   insert(key, data, options = {}) {
     return new Promise(async (resolve, reject) => {
-      const queryString = 'INSERT INTO entries (key, text, privacy, name, title, expiration) VALUES ($1, $2, $3, $4, $5, $6)';
-      const queryKeys = [key, data.text, data.privacy, data.name, data.title, data.expiration];
+      const queryString = 'INSERT INTO entries (key, text, privacy, name, title, expiration, file_name) VALUES ($1, $2, $3, $4, $5, $6, $7)';
+      const queryKeys = [key, data.text, data.privacy, data.name, data.title, data.expiration, data.fileName];
       await this.query(queryString, queryKeys);
       resolve(true);
       reject(false);
