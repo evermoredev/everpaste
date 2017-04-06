@@ -36,21 +36,21 @@ export const doRequest = (opt) => {
       });
     };
 
-    if (method.toLowerCase() == 'post')
-      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    // if (method.toLowerCase() == 'post')
+    //   xhr.setRequestHeader("Content-type", "multipart/form-data");
 
     // Set additional headers if they exist
     Object.keys(headers || {})
       .forEach((k) => xhr.setRequestHeader(k, headers[k]));
 
-    // Set params if they exist
-    params = Object.keys(params || {})
-      .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
-      .join('&');
+    const formData = new FormData();
 
-    console.log(method, url, params, headers);
+    // Append formData
+    Object.keys(params || {}).forEach(k => {
+      formData.append(k, params[k]);
+    });
 
-    xhr.send(params);
+    xhr.send(formData);
   });
 
 };

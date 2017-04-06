@@ -24,7 +24,7 @@ class PublicListView extends React.Component {
     doRequest({ url: '/api/list' })
       .then(data => {
         this.setState({
-          docList: data.reverse(),
+          docList: (data || []).reverse(),
           loading: false
         });
       })
@@ -33,29 +33,17 @@ class PublicListView extends React.Component {
       });
   };
 
-  renderDocsList = () => {
-    if (!this.state.docList.length) {
-      return (
-        <div className="loader hljs">
-          <span>&#123;</span>
-          <span>&#125;</span>
+  renderDocsList = () => this.state.docList.map((d, idx) => (
+    <div className="public-list-item" key={idx}>
+      <Link to={`/${d.key}`}>
+        <div className="public-paste">
+          <Condition value={d.title} className="title" default="Untitled" />
+          <Condition value={d.name} className="from-name" />
+          <div className="created">({moment(d.created).fromNow()})</div>
         </div>
-      )
-    } else {
-      return this.state.docList.map((d, idx) => (
-        <div className="public-list-item" key={idx}>
-          <Link to={`/${d.key}`}>
-            <div className="public-paste">
-              <Condition value={d.title} className="title" default="Untitled" />
-              <Condition value={d.name} className="from-name" />
-              <div className="created">({moment(d.created).fromNow()})</div>
-            </div>
-          </Link>
-        </div>
-      ));
-    }
-  };
-
+      </Link>
+    </div>
+  ));
 
   render() {
     return (
@@ -64,7 +52,15 @@ class PublicListView extends React.Component {
           disabled={{ raw: true, edit: true, save: true }}
         />
         <div className="view-container">
-          {this.renderDocsList()}
+          <Condition condition={this.state.loading}>
+            <div className="loader hljs">
+              <span>&#123;</span>
+              <span>&#125;</span>
+            </div>
+          </Condition>
+          <Condition condition={!this.state.loading}>
+            <div>{this.renderDocsList()}</div>
+          </Condition>
         </div>
       </div>
     );

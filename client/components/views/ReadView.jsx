@@ -21,6 +21,7 @@ class ReadView extends React.Component {
       lang: '',
       privacy: '',
       secretKey: '',
+      filename: '',
 
       rawDisabled: true,
       editDisabled: true,
@@ -45,7 +46,7 @@ class ReadView extends React.Component {
   getDoc = (docKey, lang) => {
     doRequest({ url: `/api/${docKey}`})
       .then((data) => {
-        let { title, text, name, privacy } = data,
+        let { title, text, name, privacy, filename } = data,
             { rawDisabled, editDisabled } = this.state,
             rawText;
 
@@ -59,12 +60,12 @@ class ReadView extends React.Component {
         }
         this.setState({
           title, text, rawText, name, docKey,
-          privacy, lang, rawDisabled, editDisabled
+          privacy, lang, rawDisabled, editDisabled,
+          filename: filename
         });
         this.context.currentPaste = this.state;
       })
       .catch((error) => {
-        console.log(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -125,6 +126,11 @@ class ReadView extends React.Component {
   render() {
     if (this.state.redirect) return <Redirect to={this.state.redirect} />;
 
+    const showFile = !!this.state.filename;
+    const showSecretForm = this.state.privacy == privacyOptions.encrypted && !showFile;
+    const showText = this.state.privacy != privacyOptions.encrypted && !showFile;
+    const isImage = showFile && this.state.filename.match(/\.(jpeg|jpg|gif|png)$/i);
+
     return (
       <div
         className={`read-view flex-container ${this.context.styleStore.theme}`}>
@@ -137,52 +143,74 @@ class ReadView extends React.Component {
           }}
         />
 
-        <Condition
-          condition={this.state.privacy == privacyOptions.encrypted}
-          className="view-container"
-          style={{ margin: '0 auto', textAlign: 'center' }}>
-          <h3 style={{ width: '100%', color: 'white' }}>
-            This document is encrypted. Please enter Secret Key below.
-          </h3>
-          <form
-            className="pure-form"
-            style={{ textAlign: 'center' }}
-            onSubmit={this.handleSecretKeySubmit} >
-            <fieldset>
-                <div>
-                  <label htmlFor="secretKey">
-                    <input
-                      style={{ marginLeft: '10px' }}
-                      className="input-dark"
-                      type="password"
-                      name="secretKey"
-                      value={this.state.secretKey}
-                      placeholder="Secret Key"
-                      onChange={this.handleChange}
-                    />
-                  </label>
-                </div>
-            </fieldset>
-          </form>
-          <Condition value={this.state.error} style={{ color: 'red' }} />
-        </Condition>
+        {/*
+          There's a lot of logic here for which part of ReadView should be displayed.
+          Eventually, this should be broken in to smaller components.
 
-        <Condition
-          condition={this.state.privacy != privacyOptions.encrypted}
-          className="view-container hljs">
-          <div className="error-messages"></div>
-          <div className="code-information-container">
-            <div className="unselectable code-title">
-              <Condition value={this.state.title} default="Untitled" />
-              <Condition condition={this.state.name}>
-                <span className="from-name">from {this.state.name}</span>
+          This block is for text views that are not related to file uploads
+        */}
+          <Condition condition={showSecretForm}>
+            <div
+              className="view-container"
+              style={{ margin: '0 auto', textAlign: 'center' }}>
+              <h3 style={{ width: '100%', color: 'white' }}>
+                This document is encrypted. Please enter Secret Key below.
+              </h3>
+              <form
+                className="pure-form"
+                style={{ textAlign: 'center' }}
+                onSubmit={this.handleSecretKeySubmit} >
+                <fieldset>
+                    <div>
+                      <label htmlFor="secretKey">
+                        <input
+                          style={{ marginLeft: '10px' }}
+                          className="input-dark"
+                          type="password"
+                          name="secretKey"
+                          value={this.state.secretKey}
+                          placeholder="Secret Key"
+                          onChange={this.handleChange}
+                        />
+                      </label>
+                    </div>
+                </fieldset>
+              </form>
+              <Condition value={this.state.error} style={{ color: 'red' }} />
+            </div>
+          </Condition>
+
+          <Condition condition={!showSecretForm}>
+            <div className="view-container hljs">
+              <Condition value={this.state.error} style={{ color: 'red' }} />
+              <div className="code-information-container">
+                <div className="unselectable code-title">
+                  <Condition value={this.state.title} default="Untitled" />
+                  <Condition condition={this.state.name}>
+                    <span className="from-name">from {this.state.name}</span>
+                  </Condition>
+                </div>
+              </div>
+
+              <Condition condition={showText}>
+                <div className="code-document">
+                  {this.renderCodeBlock()}
+                </div>
+              </Condition>
+
+              <Condition condition={showFile}>
+                <div className="view-container text-center file-download">
+                  <Condition condition={isImage}>
+                    <img src={`/api/file/${this.state.filename}`} />
+                  </Condition>
+                  <Condition condition={!isImage}>
+                    <a href={`/api/file/${this.state.filename}`}>{this.state.filename}</a>
+                  </Condition>
+                </div>
               </Condition>
             </div>
-          </div>
-          <div className="code-document">
-            {this.renderCodeBlock()}
-          </div>
-        </Condition>
+          </Condition>
+
       </div>
     );
   }

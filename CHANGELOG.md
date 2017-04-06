@@ -9,12 +9,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - Dev server serves production index.html file from disk if it exists
 - Changing scss files except for main.scss not triggering hot reload
+- Public view with nothing Public just hangs
 
 ### TODOs
 - Autorun migrations on server start
 - Better error reporting for problems on startup
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
+
+## [0.10.0] - 2017-04-06
+### Added
+- Ability to upload files/images
+- Breaking changes to database
+- Added shared validations module for pastes
+- Added uploads folder on the server
 
 ## [0.9.0] - 2017-04-03
 ### Added

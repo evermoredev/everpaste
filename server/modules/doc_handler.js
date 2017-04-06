@@ -8,9 +8,12 @@
 import winston from 'winston';
 import PostgresStore from './postgres_store';
 import RandomKeyGenerator from './key_generator';
+import fs from 'fs';
+import path from 'path';
 import config from '../config/config';
 import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
+import { fileValidation, pasteValidation } from '../../shared/validations/paste';
 
 class DocHandler {
 
@@ -26,16 +29,30 @@ class DocHandler {
     }
   };
 
+  // Returns the proper file path if the file exists
+  static getFilePath = filename => {
+    const filePath = path.join(__dirname, `../uploads/${filename}`);
+    return (fs.existsSync(filePath)) ? filePath : null;
+  };
+
   constructor() {
     this.store = new PostgresStore();
-    this.maxLength = config.maxLength;
     this.keyGenerator = new RandomKeyGenerator();
   }
+
+  fail = (res, opts) => {
+    if (opts.serverMsg) winston.warn(opts.serverMsg);
+    res.writeHead(opts.resCode || 404, DocHandler.contentType.json);
+    res.end(JSON.stringify({ message: opts.clientMsg }));
+  };
 
   async handleGet(docKey, res, options = {}) {
     const { key, lang } = DocHandler.splitDocKey(docKey);
     const data = await this.store.getByKey(key);
-    if (data && data.text) {
+
+    // Return the data object if there's text available or if it's a file paste
+    // and the file still exists
+    if (data && (data.text || (data.filename && DocHandler.getFilePath(data.filename)))) {
       winston.verbose('Retrieved document', { key });
       res.end(JSON.stringify(data));
     } else {
@@ -46,75 +63,87 @@ class DocHandler {
   }
 
   async handleRawGet(docKey, res) {
-    const { key, lang } = DocHandler.splitDocKey(docKey);
-    const data = await this.store.getByKey(key);
+    const { key, lang } = DocHandler.splitDocKey(docKey),
+          data = await this.store.getByKey(key);
 
-    const fail = () => {
-        winston.warn('Raw document not found.', { key });
-        res.writeHead(404, DocHandler.contentType.json);
-        res.end(JSON.stringify({ message: 'Document not found.' }));
-    };
-
-    if (data && data.text) {
-      // Don't return raw docs that are encrypted
-      if (data.privacy == privacyOptions.encrypted) fail();
+    // Don't return raw docs that are encrypted
+    if (data && data.text && data.privacy != privacyOptions.encrypted) {
       winston.verbose('Retrieved raw document', { key });
       res.writeHead(200, DocHandler.contentType.plain);
       res.end(data.text);
     }
 
-    fail();
+    this.fail(res, {
+      clientMsg: 'Document not found.',
+      serverMsg: 'RawGet: Document not found.'
+    });
+  }
+
+  /**
+   * TODO: check the database to make sure the paste hasn't expired
+   * @param filename
+   * @param res
+   */
+  handleGetFile(filename, res) {
+    const filePath = path.join(__dirname, `../uploads/${filename}`);
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
+    }
+
+    this.fail(res, {
+      clientMsg: 'File not found.',
+      serverMsg: 'Problem serving file: ' + e,
+    });
   }
 
   async handleGetList(req, res) {
     const data = await this.store.getList();
-    if (data) {
-      winston.verbose('Retrieving document list.');
-      res.writeHead(200, DocHandler.contentType.plain);
-      res.end(JSON.stringify(data));
-    } else {
-      winston.warn('Retrieved empty list.');
-      res.writeHead(404, DocHandler.contentType.json);
-      res.end(JSON.stringify({ message: 'Empty list.' }));
-    }
+    winston.verbose('Retrieving document list.');
+    res.writeHead(200, DocHandler.contentType.plain);
+    res.end(JSON.stringify(data));
   }
 
   async handlePost(req, res) {
     let data = req.body;
-    console.log(req, data);
-    /**
-     * Do some validation
-     **/
-    const errors = [];
+    data.file = req.files[0];
 
-    if (data.text.length > this.maxLength) {
-      winston.warn('Document exceeds max length.', {maxLength: this.maxLength});
-      errors.push('Document exceeds max length.');
-    }
-    if (!data.text) {
-      winston.warn('No text data for document.');
-      errors.push('No text data for document.');
+    // First do some basic validation on the paste we received
+    const validate = pasteValidation(data);
+    if (!validate.passed) {
+      return this.fail(res, {
+        resCode: 500,
+        clientMsg: validate.errors,
+        serverMsg: 'Server validation failure for ...'
+      });
     }
 
-    if (errors.length) {
-      res.writeHead(400, DocHandler.contentType.json);
-      res.end(JSON.stringify(errors));
-      return;
+    // Generate a new key
+    const key = await this.chooseKey();
+
+    // Try writing the file if it exists
+    try {
+      if (data.file) {
+        const fileExtPattern = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/gmi;
+        let fileExt = ((data.file.originalname || '').match(fileExtPattern) || [])[0] || '';
+        // Keep file extensions to 5 chars
+        if (fileExt.length > 5) fileExt.length = 5;
+        data.filename = key + fileExt;
+        fs.writeFileSync(`server/uploads/${data.filename}`, data.file.buffer);
+      }
+    } catch(e) {
+      return this.fail({
+        resCode: 500,
+        clientMsg: 'Problem uploading file. Please try again later.',
+        serverMsg: 'File error: ' + e
+      });
     }
 
-    /**
-     * Do some formatting
-     **/
-    // Make sure privacy is a proper value
-    data.privacy = (Object.keys(privacyOptions).includes(data.privacy)) ?
-      data.privacy : privacyOptions.public;
     // Create expiration timestamp
+    // TODO: this should be enumerated in the shared folder
     data.expiration =
       (['30 minutes', '6 hours', '1 days', '1 weeks', '1 months'].includes(data.expiration)) ?
         postgresTimestamp(data.expiration) : null;
 
-    // Generate a new key
-    const key = await this.chooseKey();
     // Insert the query
     const queryInserted = await this.store.insert(key, data);
 
@@ -123,9 +152,11 @@ class DocHandler {
       res.writeHead(200, DocHandler.contentType.json);
       res.end(JSON.stringify({ key }));
     } else {
-      winston.verbose('Error adding document: ', { key });
-      res.writeHead(500, DocHandler.contentType.json);
-      res.end(JSON.stringify({ message: 'Error adding document.' }));
+      this.fail({
+        clientMsg: 'Problem adding document. Please try again later.',
+        serverMsg: 'Error adding document for key: ' + key,
+        resCode: 500
+      });
     }
   };
 

@@ -1,3 +1,13 @@
 .read-view {
-
+  .file-download {
+    text-decoration: none;
+    color: #c3baba;
+    a {
+      color: #c3baba;
+    }
+    img {
+      max-width: 500px;
+      max-height: 500px;
+    }
+  }
 }

@@ -17,8 +17,8 @@ class SavedView extends React.Component {
     this.textArea.select();
     try {
       document.execCommand('copy');
-      e.target.focus();
       this.setState({ copied: 'Copied!'});
+      e.target.focus();
     } catch (err) {
       // Document not copied
     }
@@ -49,13 +49,11 @@ class SavedView extends React.Component {
           </div>
           <div className="text-center" style={{ marginTop: '10px' }}>
             Secret Key
-            {console.log(document.execCommand('copy'))}
             <Condition condition={document.queryCommandSupported('copy')}>
-              &nbsp;
               <span onClick={this.copyToClipboard} style={{ color: 'white'}}>
-                <i className="fa fa-clipboard" />
+                &nbsp;<i className="fa fa-clipboard" />&nbsp;
+                {this.state.copied}
               </span>
-              &nbsp;
             </Condition>
           </div>
           <form className="pure-form">

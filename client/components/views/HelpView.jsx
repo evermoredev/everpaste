@@ -14,13 +14,13 @@ class HelpView extends React.Component {
   }
 
   componentWillMount() {
-      doRequest({ url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md` })
-      .then(data => {
-        this.setState({ text: data })
-      })
-      .catch(error => {
-        this.setState({ text: 'Problem loading help from github.'})
-      });
+    doRequest({ url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md` })
+    .then(data => {
+      this.setState({ text: data })
+    })
+    .catch(error => {
+      this.setState({ text: 'Problem loading help from github.'})
+    });
   }
 
   render() {
