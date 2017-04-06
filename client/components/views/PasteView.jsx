@@ -262,7 +262,10 @@ class PasteView extends React.Component {
                 defaultValue={this.state.text}
                 onChange={this.handleChange}
                 spellCheck="false"
-                onDragEnter={() => this.setState({tabOption: PasteView.tabOptions.upload})}
+                onDragEnter={() => this.setState({
+                  tabOption: PasteView.tabOptions.upload,
+                  privacy: privacyOptions.public
+                })}
               />
             </div>
           </Condition>

@@ -17,11 +17,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
 
-## [0.10.0] - 2017-04-05
+## [0.10.0] - 2017-04-06
 ### Added
 - Ability to upload files/images
 - Breaking changes to database
 - Added shared validations module for pastes
+- Added uploads folder on the server
 
 ## [0.9.0] - 2017-04-03
 ### Added
