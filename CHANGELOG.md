@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Ability to upload files/images
 - Breaking changes to database
+- Added shared validations module for pastes
 
 ## [0.9.0] - 2017-04-03
 ### Added

@@ -21,7 +21,7 @@ class ReadView extends React.Component {
       lang: '',
       privacy: '',
       secretKey: '',
-      fileName: '',
+      filename: '',
 
       rawDisabled: true,
       editDisabled: true,
@@ -46,7 +46,7 @@ class ReadView extends React.Component {
   getDoc = (docKey, lang) => {
     doRequest({ url: `/api/${docKey}`})
       .then((data) => {
-        let { title, text, name, privacy, file_name } = data,
+        let { title, text, name, privacy, filename } = data,
             { rawDisabled, editDisabled } = this.state,
             rawText;
 
@@ -61,12 +61,11 @@ class ReadView extends React.Component {
         this.setState({
           title, text, rawText, name, docKey,
           privacy, lang, rawDisabled, editDisabled,
-          fileName: file_name
+          filename: filename
         });
         this.context.currentPaste = this.state;
       })
       .catch((error) => {
-        console.log(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -127,10 +126,10 @@ class ReadView extends React.Component {
   render() {
     if (this.state.redirect) return <Redirect to={this.state.redirect} />;
 
-    const showFile = !!this.state.fileName;
+    const showFile = !!this.state.filename;
     const showSecretForm = this.state.privacy == privacyOptions.encrypted && !showFile;
     const showText = this.state.privacy != privacyOptions.encrypted && !showFile;
-    const isImage = showFile && this.state.fileName.match(/\.(jpeg|jpg|gif|png)$/i);
+    const isImage = showFile && this.state.filename.match(/\.(jpeg|jpg|gif|png)$/i);
 
     return (
       <div
@@ -202,10 +201,10 @@ class ReadView extends React.Component {
               <Condition condition={showFile}>
                 <div className="view-container text-center file-download">
                   <Condition condition={isImage}>
-                    <img src={`/api/file/${this.state.fileName}`} />
+                    <img src={`/api/file/${this.state.filename}`} />
                   </Condition>
                   <Condition condition={!isImage}>
-                    <a href={`/api/file/${this.state.fileName}`}>{this.state.fileName}</a>
+                    <a href={`/api/file/${this.state.filename}`}>{this.state.filename}</a>
                   </Condition>
                 </div>
               </Condition>

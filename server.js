@@ -73,19 +73,9 @@ app.use((req, res, next) => {
  */
 
 // api calls for the server to handle
-// app.post('/api', (req, res) => docHandler.handlePost(req, res));
 app.post('/api', (req, res) => {
   upload(req, res, (err) => {
-    console.log('req.body', req.body);
-    console.log('req.body.text', req.body.text);
-    console.log('req.body.file', req.body.file);
-    console.log('req.file', req.file);
-    console.log('req.files', req.files);
-    console.log('req.headers', req.headers);
-
-    // console.log(req.files);
     return docHandler.handlePost(req, res);
-
   });
 });
 app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));

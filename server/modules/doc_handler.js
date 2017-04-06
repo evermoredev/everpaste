@@ -13,6 +13,7 @@ import path from 'path';
 import config from '../config/config';
 import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
+import { fileValidation, pasteValidation } from '../../shared/validations/paste';
 
 class DocHandler {
 
@@ -29,14 +30,13 @@ class DocHandler {
   };
 
   // Returns the proper file path if the file exists
-  static getFilePath = fileName => {
-    const filePath = path.join(__dirname, `../uploads/${fileName}`);
+  static getFilePath = filename => {
+    const filePath = path.join(__dirname, `../uploads/${filename}`);
     return (fs.existsSync(filePath)) ? filePath : null;
   };
 
   constructor() {
     this.store = new PostgresStore();
-    this.maxLength = config.maxLength;
     this.keyGenerator = new RandomKeyGenerator();
   }
 
@@ -52,7 +52,7 @@ class DocHandler {
 
     // Return the data object if there's text available or if it's a file paste
     // and the file still exists
-    if (data && (data.text || (data.file_name && DocHandler.getFilePath(data.file_name)))) {
+    if (data && (data.text || (data.filename && DocHandler.getFilePath(data.filename)))) {
       winston.verbose('Retrieved document', { key });
       res.end(JSON.stringify(data));
     } else {
@@ -66,9 +66,8 @@ class DocHandler {
     const { key, lang } = DocHandler.splitDocKey(docKey),
           data = await this.store.getByKey(key);
 
-    if (data && data.text) {
-      // Don't return raw docs that are encrypted
-      if (data.privacy == privacyOptions.encrypted) fail();
+    // Don't return raw docs that are encrypted
+    if (data && data.text && data.privacy != privacyOptions.encrypted) {
       winston.verbose('Retrieved raw document', { key });
       res.writeHead(200, DocHandler.contentType.plain);
       res.end(data.text);
@@ -80,17 +79,21 @@ class DocHandler {
     });
   }
 
+  /**
+   * TODO: check the database to make sure the paste hasn't expired
+   * @param filename
+   * @param res
+   */
   handleGetFile(filename, res) {
-    try {
-      const filePath = path.join(__dirname, `../uploads/${filename}`);
-      if (fs.existsSync(filePath)) res.sendFile(filePath);
-      else throw new Error('File not found.');
-    } catch(e) {
-      this.fail(res, {
-        clientMsg: 'File not found.',
-        serverMsg: 'Problem serving file: ' + e,
-      });
+    const filePath = path.join(__dirname, `../uploads/${filename}`);
+    if (fs.existsSync(filePath)) {
+      return res.sendFile(filePath);
     }
+
+    this.fail(res, {
+      clientMsg: 'File not found.',
+      serverMsg: 'Problem serving file: ' + e,
+    });
   }
 
   async handleGetList(req, res) {
@@ -101,67 +104,40 @@ class DocHandler {
   }
 
   async handlePost(req, res) {
-    let data = req.body,
-        file = req.files[0];
+    let data = req.body;
+    data.file = req.files[0];
+
+    // First do some basic validation on the paste we received
+    const validate = pasteValidation(data);
+    if (!validate.passed) {
+      return this.fail(res, {
+        resCode: 500,
+        clientMsg: validate.errors,
+        serverMsg: 'Server validation failure for ...'
+      });
+    }
 
     // Generate a new key
     const key = await this.chooseKey();
 
-    /**
-     * Do some validation
-     **/
-    const errors = [];
-
-    // TODO: also use /shared for validation
-    // Make sure the text data isn't too big
-    if (data.text.length > this.maxLength) {
-      winston.warn('Document exceeds max length.', {maxLength: this.maxLength});
-      errors.push('Document exceeds max length.');
-    }
-
-    // If there is no file, make sure there is text
-    if (!file && !data.text) {
-      winston.warn('No text data for document.');
-      errors.push('No text data for document.');
-    }
-
     // Try writing the file if it exists
     try {
-      if (file) {
-        // TODO: Add this to config
-        if (file.size > 50000000) {
-          errors.push('File larger than 50mb file size limit.');
-        } else {
-          const fileExtPattern = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/gmi;
-          let fileExt = ((file.originalname || '').match(fileExtPattern) || [])[0] || '';
-          // Keep file extensions to 5 chars
-          if (fileExt.length > 5) fileExt.length = 5;
-          data.fileName = key + fileExt;
-          fs.writeFileSync(`server/uploads/${data.fileName}`, file.buffer);
-        }
+      if (data.file) {
+        const fileExtPattern = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/gmi;
+        let fileExt = ((data.file.originalname || '').match(fileExtPattern) || [])[0] || '';
+        // Keep file extensions to 5 chars
+        if (fileExt.length > 5) fileExt.length = 5;
+        data.filename = key + fileExt;
+        fs.writeFileSync(`server/uploads/${data.filename}`, data.file.buffer);
       }
     } catch(e) {
-      errors.push('Problem uploading file. Please try again later.');
-      winston.error('File error: ' + e);
+      return this.fail({
+        resCode: 500,
+        clientMsg: 'Problem uploading file. Please try again later.',
+        serverMsg: 'File error: ' + e
+      });
     }
 
-    // If there any errors, end the processing
-    // TODO: format to use this.fail()
-    if (errors.length) {
-      res.writeHead(400, DocHandler.contentType.json);
-      res.end(JSON.stringify(errors));
-      return;
-    }
-
-    /**
-     * Do some formatting
-     *
-     * TODO: Move all validation functionality to the shared folder so it's
-     * consistent across client and server
-     **/
-    // Make sure privacy is a proper value
-    data.privacy = (Object.keys(privacyOptions).includes(data.privacy)) ?
-      data.privacy : privacyOptions.public;
     // Create expiration timestamp
     // TODO: this should be enumerated in the shared folder
     data.expiration =

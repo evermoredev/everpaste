@@ -7,23 +7,26 @@ import { privacyOptions } from '../../../shared/config/constants';
 import { Condition } from '../../modules/components';
 import { Redirect } from 'react-router-dom';
 import Dropzone from 'react-dropzone';
+import { fileValidation, pasteValidation } from '../../../shared/validations/paste';
 
 class PasteView extends React.Component {
+
+  static tabOptions = {
+    text: 1,
+    upload: 2
+  };
 
   constructor(props) {
     super(props);
 
+    // If we're coming from an edit, grab the currentPaste data
     if (this.props.location.state && this.props.location.state.currentPaste) {
       this.rawTxtFromEdit = this.props.location.state.currentPaste.rawText;
       this.titleFromEdit = this.props.location.state.currentPaste.title;
       this.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
     }
 
-    this.TAB_OPTIONS = {
-      text: 1,
-      upload: 2
-    };
-
+    // Set some defaults
     this.state = {
       age: Date.now(),
       from: this.docKeyFromEdit,
@@ -35,10 +38,19 @@ class PasteView extends React.Component {
       privacy: this.getPrivacyOption(getCookie('privacy')),
       errors: '',
       redirect: null,
-      tabOption: this.TAB_OPTIONS.text
+      tabOption: PasteView.tabOptions.text
     };
 
     this.initialState = this.state;
+  }
+
+  componentWillReceiveProps(nextProps, nextState) {
+    // This is a way to get the page to return to initial state if the
+    // user clicks the new paste button while on this route already
+    if (nextProps.location.state && nextProps.location.state.clicked) {
+      this.setState(this.initialState);
+      this.setState({ age: Date.now() });
+    }
   }
 
   /**
@@ -52,29 +64,48 @@ class PasteView extends React.Component {
   handlePrivacyRadio = (event) =>
     this.setState({ privacy: event.currentTarget.value });
 
-  // Only save one file
-  // TODO: Shared validation
+  /**
+   * Handle dropping of a file to the Dropzone
+   * @param file
+   */
   onDrop = (file) => {
-    if (file[0] && file[0].size > 50000000) {
-      this.setState({ errors: 'File size is too large.'});
-    } else {
+    const validate = fileValidation(file);
+    if (validate.passed) {
+      // Don't re-render, save one file
       this.state.file = file[0];
+      // Invoke saving automatically
       this.saveButton();
+    } else {
+      this.setState({ errors: validate.errors });
     }
   };
 
+  /**
+   * Returns the privacy option if it exists, otherwise public
+   * @param option
+   */
   getPrivacyOption = (option) =>
     (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
 
+  /**
+   * Performs the save action for the paste
+   */
   saveButton = () => {
-    // Do some validation and formatting
-    const errors = [];
-    if (!this.hasText() && !this.state.file) {
-      errors.push('Please enter more text to save.');
+    // Extract only the data we need for saving from state.
+    // TODO: is there a one liner to assign only certain properties from
+    //       one object to another? Would like this to be 1 statement.
+    const { name, title, text, expiration, privacy, file } = this.state;
+    const saveData = { name, title, text, expiration, privacy, file };
+
+    const validate = pasteValidation(saveData);
+
+    if (!validate.passed) {
+      this.setState({ errors: validate.errors });
+      return;
     }
 
-    let { name, title, text, expiration, privacy, secretKey, file } = this.state;
-
+    // Handle encryption
+    let secretKey;
     if (this.state.privacy == privacyOptions.encrypted) {
       let arr = new Uint8Array(1024);
       // User the non armored key for encryption
@@ -82,55 +113,48 @@ class PasteView extends React.Component {
       // Create the user friendly/armored key for display
       secretKey = btoa(encryptKey);
       // Encrypt the text to be sent to the server
-      text = CryptoJS.AES.encrypt(this.state.text, encryptKey).toString();
+      saveData.text = CryptoJS.AES.encrypt(saveData.text, encryptKey).toString();
     }
 
-    if (errors.length) {
-      this.setState({ errors });
-    } else {
-      setCookie('name', name);
-      setCookie('expiration', expiration);
-      setCookie('privacy', privacy);
-      doRequest({
-        method: 'POST',
-        url: '/api',
-        params: { title, text, name, expiration, privacy, file }
-      }).then(data => {
-        // If there is a secretKey let's redirect them to a page that shows
-        // the docKey and the secretKey, otherwise send them directly to the new paste
-        let redirect = (secretKey) ? {
-            pathname: `/saved`,
-            state: { docKey: data.key, secretKey }
-          } : {
-            pathname: `/${data.key}`
-          };
-        this.setState({ redirect });
-      }).catch(err => {
-          console.log(err);
-          errors.push(err);
-          this.setState({ errors });
-        });
-    }
+    // TODO: Set multiple cookies at once
+    setCookie('name', saveData.name);
+    setCookie('expiration', saveData.expiration);
+    setCookie('privacy', saveData.privacy);
+
+    // Make the request
+    doRequest({
+      method: 'POST',
+      url: '/api',
+      params: saveData
+    }).then(data => {
+      // If there is a secretKey let's redirect them to a page that shows
+      // the docKey and the secretKey, otherwise send them directly to the new paste
+      let redirect = (secretKey) ? {
+          pathname: `/saved`,
+          state: { docKey: data.key, secretKey }
+        } : {
+          pathname: `/${data.key}`
+        };
+      this.setState({ redirect });
+    }).catch(err => {
+      this.setState({ errors: err.message });
+    });
   };
 
-  componentWillReceiveProps(nextProps, nextState) {
-    if (nextProps.location.state && nextProps.location.state.clicked) {
-      this.setState(this.initialState);
-      this.setState({ age: Date.now() });
-    }
-  }
-
+  /**
+   * Stateless component to render the tab options
+   */
   TabOptions = () => (
     <div className="tab-options">
       <span
-        className={this.state.tabOption == this.TAB_OPTIONS.text ? 'active' : ''}
-        onClick={() => this.setState({ tabOption: this.TAB_OPTIONS.text })}>
+        className={this.state.tabOption == PasteView.tabOptions.text ? 'active' : ''}
+        onClick={() => this.setState({ tabOption: PasteView.tabOptions.text })}>
         Text
       </span>
       <span
-        className={this.state.tabOption == this.TAB_OPTIONS.upload ? 'active' : ''}
+        className={this.state.tabOption == PasteView.tabOptions.upload ? 'active' : ''}
         onClick={() => this.setState({
-          tabOption: this.TAB_OPTIONS.upload,
+          tabOption: PasteView.tabOptions.upload,
           privacy: privacyOptions.public
         })}>
         File Upload
@@ -210,7 +234,7 @@ class PasteView extends React.Component {
                 />
                 Private
               </div>
-              <Condition condition={this.state.tabOption == this.TAB_OPTIONS.text}>
+              <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
                 <div className="radio-option">
                   <input
                     className="radio"
@@ -227,7 +251,7 @@ class PasteView extends React.Component {
             </div>
           </div>
 
-          <Condition condition={this.state.tabOption == this.TAB_OPTIONS.text}>
+          <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
             <div className="text-container">
               <this.TabOptions />
               <textarea
@@ -238,12 +262,12 @@ class PasteView extends React.Component {
                 defaultValue={this.state.text}
                 onChange={this.handleChange}
                 spellCheck="false"
-                onDragEnter={() => this.setState({tabOption: this.TAB_OPTIONS.upload})}
+                onDragEnter={() => this.setState({tabOption: PasteView.tabOptions.upload})}
               />
             </div>
           </Condition>
 
-          <Condition condition={this.state.tabOption == this.TAB_OPTIONS.upload}>
+          <Condition condition={this.state.tabOption == PasteView.tabOptions.upload}>
             <div className="upload-container">
               <this.TabOptions />
               <Dropzone className="dropzone" onDrop={this.onDrop} multiple={false}>
