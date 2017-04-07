@@ -1,7 +1,7 @@
 import React  from 'react';
 import { HeaderBlock } from '../blocks';
 import { doRequest } from '../../modules/request';
-import { setCookie, getCookie } from '../../modules/cookies';
+import { setCookies, getCookie } from '../../modules/cookies';
 import CryptoJS from 'crypto-js';
 import { privacyOptions } from '../../../shared/config/constants';
 import { Condition } from '../../modules/components';
@@ -42,6 +42,7 @@ class PasteView extends React.Component {
     };
 
     this.initialState = this.state;
+
   }
 
   componentWillReceiveProps(nextProps, nextState) {
@@ -69,14 +70,41 @@ class PasteView extends React.Component {
    * @param file
    */
   onDrop = (file) => {
+    // If array, grab the first file only
+    file = file[0] || file;
     const validate = fileValidation(file);
     if (validate.passed) {
       // Don't re-render, save one file
-      this.state.file = file[0];
+      this.state.file = file;
+      // In case we got here with privacy set as encryption
+      if (this.state.privacy == privacyOptions.encrypted) {
+        this.state.privacy = privacyOptions.private;
+      }
       // Invoke saving automatically
       this.saveButton();
     } else {
       this.setState({ errors: validate.errors });
+    }
+  };
+
+  /**
+   * Handle pasting of an image
+   * @param event
+   */
+  onPaste = (event) => {
+    try {
+      const items = event.clipboardData.items;
+
+      for (let idx in items) {
+        const item = items[idx];
+        if (item.kind === 'file') {
+          const blob = item.getAsFile();
+          const file = new File([blob], 'file', { type: blob.type });
+          this.onDrop(file);
+        }
+      }
+    } catch(e) {
+      // Ignore errors from older browsers
     }
   };
 
@@ -117,9 +145,11 @@ class PasteView extends React.Component {
     }
 
     // TODO: Set multiple cookies at once
-    setCookie('name', saveData.name);
-    setCookie('expiration', saveData.expiration);
-    setCookie('privacy', saveData.privacy);
+    setCookies([
+      { name: 'name', value: saveData.name },
+      { name: 'expiration', value: saveData.expiration },
+      { name: 'privacy', value: saveData.privacy }
+    ]);
 
     // Make the request
     doRequest({
@@ -155,7 +185,8 @@ class PasteView extends React.Component {
         className={this.state.tabOption == PasteView.tabOptions.upload ? 'active' : ''}
         onClick={() => this.setState({
           tabOption: PasteView.tabOptions.upload,
-          privacy: privacyOptions.public
+          privacy: (this.state.privacy == privacyOptions.encrypted) ?
+            privacyOptions.private : this.state.privacy
         })}>
         File Upload
       </span>
@@ -163,10 +194,14 @@ class PasteView extends React.Component {
   );
 
   render() {
-    if (this.state.redirect) return <Redirect to={this.state.redirect} />;
+    if (this.state.redirect)
+      return <Redirect to={this.state.redirect} push={true} />;
 
     return (
-      <div className={`paste-view flex-container ${this.context.styleStore.theme}`}>
+      <div
+        className={`paste-view flex-container ${this.context.styleStore.theme}`}
+        onPaste={this.onPaste}
+      >
         <HeaderBlock
           saveButton={this.saveButton}
           disabled={{ raw: true, edit: true, save: !this.hasText() }}
@@ -264,7 +299,8 @@ class PasteView extends React.Component {
                 spellCheck="false"
                 onDragEnter={() => this.setState({
                   tabOption: PasteView.tabOptions.upload,
-                  privacy: privacyOptions.public
+                  privacy: (this.state.privacy == privacyOptions.encrypted) ?
+                    privacyOptions.private : this.state.privacy
                 })}
               />
             </div>

@@ -124,7 +124,8 @@ class ReadView extends React.Component {
   };
 
   render() {
-    if (this.state.redirect) return <Redirect to={this.state.redirect} />;
+    if (this.state.redirect)
+      return <Redirect to={this.state.redirect} push={true} />;
 
     const showFile = !!this.state.filename;
     const showSecretForm = this.state.privacy == privacyOptions.encrypted && !showFile;
@@ -201,7 +202,9 @@ class ReadView extends React.Component {
               <Condition condition={showFile}>
                 <div className="view-container text-center file-download">
                   <Condition condition={isImage}>
-                    <img src={`/api/file/${this.state.filename}`} />
+                    <a href={`/api/file/${this.state.filename}`} target="_blank">
+                      <img src={`/api/file/${this.state.filename}`} />
+                    </a>
                   </Condition>
                   <Condition condition={!isImage}>
                     <a href={`/api/file/${this.state.filename}`}>{this.state.filename}</a>
