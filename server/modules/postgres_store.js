@@ -17,25 +17,18 @@ class PostgresStore {
     this.connectionUrl = config.storage.connectionUrl;
   }
 
-  insert(key, data, options = {}) {
-    return new Promise(async (resolve, reject) => {
+  async insert(key, data, options = {}) {
       const queryString = 'INSERT INTO entries (key, text, privacy, name, title, expiration, filename) VALUES ($1, $2, $3, $4, $5, $6, $7)';
       const queryKeys = [key, data.text, data.privacy, data.name, data.title, data.expiration, data.filename];
-      await this.query(queryString, queryKeys);
-      resolve(true);
-      reject(false);
-    });
+      return await this.query(queryString, queryKeys);
   }
 
-  getByKey(key, options = {}) {
-    return new Promise(async (resolve, reject) => {
+ async getByKey(key, options = {}) {
       const now = postgresTimestamp();
       const queryString = 'SELECT * from entries where KEY = $1 and (expiration IS NULL or expiration > $2)';
       const queryKeys = [key, now];
       const { rows } = await this.query(queryString, queryKeys);
-      resolve(rows.length ? rows[0] : false);
-      reject(false);
-    });
+      return rows.length ? rows[0] : false;
   }
 
   getList() {

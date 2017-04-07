@@ -17,6 +17,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
 
+## [0.11.0] - 2017-04-07
+### Added
+- Added ability to paste images from clipboard
+
+### Fixed
+- Fixed a problem with using back button
+
 ## [0.10.0] - 2017-04-06
 ### Added
 - Ability to upload files/images

@@ -14,6 +14,7 @@ import config from '../config/config';
 import { privacyOptions } from '../../shared/config/constants';
 import { postgresTimestamp } from './_helpers';
 import { fileValidation, pasteValidation } from '../../shared/validations/paste';
+import { mime2ext } from '../../shared/modules/mime2ext';
 
 class DocHandler {
 
@@ -123,11 +124,7 @@ class DocHandler {
     // Try writing the file if it exists
     try {
       if (data.file) {
-        const fileExtPattern = /\.([0-9a-z]+)(?=[?#])|(\.)(?:[\w]+)$/gmi;
-        let fileExt = ((data.file.originalname || '').match(fileExtPattern) || [])[0] || '';
-        // Keep file extensions to 5 chars
-        if (fileExt.length > 5) fileExt.length = 5;
-        data.filename = key + fileExt;
+        data.filename = key + mime2ext[data.file.mimetype];
         fs.writeFileSync(`server/uploads/${data.filename}`, data.file.buffer);
       }
     } catch(e) {
