@@ -7,25 +7,29 @@ import https from 'https';
 import path from 'path';
 import limiter from 'connect-ratelimit';
 import multer from 'multer';
-
-let upload  = multer({ storage: multer.memoryStorage() }).any();
-
-import config from './server/config/config';
-import DocHandler from './server/modules/doc_handler';
-
 import webpack from 'webpack';
-import webpackConfig from './server/config/webpack.config';
+
 import compile from './server/config/compile';
+import config from './server/config/config';
+import webpackConfig from './server/config/webpack.config';
+
+import DocHandler from './server/modules/doc_handler';
+import Migrations from './server/migrations';
 
 // Prep webpack based on our environment
 const webpackPrepped = config.production ?
   webpack(require('./server/config/webpack.production.config')) :
   webpack(require('./server/config/webpack.config'));
 
+// multer for file uploads
+let upload  = multer({ storage: multer.memoryStorage() }).any();
+
 // Create the app
 const app = express();
+// Create the document handler
 const docHandler = new DocHandler();
 
+// Set up location to serve static files
 app.use(express.static(__dirname + '/public'));
 
 // Set up the logger
@@ -71,13 +75,8 @@ app.use((req, res, next) => {
 /**
  * Set up some routing
  */
-
 // api calls for the server to handle
-app.post('/api', (req, res) => {
-  upload(req, res, (err) => {
-    return docHandler.handlePost(req, res);
-  });
-});
+app.post('/api', (req, res) => upload(req, res, (err) => docHandler.handlePost(req, res)));
 app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
 app.get('/api/file/:filename', (req, res) => docHandler.handleGetFile(req.params.filename, res));
 app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
@@ -86,9 +85,9 @@ app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
 const passThrough = (url) => (/^\/(sockjs-node|js|img)\//).test(url);
 
 /**
- * Development mode
+ * Development Mode
  */
-if (config.development) {
+const runDevServer = () => {
   app.use('*', (req, res, next) => {
     if (passThrough(req.originalUrl)) {
       next();
@@ -113,13 +112,12 @@ if (config.development) {
     if (err) winston.error(err);
     winston.info('Development: listening on ' + config.host + ':' + config.port);
   });
-
-}
+};
 
 /**
- * Production mode
+ * Production Mode
  */
-if (config.production) {
+const runProdServer = () => {
   // remove old files and compile new ones
   compile(webpackPrepped);
   app.use('*', (req, res, next) => {
@@ -152,4 +150,18 @@ if (config.production) {
       winston.info('Production: listening on ' + config.host + ':' + config.port);
     });
   }
-}
+};
+
+/**
+ * Run the migrations
+ */
+const runMigrations = async () => {
+  const migrations = new Migrations();
+  // WARNING: Uncomment the next line only if you want to run down migrations.
+  //          This could include dropping tables
+  // await migrations.down();
+  await migrations.up();
+};
+
+runMigrations()
+  .then(() => config.production ? runProdServer() : runDevServer());

@@ -31,16 +31,14 @@ class PostgresStore {
       return rows.length ? rows[0] : false;
   }
 
-  getList() {
-    return new Promise(async (resolve, reject) => {
+  async getList() {
       const now = postgresTimestamp();
       const queryString = 'SELECT * from entries where privacy = $1 and (expiration IS NULL or expiration > $2)';
       const queryKeys = [privacyOptions.public, now];
       const { rows } = await this.query(queryString, queryKeys);
-      resolve(rows.length ? rows : false);
-      reject(false);
-    });
+      return rows.length ? rows : false;
   }
+
   /**
    * Wrap some postgres functions in promises
    */

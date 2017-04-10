@@ -25,6 +25,17 @@ Set up your database and then copy `server/config/config.example.js` to `server/
 
 Check out `server/tools` for helpful files and utilities.
 
+#### Working with Migrations
+
+To create your own migration, add a file to the `/server/migrations` folder that exports:
+
+  * `name`: Name of the migration
+  * `up`: Query string to be run in the up direction.
+  * `down`: Query string to be run in the down direction.
+  
+** Important ** The name of the migration matters, as they are loaded in alphabetical order. 
+  
+
 #### Posting data with curl
 
 `curl -d "text=$(cat myfile.txt)" http://location.of.pastebin/api`

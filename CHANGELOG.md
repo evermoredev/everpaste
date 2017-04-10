@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
 
+## [1.0.0] - 2017-04-
+### Added
+- Added a migrations api
+
 ## [0.11.0] - 2017-04-07
 ### Added
 - Added ability to paste images from clipboard
