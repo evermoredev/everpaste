@@ -1,3 +1,8 @@
+/**
+ * Base webpack config. webpack.production.config uses this base
+ * and adds some optimizations.
+ */
+
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
 const webpack = require('webpack'); //to access built-in plugins
 const path = require('path');
@@ -69,6 +74,7 @@ module.exports = {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    // Using an ejs template here in case we want to add
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../../client/index.ejs'),
       hash: true,

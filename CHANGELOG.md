@@ -9,10 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Known Issues
 - Dev server serves production index.html file from disk if it exists
 - Changing scss files except for main.scss not triggering hot reload
-- Public view with nothing Public just hangs
 
 ### TODOs
-- Autorun migrations on server start
 - Better error reporting for problems on startup
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
@@ -20,6 +18,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.0.0] - 2017-04-
 ### Added
 - Added a migrations api
+- Added sequelize orm
+- Added a config for the client as well as server
+- Created models & controllers folder for the server
+
+### Changed
+- Organized server.js to use a Server class
+- Optimized StyleStore
+- Lots of additional code cleanup
+
+### Fixed
+- Public view hanging with no data
+- Mobile navigation fixed
+
 
 ## [0.11.0] - 2017-04-07
 ### Added

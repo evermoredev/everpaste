@@ -4,7 +4,9 @@ node_modules/
 *.swo
 *.DS_Store
 .idea/
+client/config/config.js
 server/config/config.js
+shared/config/config.js
 server/uploads/
 public/js/app.*.js
 public/index.html

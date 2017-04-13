@@ -9,7 +9,7 @@ class NotFoundView extends React.Component {
 
   render() {
     return (
-      <div className={`not-found-view flex-container ${this.context.styleStore.theme}`}>
+      <div className={`not-found-view flex-container ${this.context.styleStore.theme.className}`}>
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />

@@ -1,12 +1,13 @@
-import React  from 'react';
-import { HeaderBlock } from '../blocks';
-import { doRequest } from '../../modules/request';
-import { setCookies, getCookie } from '../../modules/cookies';
 import CryptoJS from 'crypto-js';
-import { privacyOptions } from '../../../shared/config/constants';
-import { Condition } from '../../modules/components';
-import { Redirect } from 'react-router-dom';
+import React  from 'react';
 import Dropzone from 'react-dropzone';
+import { Redirect } from 'react-router-dom';
+
+import { HeaderBlock } from '../blocks';
+import { Condition } from '../../modules/components';
+import { setCookies, getCookie } from '../../modules/cookies';
+import { doRequest } from '../../modules/request';
+import { expirationOptions, privacyOptions } from '../../../shared/config/constants';
 import { fileValidation, pasteValidation } from '../../../shared/validations/paste';
 
 class PasteView extends React.Component {
@@ -34,7 +35,7 @@ class PasteView extends React.Component {
       name: getCookie('name') || '',
       text: this.rawTxtFromEdit || '',
       file: null,
-      expiration: getCookie('expiration') || '1 days',
+      expiration: this.getExpirationOption(getCookie('expiration')),
       privacy: this.getPrivacyOption(getCookie('privacy')),
       errors: '',
       redirect: null,
@@ -110,10 +111,18 @@ class PasteView extends React.Component {
 
   /**
    * Returns the privacy option if it exists, otherwise public
-   * @param option
+   * @param {string} option
    */
   getPrivacyOption = (option) =>
-    (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
+    (Object.keys(privacyOptions).includes(option)) ?
+      option : privacyOptions.public;
+
+  /**
+   * Returns the expiration option if it exists, otherwise use the first option
+   * @param {string} option
+   */
+  getExpirationOption = (option) =>
+    expirationOptions.includes(option) ? option : expirationOptions[0];
 
   /**
    * Performs the save action for the paste
@@ -144,21 +153,22 @@ class PasteView extends React.Component {
       saveData.text = CryptoJS.AES.encrypt(saveData.text, encryptKey).toString();
     }
 
-    // TODO: Set multiple cookies at once
-    setCookies([
-      { name: 'name', value: saveData.name },
-      { name: 'expiration', value: saveData.expiration },
-      { name: 'privacy', value: saveData.privacy }
-    ]);
-
     // Make the request
     doRequest({
       method: 'POST',
       url: '/api',
       params: saveData
     }).then(data => {
+
+      // Set cookies after server response so we don't save bad data to cookies
+      setCookies([
+        { name: 'name', value: saveData.name },
+        { name: 'expiration', value: saveData.expiration },
+        { name: 'privacy', value: saveData.privacy }
+      ]);
+
       // If there is a secretKey let's redirect them to a page that shows
-      // the docKey and the secretKey, otherwise send them directly to the new paste
+      // the docKey & secretKey, otherwise send them directly to the new paste
       let redirect = (secretKey) ? {
           pathname: `/saved`,
           state: { docKey: data.key, secretKey }
@@ -199,7 +209,7 @@ class PasteView extends React.Component {
 
     return (
       <div
-        className={`paste-view flex-container ${this.context.styleStore.theme}`}
+        className={`paste-view flex-container ${this.context.styleStore.theme.className}`}
         onPaste={this.onPaste}
       >
         <HeaderBlock
@@ -239,11 +249,9 @@ class PasteView extends React.Component {
                 value={this.state.expiration}
                 onChange={this.handleChange}
               >
-                <option value="forever">Forever</option>
-                <option value="1 weeks">1 Week</option>
-                <option value="1 days">1 Day</option>
-                <option value="6 hours">6 Hours</option>
-                <option value="30 minutes">30 Minutes</option>
+                {expirationOptions.map((o, idx) => (
+                  <option key={idx} value={o}>{o}</option>
+                ))}
               </select>
             </div>
             <div className="option">

@@ -7,19 +7,22 @@ class SettingsView extends React.Component {
     super(props);
   }
 
-  handleThemeChange = (event, className) => {
-    this.context.styleStore.setTheme(className);
+  handleThemeChange = (event, themeName) => {
+    this.context.styleStore.setTheme(themeName);
     this.forceUpdate();
   };
 
-  renderThemesList = () => this.context.styleStore.themes.map((t, idx) =>
-    <div
-      key={idx}
-      className={`${t.className} theme-selection`}
-      onClick={(event) => this.handleThemeChange(event, t.className)}>
-        {t.name}
-    </div>
-  );
+  renderThemesList = () => {
+    const themes = this.context.styleStore.themes;
+    return Object.keys(themes).map((k, idx) =>
+      <div
+        key={idx}
+        className={`${themes[k]} theme-selection`}
+        onClick={(event) => this.handleThemeChange(event, k)}>
+        {k}
+      </div>
+    );
+  };
 
   renderSampleCode = () => {
     return (
@@ -138,13 +141,13 @@ class SettingsView extends React.Component {
 
   render() {
     return(
-      <div className={`settings-view flex-container ${this.context.styleStore.theme}`}>
+      <div className={`settings-view flex-container ${this.context.styleStore.theme.className}`}>
         <HeaderBlock disabled={{ raw: true, edit: true, save: true }} />
         <div className="view-container">
           <h2 className="settings-header">Select a Code Theme Below</h2>
           <div className="sample-code">{this.renderSampleCode()}</div>
           <div className="settings-sub-header">
-            Current Theme: {this.context.styleStore.themeDisplayName}
+            Current Theme: {this.context.styleStore.theme.name}
           </div>
           <div className="theme-container">{this.renderThemesList()}</div>
         </div>

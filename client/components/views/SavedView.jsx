@@ -35,7 +35,7 @@ class SavedView extends React.Component {
     }
 
     return (
-      <div className={`saved-view flex-container ${this.context.styleStore.theme}`}>
+      <div className={`saved-view flex-container ${this.context.styleStore.theme.className}`}>
         <HeaderBlock
           disabled={{
             raw: true,

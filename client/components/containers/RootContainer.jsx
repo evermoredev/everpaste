@@ -1,12 +1,3 @@
-/**
- * There could be some ambiguous routes if we're not careful. For example,
- * /settings would match /:key. This is a feature, allowing you to match
- * multiple routes if wanted. To disrupt this, we can wrap the "catch-all"
- * /:key route and look for more matches inside. If we don't match any of
- * those, it will fall to the Miss component, where we can then render the
- * fall through route for /:key. See below.
- */
-
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -28,9 +19,13 @@ class RootContainer extends React.Component {
     super(props);
   }
 
+  /**
+   * Sets a react context for props that need to be accessed in several
+   * places, instead of threading them through each component.
+   */
   getChildContext() {
     return {
-      styleStore: StyleStore,
+      styleStore: new StyleStore(),
       currentPaste: {}
     }
   }

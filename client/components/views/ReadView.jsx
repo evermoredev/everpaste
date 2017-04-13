@@ -134,7 +134,7 @@ class ReadView extends React.Component {
 
     return (
       <div
-        className={`read-view flex-container ${this.context.styleStore.theme}`}>
+        className={`read-view flex-container ${this.context.styleStore.theme.className}`}>
         <HeaderBlock
           rawButton={this.rawButton}
           currentPaste={this.state}
@@ -202,12 +202,12 @@ class ReadView extends React.Component {
               <Condition condition={showFile}>
                 <div className="view-container text-center file-download">
                   <Condition condition={isImage}>
-                    <a href={`/api/file/${this.state.filename}`} target="_blank">
-                      <img src={`/api/file/${this.state.filename}`} />
+                    <a href={`/api/file/${this.state.docKey}`} target="_blank">
+                      <img src={`/api/file/${this.state.docKey}`} />
                     </a>
                   </Condition>
                   <Condition condition={!isImage}>
-                    <a href={`/api/file/${this.state.filename}`}>{this.state.filename}</a>
+                    <a href={`/api/file/${this.state.docKey}`}>{this.state.filename}</a>
                   </Condition>
                 </div>
               </Condition>

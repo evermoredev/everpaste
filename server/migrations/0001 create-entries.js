@@ -14,7 +14,8 @@ export const up = `
    title varchar(255),
    filename varchar(255),
    expiration timestamp,
-   created timestamp default clock_timestamp(),
+   created_at timestamp,
+   updated_at timestamp,
    unique(key));
 `;
 

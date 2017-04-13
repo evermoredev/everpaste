@@ -1,14 +1,21 @@
 import fs from 'fs';
 import winston from 'winston';
+import postgres from 'pg';
+import serverConfig from '../config/config';
 
-import PostgresStore from '../modules/postgres_store';
-
+/**
+ * Class for handling migration files from the file system.
+ */
 class Migrations {
 
+  /**
+   * Create a migration instance.
+   */
   constructor() {
-    this.store = new PostgresStore();
+    // Holds the imported migrations objects
     this.migrations = [];
 
+    // List all the files in this directory
     fs.readdir(__dirname, (err, items) => {
       items.forEach(item => {
         // Don't load this file, index.js
@@ -24,14 +31,32 @@ class Migrations {
     });
   }
 
+  connect() {
+    return new Promise((resolve, reject) => {
+      postgres.connect(serverConfig.storage.connectionUrl, (err, client, done) => {
+        (err) ? reject(err) : resolve({ client, done });
+      })
+    });
+  }
+
+  query(queryString, queryKeys) {
+    return new Promise(async (resolve, reject) => {
+      const { client, done } = await this.connect();
+      client.query(queryString, queryKeys, (err, res) => {
+        (err) ? reject(err) : resolve(res);
+        done();
+      });
+    });
+  }
 
   /**
    * Gets the migrations table. Creates the table if it doesn't exist.
+   * @returns {object} The migration row containing the current property.
    */
   async getMigrationsTable() {
 
     try {
-      await this.store.query(`
+      await this.query(`
         CREATE TABLE IF NOT EXISTS migrations
         (id serial primary key,
           current integer default 0,
@@ -42,29 +67,34 @@ class Migrations {
       // http://www.postgresql-archive.org/Errors-on-CREATE-TABLE-IF-NOT-EXISTS-td5659080.html
     }
 
-    let { rows } = await this.store.query('SELECT * FROM migrations');
+    // Get the migration information from the database
+    let { rows } = await this.query('SELECT * FROM migrations');
 
+    // If it doesn't exist, create a row
     if (!rows.length) {
       winston.info('No migration data found. Setting up a migration row.');
-      await this.store.query(`INSERT INTO migrations (current) VALUES (0);`);
-      let result = await this.store.query('SELECT * FROM migrations');
+      await this.query(`INSERT INTO migrations (current) VALUES (0);`);
+      let result = await this.query('SELECT * FROM migrations');
       rows = result.rows;
     }
 
+    // Return only the first row (There should only be one.)
     return rows[0];
   }
 
   /**
    * Sets the current migration index
-   * @param value
+   * @param {number} value
    */
   async setCurrent(value) {
-    await this.store.query(`UPDATE migrations SET current = ${value}`);
+    await this.query(`UPDATE migrations SET current = ${value}`);
   }
 
   /**
-   * Run the up migrations to {upTo}. Default to all the migrations in this.migrations.
-   * @param upTo
+   * Run the up migrations to {upTo}. Default to all the migrations
+   * in this.migrations.
+   * @param  {number} upTo
+   * @returns {boolean} true if migrations were run
    */
   async up(upTo = this.migrations.length) {
     const migrationTable = await this.getMigrationsTable();
@@ -72,36 +102,40 @@ class Migrations {
     // Exit if current
     if (migrationTable.current >= upTo) {
       winston.info('Migrations are current.');
-      return Promise.resolve(false);
+      return false;
     }
 
+    // Run the up migrations
     for (let i = migrationTable.current+1; i <= upTo; i++) {
       winston.info(`Running Up Migrations for: ${this.migrations[i-1].name}`);
-      await this.store.query(this.migrations[i-1].up);
+      await this.query(this.migrations[i-1].up);
     }
 
+    // Set the current migration number
     await this.setCurrent(upTo);
-    return Promise.resolve(true);
+    return true;
   }
 
   /**
    * Run the down migrations down to {downTo}. Default to 0
-   * @param downTo
+   * @param  {number} downTo
+   * @returns {boolean} true if migrations were run
    */
   async down(downTo = 0) {
     const migrationTable = await this.getMigrationsTable();
 
     // Exit if current
-    if (migrationTable.current <= downTo) Promise.resolve(false);
+    if (migrationTable.current <= downTo) return false;
 
-    // Don't reverse the original array
+    // Run the down migrations
     for (let i = migrationTable.current; i > 0; i--) {
       winston.info(`Running Down Migrations for: ${this.migrations[i-1].name}`);
-      await this.store.query(this.migrations[i-1].down);
+      await this.query(this.migrations[i-1].down);
     }
 
+    // Set the current migration number
     await this.setCurrent(downTo);
-    return Promise.resolve(true);
+    return true;
   }
 
 }

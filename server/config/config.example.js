@@ -35,7 +35,7 @@ const config = {
 
   /**
    * Document information and static assets
-   * @title Will appear in the header and as window title
+   * @title This is the document.title added to the index.ejs template
    * @maxLength int Maximum characters for a Paste, currently set to 50mb
    * @staticMaxAge int Caching age for static documents
    *
