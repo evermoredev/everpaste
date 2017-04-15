@@ -16,10 +16,10 @@ import { mime2ext } from '../../shared/modules/mime2ext';
 class ApiController {
 
   // Returns the proper file path if the file exists
-  static getFilePath = filename => {
+  static getFilePath(filename) {
     const filePath = path.join(__dirname, `../uploads/${filename}`);
     return (fs.existsSync(filePath)) ? filePath : null;
-  };
+  }
 
   constructor(db) { 
     this.db = db;
