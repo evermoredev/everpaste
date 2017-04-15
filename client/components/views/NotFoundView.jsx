@@ -1,6 +1,9 @@
 import React from 'react';
 import { HeaderBlock } from '../blocks';
 
+/**
+ * The 404 view for the application
+ */
 class NotFoundView extends React.Component {
 
   constructor(props) {
@@ -9,7 +12,9 @@ class NotFoundView extends React.Component {
 
   render() {
     return (
-      <div className={`not-found-view flex-container ${this.context.styleStore.theme.className}`}>
+      <div className={
+        `not-found-view flex-container ${this.context.styleStore.theme.className}`
+      }>
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />

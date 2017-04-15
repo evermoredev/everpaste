@@ -1,4 +1,8 @@
-export const mime2ext = {
+/**
+ * Maps mime types to extensions. Some mime types have multiple extensions but
+ * for this case, could only pick one.
+ */
+ export const mime2ext = {
   'application/acad': '.dwg',
   'application/arj': '.arj',
   'application/base64': '.mme',

@@ -1,10 +1,13 @@
 import bodyParser from 'body-parser';
+import cluster from 'cluster';
+import compression from 'compression';
 import express from 'express';
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
 import limiter from 'connect-ratelimit';
 import multer from 'multer';
+import os from 'os';
 import path from 'path';
 import webpack from 'webpack';
 import winston from 'winston';
@@ -12,9 +15,9 @@ import winston from 'winston';
 import compile from './server/config/compile';
 import serverConfig from './server/config/config';
 import webpackConfig from './server/config/webpack.config';
-
 import ApiController from './server/controllers/api_controller';
 import Migrations from './server/migrations';
+import Database from './server/models';
 
 /**
  * Class for combining all the elements needed to run a NodeJS server
@@ -26,7 +29,15 @@ class Server {
 
   constructor() {
     this.app = express();
-    this.apiController = new ApiController();
+  }
+
+  /**
+   * Sets up the database and loads the models.
+   * @returns {Promise}
+   */
+  async database() {
+    this.db = new Database();
+    await this.db.loadModels();
   }
 
   /**
@@ -52,6 +63,9 @@ class Server {
    * Applies all the middleware to the instance of app
    */
   middleware() {
+    // gzip http payloads
+    this.app.use(compression());
+
     // Set up location to serve static files
     this.app.use(express.static(__dirname + '/public'));
     this.app.use(bodyParser.json());
@@ -77,6 +91,10 @@ class Server {
       );
       next();
     });
+  }
+
+  controllers() {
+    this.apiController = new ApiController(this.db);
   }
 
   /**
@@ -194,10 +212,16 @@ class Server {
    * Builds and runs the server based on the current configuration
    */
   async run() {
+    // Database operations. Comment these out if there's no database
+    await this.database();
+    await this.migrations();
+    // Logging and middleware
     this.logging();
     this.middleware();
-    await this.migrations();
+    // Set up controllers and routing
+    this.controllers();
     this.routing();
+    // Start the server
     if (serverConfig.production) {
       this.runProdServer();
     } else {
@@ -206,5 +230,26 @@ class Server {
   }
 }
 
-const server = new Server();
-server.run();
+
+/**
+ * If this is the production server, utilize all the cpus
+ */
+if (serverConfig.production) {
+
+  if (cluster.isMaster) {
+    // Start workers and listen for messages containing notifyRequest
+    os.cpus().forEach((cpu) => {
+      winston.info(`Starting node worker on ${cpu.model}`);
+      cluster.fork();
+    });
+  } else {
+    // Run an instance of a server on each cluster
+    const server = new Server();
+    server.run();
+  }
+
+} else {
+  // Dev server
+  const server = new Server();
+  server.run();
+}

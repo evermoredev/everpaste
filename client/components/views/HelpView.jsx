@@ -1,20 +1,31 @@
-import React from 'react';
 import marked from 'marked';
-import { doRequest } from '../../modules/request';
-import { HeaderBlock } from '../blocks';
+import React from 'react';
 
+import { HeaderBlock } from '../blocks';
+import { doRequest } from '../../modules/request';
+
+/**
+ * View for displaying help. Currently pulls in the changelog from the github
+ * repo.
+ */
 class HelpView extends React.Component {
 
   constructor(props) {
     super(props);
 
+    // Initially set text to empty until it's loaded from github
     this.state = {
       text: ''
     }
   }
 
+  /**
+   * Make the xhr request to the github page and setState with the content rec'd
+   */
   componentWillMount() {
-    doRequest({ url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md` })
+    doRequest({
+      url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md`
+    })
     .then(data => {
       this.setState({ text: data })
     })

@@ -17,8 +17,8 @@ export const fileValidation = (file) => {
 /**
  * A validation module for posting pastes.
  * This allows consistency of validation for client and server.
- * @param data
- * @returns object { passed | errors }
+ * @param {object} data
+ * @returns {object}
  */
 export const pasteValidation = (data) => {
   let errors = [];

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { Condition } from '../../modules/components'
 import clientConfig from '../../config/config';
+import { Condition } from '../../modules/components'
 
 /**
  * Header display containing navigation links

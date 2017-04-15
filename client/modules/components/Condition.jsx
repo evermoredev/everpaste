@@ -54,7 +54,9 @@ class Condition extends React.Component {
     // Option 2: If the condition exists
     if ('condition' in this.props) {
       if (!React.isValidElement(this.props.children)) {
-        throw Error('Children of <Condition> component must have a wrapping parent.');
+        throw Error(
+          'Children of <Condition> component must have a wrapping parent.'
+        );
       }
       return (condition) ? this.props.children : null;
     }

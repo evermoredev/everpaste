@@ -7,9 +7,19 @@ import { HeaderBlock } from '../blocks';
 import { Condition } from '../../modules/components';
 import { setCookies, getCookie } from '../../modules/cookies';
 import { doRequest } from '../../modules/request';
-import { expirationOptions, privacyOptions } from '../../../shared/config/constants';
+import {
+  expirationOptions,
+  getExpirationOption,
+  privacyOptions,
+  getPrivacyOption
+} from '../../../shared/config/constants';
 import { fileValidation, pasteValidation } from '../../../shared/validations/paste';
 
+/**
+ * View for submitting a paste
+ * This has become rather large after adding file uploading. Should probably
+ * be split into sub-components soon.
+ */
 class PasteView extends React.Component {
 
   static tabOptions = {
@@ -35,8 +45,8 @@ class PasteView extends React.Component {
       name: getCookie('name') || '',
       text: this.rawTxtFromEdit || '',
       file: null,
-      expiration: this.getExpirationOption(getCookie('expiration')),
-      privacy: this.getPrivacyOption(getCookie('privacy')),
+      expiration: getExpirationOption(getCookie('expiration')),
+      privacy: getPrivacyOption(getCookie('privacy')),
       errors: '',
       redirect: null,
       tabOption: PasteView.tabOptions.text
@@ -55,6 +65,8 @@ class PasteView extends React.Component {
     }
   }
 
+  /****************************** Event Handlers ******************************/
+
   /**
    * Determines if the paste has enough text to be saved
    */
@@ -68,7 +80,7 @@ class PasteView extends React.Component {
 
   /**
    * Handle dropping of a file to the Dropzone
-   * @param file
+   * @param {object} file
    */
   onDrop = (file) => {
     // If array, grab the first file only
@@ -90,7 +102,7 @@ class PasteView extends React.Component {
 
   /**
    * Handle pasting of an image
-   * @param event
+   * @param {object} event
    */
   onPaste = (event) => {
     try {
@@ -108,21 +120,6 @@ class PasteView extends React.Component {
       // Ignore errors from older browsers
     }
   };
-
-  /**
-   * Returns the privacy option if it exists, otherwise public
-   * @param {string} option
-   */
-  getPrivacyOption = (option) =>
-    (Object.keys(privacyOptions).includes(option)) ?
-      option : privacyOptions.public;
-
-  /**
-   * Returns the expiration option if it exists, otherwise use the first option
-   * @param {string} option
-   */
-  getExpirationOption = (option) =>
-    expirationOptions.includes(option) ? option : expirationOptions[0];
 
   /**
    * Performs the save action for the paste

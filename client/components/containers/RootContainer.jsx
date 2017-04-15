@@ -13,6 +13,10 @@ import {
   NotFoundView
 } from '../../components/views';
 
+/**
+ * Root container for the entire application. This will hold our client-side
+ * routing.
+ */
 class RootContainer extends React.Component {
 
   constructor(props) {
@@ -50,6 +54,10 @@ class RootContainer extends React.Component {
 
 }
 
+/**
+ * Needed by react to identify context
+ * @type {{styleStore: *, currentPaste: *}}
+ */
 RootContainer.childContextTypes = {
   styleStore: React.PropTypes.object,
   currentPaste: React.PropTypes.object

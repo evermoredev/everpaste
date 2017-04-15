@@ -1,8 +1,8 @@
+import serverConfig from '../config/config';
+
 /**
  * Creates random keys to identify documents
  */
-import serverConfig from '../config/config';
-
 class RandomKeyGenerator {
 
   /**
@@ -25,6 +25,7 @@ class RandomKeyGenerator {
     }
     return text;
   }
+
 }
 
 export default RandomKeyGenerator;

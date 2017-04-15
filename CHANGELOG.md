@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Created models & controllers folder for the server
 
 ### Changed
+- Significantly improve performance by compressing http payloads and utilizing available cpus with node clusters
 - Organized server.js to use a Server class
 - Optimized StyleStore
 - Lots of additional code cleanup
@@ -30,7 +31,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Public view hanging with no data
 - Mobile navigation fixed
-
 
 ## [0.11.0] - 2017-04-07
 ### Added

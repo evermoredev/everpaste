@@ -1,6 +1,9 @@
 import React from 'react';
 import { HeaderBlock } from '../blocks';
 
+/**
+ * View for changing the settings
+ */
 class SettingsView extends React.Component {
 
   constructor(props) {
@@ -9,6 +12,8 @@ class SettingsView extends React.Component {
 
   handleThemeChange = (event, themeName) => {
     this.context.styleStore.setTheme(themeName);
+    // Changing the context doesn't cause a re-render, so force one to see the
+    // new theme take effect
     this.forceUpdate();
   };
 
@@ -24,6 +29,9 @@ class SettingsView extends React.Component {
     );
   };
 
+  /**
+   * Renders some sample code to show theme changes
+   */
   renderSampleCode = () => {
     return (
       <div className="settings-code-document">
@@ -45,7 +53,9 @@ class SettingsView extends React.Component {
                 <tr className="code-row">
                   <td className="line-number"></td>
                   <td className="code-col">&nbsp;&nbsp;
-                    <span className="hljs-comment">/** Print a hello message */</span>
+                    <span className="hljs-comment">
+                    /** Print a hello message */
+                    </span>
                   </td>
                 </tr>
                 <tr className="code-row">
@@ -141,7 +151,9 @@ class SettingsView extends React.Component {
 
   render() {
     return(
-      <div className={`settings-view flex-container ${this.context.styleStore.theme.className}`}>
+      <div className={
+        `settings-view flex-container ${this.context.styleStore.theme.className}`
+      }>
         <HeaderBlock disabled={{ raw: true, edit: true, save: true }} />
         <div className="view-container">
           <h2 className="settings-header">Select a Code Theme Below</h2>

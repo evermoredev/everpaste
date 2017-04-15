@@ -1,6 +1,8 @@
 import fs from 'fs';
-import winston from 'winston';
+import path from 'path';
 import postgres from 'pg';
+import winston from 'winston';
+
 import serverConfig from '../config/config';
 
 /**
@@ -16,18 +18,16 @@ class Migrations {
     this.migrations = [];
 
     // List all the files in this directory
-    fs.readdir(__dirname, (err, items) => {
-      items.forEach(item => {
-        // Don't load this file, index.js
-        if (item == 'index.js') return;
+    fs.readdirSync(__dirname).forEach((file) => {
+      // Don't load this file, index.js
+      if (file == 'index.js') return;
 
-        winston.info(`Reading migration from ./${item}`);
-        let m = require(`./${item}`);
-        if (!m.name || !m.up || !m.down) {
-          throw Error('Migration found without one of: name, up, or down string.');
-        }
-        this.migrations.push(m);
-      });
+      winston.info(`Loading migration file: ${file}`);
+      let m = require(path.join(__dirname, file));
+      if (!m.name || !m.up || !m.down) {
+        throw Error('Migration found without one of: name, up, or down string.');
+      }
+      this.migrations.push(m);
     });
   }
 

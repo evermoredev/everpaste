@@ -1,10 +1,14 @@
+import moment from 'moment';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import moment from 'moment';
-import { doRequest } from '../../modules/request';
+
 import { HeaderBlock } from '../blocks';
+import { doRequest } from '../../modules/request';
 import { Condition } from '../../modules/components';
 
+/**
+ * View for a list of all pastes that have "public" privacy settings
+ */
 class PublicListView extends React.Component {
 
   constructor(props) {
@@ -40,7 +44,8 @@ class PublicListView extends React.Component {
           <Condition value={d.title} className="title" default="Untitled" />
           <Condition value={d.name} className="from-name" />
           <div className="created">
-            ({moment(d.createdAt).from(moment.utc().format("YYYY-MM-DD H:mm:ss.SSS"))})
+            ({moment(d.createdAt)
+                .from(moment.utc().format("YYYY-MM-DD H:mm:ss.SSS"))})
           </div>
         </div>
       </Link>
@@ -49,7 +54,9 @@ class PublicListView extends React.Component {
 
   render() {
     return (
-      <div className={`public-list-view flex-container ${this.context.styleStore.theme.className}`}>
+      <div className={
+        `public-list-view flex-container ${this.context.styleStore.theme.className}`
+      }>
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
@@ -67,6 +74,7 @@ class PublicListView extends React.Component {
       </div>
     );
   }
+
 }
 
 PublicListView.contextTypes = {

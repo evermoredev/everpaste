@@ -1,5 +1,8 @@
 import { getCookie, setCookies } from '../modules/cookies';
 
+/**
+ * Store to manage all of the themes
+ */
 class StyleStore {
 
   constructor() {
@@ -87,6 +90,11 @@ class StyleStore {
     this.setTheme(getCookie('theme'));
   }
 
+  /**
+   * Sets the selected theme on the instance of StyleStore and updates the
+   * theme cookie
+   * @param {string} themeName
+   */
   setTheme = (themeName) => {
     if (this.themes[themeName]) {
       this.theme = {
