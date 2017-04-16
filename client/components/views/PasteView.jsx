@@ -11,9 +11,10 @@ import {
   expirationOptions,
   getExpirationOption,
   privacyOptions,
-  getPrivacyOption
-} from '../../../shared/config/constants';
-import { fileValidation, pasteValidation } from '../../../shared/validations/paste';
+  getPrivacyOption } from '../../../shared/config/constants';
+import {
+  fileValidation,
+  pasteValidation } from '../../../shared/validations/paste';
 
 /**
  * View for submitting a paste
@@ -251,10 +252,9 @@ class PasteView extends React.Component {
                 ))}
               </select>
             </div>
-            <div className="option">
+            <div className="radio-options">
               <div className="radio-option">
                 <input
-                  className="radio"
                   type="radio"
                   name="public"
                   value={privacyOptions.public}
@@ -265,7 +265,6 @@ class PasteView extends React.Component {
               </div>
               <div className="radio-option">
                 <input
-                  className="radio"
                   type="radio"
                   name="private"
                   value={privacyOptions.private}
@@ -277,7 +276,6 @@ class PasteView extends React.Component {
               <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
                 <div className="radio-option">
                   <input
-                    className="radio"
                     type="radio"
                     name="encrypt"
                     value={privacyOptions.encrypted}
@@ -287,7 +285,6 @@ class PasteView extends React.Component {
                   Private w/AES
                 </div>
               </Condition>
-
             </div>
           </div>
 

@@ -14,6 +14,7 @@ class Database {
 
   constructor() {
     this.sequelize = new Sequelize(serverConfig.storage.connectionUrl);
+    this.sequelize.query("SET TIME ZONE 'UTC'");
     this.models = {};
   }
 

@@ -11,11 +11,10 @@ class HeaderBlock extends React.Component {
 
   constructor(props) {
     super(props);
-
     // Set mobile nav menu to closed initially
     this.state = {
       isMobileNavOpen: false
-    }
+    };
   }
 
   /**
@@ -30,7 +29,7 @@ class HeaderBlock extends React.Component {
    * @param event
    */
   toggleMobileNav = (event) => {
-    event.preventDefault();
+    console.log('in toggle');
     this.setState({ isMobileNavOpen: !this.state.isMobileNavOpen });
   };
 
@@ -107,7 +106,9 @@ class HeaderBlock extends React.Component {
 
           { /** Mobile Navigation **/ }
           <Condition condition={this.state.isMobileNavOpen}>
-            <ul className='mobile-navigation active'>
+            <ul
+              className='mobile-navigation active'
+            >
               {this.renderLink({to: '/', iconClass: 'fa fa-plus', name: 'New'})}
               {this.renderActionLink({ action: this.props.saveButton, name: 'Save', iconClass: 'fa fa-floppy-o' })}
               {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', name: 'Edit', state: { editLink: true, currentPaste: this.props.currentPaste }})}
@@ -115,6 +116,7 @@ class HeaderBlock extends React.Component {
               {this.renderLink({to: '/public', iconClass: 'fa fa-globe', name: 'Public'})}
               {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', name: 'Settings'})}
               {this.renderLink({to: '/help', iconClass: 'fa fa-question', name: 'Help'})}
+              <li className="mobile-overlay" onClick={this.toggleMobileNav} />
             </ul>
           </Condition>
 
