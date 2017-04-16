@@ -106,16 +106,17 @@ class HeaderBlock extends React.Component {
           </div>
 
           { /** Mobile Navigation **/ }
-          <ul className={`mobile-navigation ${(this.state.isMobileNavOpen) ? ' active' : ''}`}>
-            {this.renderLink({to: '/', iconClass: 'fa fa-plus', name: 'New'})}
-            {this.renderActionLink({ action: this.props.saveButton, name: 'Save', iconClass: 'fa fa-floppy-o' })}
-            {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', name: 'Edit', state: { editLink: true, currentPaste: this.props.currentPaste }})}
-            {this.renderActionLink({ action: this.props.rawButton, name: 'Raw', iconClass: 'fa fa-files-o' })}
-            {this.renderLink({to: '/public', iconClass: 'fa fa-globe', name: 'Public'})}
-            {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', name: 'Settings'})}
-            {this.renderLink({to: '/help', iconClass: 'fa fa-question', name: 'Help'})}
-            <li className="mobile-overlay" />
-          </ul>
+          <Condition condition={this.state.isMobileNavOpen}>
+            <ul className='mobile-navigation active'>
+              {this.renderLink({to: '/', iconClass: 'fa fa-plus', name: 'New'})}
+              {this.renderActionLink({ action: this.props.saveButton, name: 'Save', iconClass: 'fa fa-floppy-o' })}
+              {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', name: 'Edit', state: { editLink: true, currentPaste: this.props.currentPaste }})}
+              {this.renderActionLink({ action: this.props.rawButton, name: 'Raw', iconClass: 'fa fa-files-o' })}
+              {this.renderLink({to: '/public', iconClass: 'fa fa-globe', name: 'Public'})}
+              {this.renderLink({to: '/settings', iconClass: 'fa fa-gear', name: 'Settings'})}
+              {this.renderLink({to: '/help', iconClass: 'fa fa-question', name: 'Help'})}
+            </ul>
+          </Condition>
 
           { /** Desktop Navigation **/ }
           <ul className='desktop-navicon'>
