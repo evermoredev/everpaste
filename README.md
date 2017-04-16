@@ -4,17 +4,23 @@ EverPaste is a SPA PasteBin and Server built on top of Node.js.
 
 ## Installation
 
-Node >= v6
-Postgres
+Node >= v7.9
+Postgres >= 9.5
 
 #### Ubuntu 16.04 (xenial)
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
-sudo bash nodesource_setup.sh
-sudo apt-get install nodejs
-sudo apt-get install build-essential
-sudo apt-get install postgresql postgresql-contrib
+# Add the keys and source for Node 7.x
+sudo curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+sudo sh -c "echo deb https://deb.nodesource.com/node_7.x zesty main \
+> /etc/apt/sources.list.d/nodesource.list"
+# Update and install node
+sudo apt update
+sudo apt install nodejs
+# Install build tools and postgresql
+sudo apt-get install build-essential postgresql postgresql-contrib
+
+
 ```
 
 Set up your database and then copy `server/config/config.example.js` to `server/config/config.js`, `client/config/config.example.js` to `client/config/config.js` and alter the fields as necessary.
