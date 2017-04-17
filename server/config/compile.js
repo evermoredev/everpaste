@@ -8,7 +8,7 @@ const compile = (webpackPrepped) => {
 
   child_process.exec(command, (error) => {
     if (error) {
-      winston.info('No build files to remove:', error);
+      winston.info('No build files to remove.');
     } else {
       winston.info('Successfully deleted old build files.');
     }

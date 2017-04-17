@@ -7,7 +7,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
 const webpack = require('webpack'); //to access built-in plugins
 const path = require('path');
 
-const config = require('./config.js');
+const serverConfig = require('./config.js');
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -78,9 +78,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../../client/index.ejs'),
       hash: true,
-      title: config.default.title,
-      favicon: config.default.favicon,
-      logo: config.default.logo,
+      title: serverConfig.title,
       minify: {
         collapseWhitespace: false
       }
