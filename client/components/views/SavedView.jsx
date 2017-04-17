@@ -1,8 +1,14 @@
 import React from 'react';
-import { HeaderBlock } from '../blocks';
 import { Redirect, Link } from 'react-router-dom';
+
+import { HeaderBlock } from '../blocks';
 import { Condition } from '../../modules/components';
 
+/**
+ * This is an intermediate view between posting a paste from PasteView and
+ * being redirected to ReadView. Currently this is only used for displaying
+ * a generated secret key after posting with the AES privacy option.
+ */
 class SavedView extends React.Component {
 
   constructor(props) {
@@ -13,12 +19,16 @@ class SavedView extends React.Component {
     }
   }
 
-  copyToClipboard = (e) => {
+  /**
+   * Used to copy the secret key to the clipboard from clicking on an icon
+   * @param {object} event
+   */
+  copyToClipboard = (event) => {
     this.textArea.select();
     try {
       document.execCommand('copy');
       this.setState({ copied: 'Copied!'});
-      e.target.focus();
+      event.target.focus();
     } catch (err) {
       // Document not copied
     }
@@ -27,15 +37,19 @@ class SavedView extends React.Component {
   render() {
     let docKey, secretKey;
 
+    // Make sure we got here from the router, with proper information otherwise
+    // send them home.
     try {
       docKey = this.props.location.state.docKey;
       secretKey = this.props.location.state.secretKey;
     } catch(e) {
-      return <Redirect to="/" />
+      return <Redirect to="/" push={false} />
     }
 
     return (
-      <div className={`saved-view flex-container ${this.context.styleStore.theme}`}>
+      <div className={
+        `saved-view flex-container ${this.context.styleStore.theme.className}`
+      }>
         <HeaderBlock
           disabled={{
             raw: true,

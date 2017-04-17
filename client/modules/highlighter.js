@@ -33,7 +33,6 @@ const highlight = (code, options = {}) => {
   });
   buf += '</table>';
 
-
   return buf;
 };
 

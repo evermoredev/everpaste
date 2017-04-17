@@ -1,107 +1,115 @@
-import cookie from 'cookie';
+import { getCookie, setCookies } from '../modules/cookies';
 
+/**
+ * Store to manage all of the themes
+ */
 class StyleStore {
 
   constructor() {
-
+    
     // LIst of all available themes
-    // TODO: Let's make this a hashmap with className property as the hash key
-    this.themes = [
-      { name: 'Agate', className: 'agate-theme' },
-      { name: 'Android Studio', className: 'androidstudio-theme' },
-      { name: 'Arduino Light', className: 'arduino-light-theme' },
-      { name: 'Arta', className: 'arta-theme' },
-      { name: 'Ascetic', className: 'ascetic-theme' },
-      { name: 'Atelier Cave Dark', className: 'atelier-cave-dark-theme' },
-      { name: 'Atelier Cave Light', className: 'atelier-cave-light-theme' },
-      { name: 'Atelier Dune Dark', className: 'atelier-dune-dark-theme' },
-      { name: 'Atelier Dune Light', className: 'atelier-dune-light-theme' },
-      { name: 'Atelier Estuary Dark', className: 'atelier-estuary-dark-theme' },
-      { name: 'Atelier Estuary Light', className: 'atelier-estuary-light-theme' },
-      { name: 'Atelier Forest Dark', className: 'atelier-forest-dark-theme' },
-      { name: 'Atelier Forest Light', className: 'atelier-forest-light-theme' },
-      { name: 'Atelier Heath Dark', className: 'atelier-heath-dark-theme' },
-      { name: 'Atelier Heath Light', className: 'atelier-heath-light-theme' },
-      { name: 'Atelier Lakeside Dark', className: 'atelier-lakeside-dark-theme' },
-      { name: 'Atelier Lakeside Light', className: 'atelier-lakeside-light-theme' },
-      { name: 'Atelier Plateau Dark', className: 'atelier-plateau-dark-theme' },
-      { name: 'Atelier Plateau Light', className: 'atelier-plateau-light-theme' },
-      { name: 'Atelier Savanna Dark', className: 'atelier-savanna-dark-theme' },
-      { name: 'Atelier Savanna Light', className: 'atelier-savanna-light-theme' },
-      { name: 'Atelier Seaside Dark', className: 'atelier-seaside-dark-theme' },
-      { name: 'Atelier Seaside Light', className: 'atelier-seaside-light-theme' },
-      { name: 'Atelier Sulphurpool Dark', className: 'atelier-sulphurpool-dark-theme' },
-      { name: 'Atelier Sulphurpool Light', className: 'atelier-sulphurpool-light-theme' },
-      { name: 'Atom One Dark', className: 'atom-one-dark-theme' },
-      { name: 'Atom One Light', className: 'atom-one-light-theme' },
-      { name: 'Brown Paper', className: 'brown-paper-theme' },
-      { name: 'Codepen Embed', className: 'codepen-embed-theme' },
-      { name: 'Color Brewer', className: 'color-brewer-theme' },
-      { name: 'Darcula', className: 'darcula-theme' },
-      { name: 'Dark', className: 'dark-theme' },
-      { name: 'Docco', className: 'docco-theme' },
-      { name: 'Dracula', className: 'dracula-theme' },
-      { name: 'Far', className: 'far-theme' },
-      { name: 'Foundation', className: 'foundation-theme' },
-      { name: 'Github', className: 'github-theme' },
-      { name: 'Github Gist', className: 'github-gist-theme' },
-      { name: 'Google Code', className: 'googlecode-theme' },
-      { name: 'Gray Scale', className: 'grayscale-theme' },
-      { name: 'Gruvbox Dark', className: 'gruvbox-dark-theme' },
-      { name: 'Gruvbox Light', className: 'gruvbox-light-theme' },
-      { name: 'Hopscotch', className: 'hopscotch-theme' },
-      { name: 'Hybrid', className: 'hybrid-theme' },
-      { name: 'Idea', className: 'idea-theme' },
-      { name: 'IR Black', className: 'ir-black-theme' },
-      { name: 'Kimbie Dark', className: 'kimbie-dark-theme' },
-      { name: 'Kimbie Light', className: 'kimbie-light-theme' },
-      { name: 'Magula', className: 'magula-theme' },
-      { name: 'Mono Blue', className: 'mono-blue-theme' },
-      { name: 'Monokai', className: 'monokai-theme' },
-      { name: 'Monokai Sublime', className: 'monokai-sublime-theme' },
-      { name: 'Obsidian', className: 'obsidian-theme' },
-      { name: 'Ocean', className: 'ocean-theme' },
-      { name: 'Paraiso Dark', className: 'paraiso-dark-theme' },
-      { name: 'Paraiso Light', className: 'paraiso-light-theme' },
-      { name: 'Pojoaque', className: 'pojoaque-theme' },
-      { name: 'Pure Basic', className: 'pure-basic-theme' },
-      { name: 'QT Creator Dark', className: 'qtcreator-dark-theme' },
-      { name: 'QT Creator Light', className: 'qtcreator-light-theme' },
-      { name: 'Rails Casts', className: 'railscasts-theme' },
-      { name: 'Rainbow', className: 'rainbow-theme' },
-      { name: 'School Book', className: 'school-book-theme' },
-      { name: 'Solarized Dark', className: 'solarized-dark-theme' },
-      { name: 'Solarized Light', className: 'solarized-light-theme' },
-      { name: 'Sunburst', className: 'sunburst-theme' },
-      { name: 'Tomorrow', className: 'tomorrow-theme' },
-      { name: 'Tomorrow Night', className: 'tomorrow-night-theme' },
-      { name: 'Tomorrow Night Blue', className: 'tomorrow-night-blue-theme' },
-      { name: 'Tomorrow Night Bright', className: 'tomorrow-night-bright-theme' },
-      { name: 'Tomorrow Night Eighties', className: 'tomorrow-night-eighties-theme' },
-      { name: 'VS', className: 'vs-theme' },
-      { name: 'XCode', className: 'xcode-theme' },
-      { name: 'XT256', className: 'xt256-theme' },
-      { name: 'Zenburn', className: 'zenburn-theme' }
-    ];
+    this.themes = {
+      'Agate': 'agate-theme',
+      'Android Studio': 'androidstudio-theme',
+      'Arduino Light': 'arduino-light-theme',
+      'Arta': 'arta-theme',
+      'Ascetic': 'ascetic-theme',
+      'Atelier Cave Dark': 'atelier-cave-dark-theme',
+      'Atelier Cave Light': 'atelier-cave-light-theme',
+      'Atelier Dune Dark': 'atelier-dune-dark-theme',
+      'Atelier Dune Light': 'atelier-dune-light-theme',
+      'Atelier Estuary Dark': 'atelier-estuary-dark-theme',
+      'Atelier Estuary Light': 'atelier-estuary-light-theme',
+      'Atelier Forest Dark': 'atelier-forest-dark-theme',
+      'Atelier Forest Light': 'atelier-forest-light-theme',
+      'Atelier Heath Dark': 'atelier-heath-dark-theme',
+      'Atelier Heath Light': 'atelier-heath-light-theme',
+      'Atelier Lakeside Dark': 'atelier-lakeside-dark-theme',
+      'Atelier Lakeside Light': 'atelier-lakeside-light-theme',
+      'Atelier Plateau Dark': 'atelier-plateau-dark-theme',
+      'Atelier Plateau Light': 'atelier-plateau-light-theme',
+      'Atelier Savanna Dark': 'atelier-savanna-dark-theme',
+      'Atelier Savanna Light': 'atelier-savanna-light-theme',
+      'Atelier Seaside Dark': 'atelier-seaside-dark-theme',
+      'Atelier Seaside Light': 'atelier-seaside-light-theme',
+      'Atelier Sulphurpool Dark': 'atelier-sulphurpool-dark-theme',
+      'Atelier Sulphurpool Light': 'atelier-sulphurpool-light-theme',
+      'Atom One Dark': 'atom-one-dark-theme',
+      'Atom One Light': 'atom-one-light-theme',
+      'Brown Paper': 'brown-paper-theme',
+      'Codepen Embed': 'codepen-embed-theme',
+      'Color Brewer': 'color-brewer-theme',
+      'Darcula': 'darcula-theme',
+      'Dark': 'dark-theme',
+      'Docco': 'docco-theme',
+      'Dracula': 'dracula-theme',
+      'Far': 'far-theme',
+      'Foundation': 'foundation-theme',
+      'Github': 'github-theme',
+      'Github Gist': 'github-gist-theme',
+      'Google Code': 'googlecode-theme',
+      'Gray Scale': 'grayscale-theme',
+      'Gruvbox Dark': 'gruvbox-dark-theme',
+      'Gruvbox Light': 'gruvbox-light-theme',
+      'Hopscotch': 'hopscotch-theme',
+      'Hybrid': 'hybrid-theme',
+      'Idea': 'idea-theme',
+      'IR Black': 'ir-black-theme',
+      'Kimbie Dark': 'kimbie-dark-theme',
+      'Kimbie Light': 'kimbie-light-theme',
+      'Magula': 'magula-theme',
+      'Mono Blue': 'mono-blue-theme',
+      'Monokai': 'monokai-theme',
+      'Monokai Sublime': 'monokai-sublime-theme',
+      'Obsidian': 'obsidian-theme',
+      'Ocean': 'ocean-theme',
+      'Paraiso Dark': 'paraiso-dark-theme',
+      'Paraiso Light': 'paraiso-light-theme',
+      'Pojoaque': 'pojoaque-theme',
+      'Pure Basic': 'pure-basic-theme',
+      'QT Creator Dark': 'qtcreator-dark-theme',
+      'QT Creator Light': 'qtcreator-light-theme',
+      'Rails Casts': 'railscasts-theme',
+      'Rainbow': 'rainbow-theme',
+      'School Book': 'school-book-theme',
+      'Solarized Dark': 'solarized-dark-theme',
+      'Solarized Light': 'solarized-light-theme',
+      'Sunburst': 'sunburst-theme',
+      'Tomorrow': 'tomorrow-theme',
+      'Tomorrow Night': 'tomorrow-night-theme',
+      'Tomorrow Night Blue': 'tomorrow-night-blue-theme',
+      'Tomorrow Night Bright': 'tomorrow-night-bright-theme',
+      'Tomorrow Night Eighties': 'tomorrow-night-eighties-theme',
+      'VS': 'vs-theme',
+      'XCode': 'xcode-theme',
+      'XT256': 'xt256-theme',
+      'Zenburn': 'zenburn-theme'
+    };
 
-    this.cookies = cookie.parse(document.cookie);
-    this.defaultTheme = this.cookies.theme || 'atom-one-dark-theme';
-    this.defaultThemeDisplayName = this.getThemeDisplayName(this.defaultTheme);
-    this.theme = this.defaultTheme;
-    this.themeDisplayName = this.defaultThemeDisplayName;
+    this.theme = {};
+    this.setTheme(getCookie('theme'));
   }
 
+  /**
+   * Sets the selected theme on the instance of StyleStore and updates the
+   * theme cookie
+   * @param {string} themeName
+   */
   setTheme = (themeName) => {
-    document.cookie = cookie.serialize('theme', String(themeName), {
-      maxAge: 315360000
-    });
-    this.theme = themeName;
-    this.themeDisplayName = this.getThemeDisplayName(this.theme);
+    if (this.themes[themeName]) {
+      this.theme = {
+        name: themeName,
+        className: this.themes[themeName]
+      }
+    } else {
+      this.theme = {
+        name: 'Atom One Dark',
+        className: this.themes['Atom One Dark']
+      }
+    }
+    setCookies({ name: 'theme', value: this.theme.name });
   };
-
-  getThemeDisplayName = (theme) =>
-    this.themes.filter(t => t.className == theme)[0].name;
 
 }
 
-export default new StyleStore();
+export default StyleStore;

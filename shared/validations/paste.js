@@ -1,4 +1,4 @@
-import { privacyOptions } from '../config/constants';
+import { expirationOptions, privacyOptions } from '../config/constants';
 
 const maxFileSize = 50000000;
 const maxTextLength = 50000000;
@@ -17,8 +17,8 @@ export const fileValidation = (file) => {
 /**
  * A validation module for posting pastes.
  * This allows consistency of validation for client and server.
- * @param data
- * @return object { passed | errors }
+ * @param {object} data
+ * @returns {object}
  */
 export const pasteValidation = (data) => {
   let errors = [];
@@ -37,6 +37,9 @@ export const pasteValidation = (data) => {
     errors.push('Exceeded maximum text length.');
   }
 
+  if (!expirationOptions.includes(data.expiration)) {
+    errors.push('Please select a valid expiration option.');
+  }
   if (!Object.keys(privacyOptions).includes(data.privacy)) {
     errors.push('Please select a valid privacy option.');
   }

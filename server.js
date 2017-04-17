@@ -1,155 +1,260 @@
-import winston from 'winston';
-import express from 'express';
 import bodyParser from 'body-parser';
+import cluster from 'cluster';
+import compression from 'compression';
+import express from 'express';
 import fs from 'fs';
+import helmet from 'helmet';
 import http from 'http';
 import https from 'https';
-import path from 'path';
 import limiter from 'connect-ratelimit';
 import multer from 'multer';
-
-let upload  = multer({ storage: multer.memoryStorage() }).any();
-
-import config from './server/config/config';
-import DocHandler from './server/modules/doc_handler';
-
+import os from 'os';
+import path from 'path';
 import webpack from 'webpack';
-import webpackConfig from './server/config/webpack.config';
+import winston from 'winston';
+
 import compile from './server/config/compile';
+import serverConfig from './server/config/config';
+import webpackConfig from './server/config/webpack.config';
+import ApiController from './server/controllers/api_controller';
+import Migrations from './server/migrations';
+import Database from './server/models';
 
-// Prep webpack based on our environment
-const webpackPrepped = config.production ?
-  webpack(require('./server/config/webpack.production.config')) :
-  webpack(require('./server/config/webpack.config'));
+/**
+ * Class for combining all the elements needed to run a NodeJS server
+ */
+class Server {
 
-// Create the app
-const app = express();
-const docHandler = new DocHandler();
+  // Allow these root paths to pass through otherwise serve the app (index.html)
+  static passThrough = (url) => (/^\/(sockjs-node|js|img)\//).test(url);
 
-app.use(express.static(__dirname + '/public'));
-
-// Set up the logger
-if (config.logging) {
-  try {
-    winston.remove(winston.transports.Console);
-  } catch(er) { }
-  let detail, type;
-  for (let i = 0; i < config.logging.length; i++) {
-    detail = config.logging[i];
-    type = detail.type;
-    delete detail.type;
-    winston.add(winston.transports[type], detail);
+  constructor() {
+    this.app = express();
   }
-}
 
-app.use(bodyParser.json());
+  /**
+   * Sets up the database and loads the models.
+   * @returns {Promise}
+   */
+  async database() {
+    this.db = new Database();
+    await this.db.loadModels();
+  }
 
-// for parsing application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({
-  limit: config.maxLength,
-  extended: true
-}));
+  /**
+   * Sets up logging for the application
+   */
+  logging() {
+    // Set up the logger
+    if (serverConfig.logging) {
+      try {
+        winston.remove(winston.transports.Console);
+      } catch(er) { }
+      let detail, type;
+      for (let i = 0; i < serverConfig.logging.length; i++) {
+        detail = serverConfig.logging[i];
+        type = detail.type;
+        delete detail.type;
+        winston.add(winston.transports[type], detail);
+      }
+    }
+  }
 
-// Rate limit all requests
-if (config.rateLimits) {
-  config.rateLimits.end = true;
-  app.use(limiter(config.rateLimits));
-}
+  /**
+   * Applies all the middleware to the instance of app
+   */
+  middleware() {
+    // gzip http payloads
+    this.app.use(compression());
 
-/**
- * Cross-origin requests
- */
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+    // Add some default security like removing x-powered-by headers,
+    // sniffing of MIME types, frameguard protection, and a bit more.
+    this.app.use(helmet());
 
-/**
- * Set up some routing
- */
+    // Set up location to serve static files
+    this.app.use(express.static(__dirname + '/public'));
+    this.app.use(bodyParser.json());
 
-// api calls for the server to handle
-app.post('/api', (req, res) => {
-  upload(req, res, (err) => {
-    return docHandler.handlePost(req, res);
-  });
-});
-app.get('/api/list', (req, res) => docHandler.handleGetList(req, res));
-app.get('/api/file/:filename', (req, res) => docHandler.handleGetFile(req.params.filename, res));
-app.get('/api/:id', (req, res) => docHandler.handleGet(req.params.id, res));
+    // for parsing application/x-www-form-urlencoded
+    this.app.use(bodyParser.urlencoded({
+      limit: serverConfig.maxLength,
+      extended: true
+    }));
 
-// Allow these root paths to pass through otherwise serve the app (index.html)
-const passThrough = (url) => (/^\/(sockjs-node|js|img)\//).test(url);
+    // Rate limit all requests
+    if (serverConfig.rateLimits) {
+      serverConfig.rateLimits.end = true;
+      this.app.use(limiter(serverConfig.rateLimits));
+    }
 
-/**
- * Development mode
- */
-if (config.development) {
-  app.use('*', (req, res, next) => {
-    if (passThrough(req.originalUrl)) {
+    // Cross-origin requests
+    this.app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept"
+      );
       next();
-    } else {
-      const filename = path.join(webpackPrepped.outputPath, 'index.html');
-      webpackPrepped.outputFileSystem.readFile(filename, (err, result) => {
-        if (err) return next(err);
-        res.set('content-type','text/html');
-        res.send(result);
+    });
+  }
+
+  controllers() {
+    this.apiController = new ApiController(this.db);
+  }
+
+  /**
+   * Runs migrations
+   *
+   * WARNING: Uncommenting the migrations.down() will probably cause loss of
+   * data. Not for production.
+   */
+  async migrations() {
+    const migrations = new Migrations();
+    // await migrations.down();
+    await migrations.up();
+  }
+
+  /**
+   * Sets up all the routes for the application
+   * Uses multer for file uploads
+   */
+  routing() {
+    // multer for file uploads
+    let upload  = multer({ storage: multer.memoryStorage() }).any();
+    // api calls for the server to handle
+    this.app.post('/api',
+      (req, res) =>
+        upload(req, res, (err) => this.apiController.handlePost(req, res)));
+    this.app.get('/api/list',
+      (req, res) => this.apiController.handleGetList(req, res));
+    this.app.get('/api/file/:id',
+      (req, res) => this.apiController.handleGetFile(req.params.id, res));
+    this.app.get('/api/:id',
+      (req, res) => this.apiController.handleGet(req.params.id, res));
+  }
+
+  /**
+   * Runs the server in development mode.
+   */
+  runDevServer() {
+    const webpackPrepped =
+      webpack(require('./server/config/webpack.config'));
+    this.app.use('*', (req, res, next) => {
+      if (Server.passThrough(req.originalUrl)) {
+        next();
+      } else {
+        const filename = path.join(webpackPrepped.outputPath, 'index.html');
+        webpackPrepped.outputFileSystem.readFile(filename, (err, result) => {
+          if (err) return next(err);
+          res.set('content-type','text/html');
+          res.send(result);
+          res.end();
+        });
+      }
+    });
+
+    this.app.use(require('webpack-dev-middleware')(webpackPrepped, {
+      publicPath: webpackConfig.output.publicPath,
+      hot: true,
+      historyApiFallback: true
+    }));
+    const server = new http.Server(this.app);
+    server.listen(serverConfig.port, serverConfig.host, (err, res) => {
+      if (err) winston.error(err);
+      winston.info('Development: listening on '
+        + serverConfig.host + ':' + serverConfig.port);
+    });
+  }
+
+  /**
+   * Runs the server in production mode.
+   */
+  runProdServer() {
+    // remove old files and compile new ones
+    const webpackPrepped =
+      webpack(require('./server/config/webpack.production.config'));
+    compile(webpackPrepped);
+    this.app.use('*', (req, res, next) => {
+      if (Server.passThrough(req.originalUrl)) {
+        next();
+      } else {
+        res.sendFile(path.join(__dirname + '/public/index.html'));
+      }
+    });
+    // With SSL enabled
+    if (serverConfig.sslEnabled) {
+      // Redirect to https
+      http.createServer((req, res) => {
+        res.writeHead(301,
+          {"Location": "https://" + req.headers['host'] + req.url});
         res.end();
+      }).listen(serverConfig.port);
+
+      // SSL Cert options
+      const options = {
+        key: fs.readFileSync(serverConfig.certPrivateKey),
+        cert: fs.readFileSync(serverConfig.certChain),
+        ca: fs.readFileSync(serverConfig.certCa)
+      };
+
+      https.Server(options, this.app)
+        .listen(serverConfig.sslPort, (err, res) => {
+          if (err) winston.error(err);
+          winston.info('Production with SSL: listening on '
+            + serverConfig.host + ':' + serverConfig.sslPort);
+      });
+    } else {
+      http.createServer(this.app)
+        .listen(serverConfig.port, serverConfig.host, (err, res) => {
+          if (err) winston.error(err);
+          winston.info('Production: listening on '
+            + serverConfig.host + ':' + serverConfig.port);
       });
     }
-  });
+  }
 
-  app.use(require('webpack-dev-middleware')(webpackPrepped, {
-    publicPath: webpackConfig.output.publicPath,
-    hot: true,
-    historyApiFallback: true
-  }));
-  const server = new http.Server(app);
-  server.listen(config.port, config.host, (err, res) => {
-    if (err) winston.error(err);
-    winston.info('Development: listening on ' + config.host + ':' + config.port);
-  });
-
+  /**
+   * Builds and runs the server based on the current configuration
+   */
+  async run() {
+    // Database operations. Comment these out if there's no database
+    await this.database();
+    await this.migrations();
+    // Logging and middleware
+    this.logging();
+    this.middleware();
+    // Set up controllers and routing
+    this.controllers();
+    this.routing();
+    // Start the server
+    if (serverConfig.production) {
+      this.runProdServer();
+    } else {
+      this.runDevServer();
+    }
+  }
 }
 
+
 /**
- * Production mode
+ * If this is the production server, utilize all the cpus
  */
-if (config.production) {
-  // remove old files and compile new ones
-  compile(webpackPrepped);
-  app.use('*', (req, res, next) => {
-    if (passThrough(req.originalUrl)) {
-      next();
-    } else {
-      res.sendFile(path.join(__dirname + '/public/index.html'));
-    }
-  });
-  // With SSL enabled
-  if (config.sslEnabled) {
-    // Redirect to https
-    http.createServer((req, res) => {
-      res.writeHead(301, {"Location": "https://" + req.headers['host'] + req.url});
-      res.end();
-    }).listen(config.port);
-    // SSL Cert options
-    options = {
-      key: fs.readFileSync(config.certPrivateKey),
-      cert: fs.readFileSync(config.certChain),
-      ca: fs.readFileSync(config.certCa)
-    };
-    https.Server(options, app).listen(config.sslPort, (err, res) => {
-      if (err) winston.error(err);
-      winston.info('Production with SSL: listening on ' + config.host + ':' + config.sslPort);
+if (serverConfig.production) {
+
+  if (cluster.isMaster) {
+    // Start workers and listen for messages containing notifyRequest
+    os.cpus().forEach((cpu) => {
+      winston.info(`Starting node worker on ${cpu.model}`);
+      cluster.fork();
     });
   } else {
-    http.createServer(app).listen(config.port, config.host, (err, res) => {
-      if (err) winston.error(err);
-      winston.info('Production: listening on ' + config.host + ':' + config.port);
-    });
+    // Run an instance of a server on each cluster
+    const server = new Server();
+    server.run();
   }
+
+} else {
+  // Dev server
+  const server = new Server();
+  server.run();
 }

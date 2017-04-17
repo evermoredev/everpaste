@@ -43,8 +43,17 @@
       }
     }
 
-    .radio {
-      margin-right: 5px;
+    .radio-options {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 320px;
+      margin-top: 10px;
+      input {
+        margin-right: 5px;
+      }
     }
     .radio-option {
       margin-right: 13px;

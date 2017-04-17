@@ -1,15 +1,23 @@
+import serverConfig from '../config/config';
+
 /**
  * Creates random keys to identify documents
  */
-import config from '../config/config';
-
 class RandomKeyGenerator {
 
+  /**
+   * Creates a randomKeyGenerator with keyChars and keyLength from
+   * the server config.
+   */
   constructor() {
-    this.keyChars = config.keyGenerator.keyChars;
-    this.keyLength = config.keyGenerator.keyLength;
+    this.keyChars = serverConfig.keyGenerator.keyChars;
+    this.keyLength = serverConfig.keyGenerator.keyLength;
   }
 
+  /**
+   * Creates a random key
+   * @returns {string} String of random keys
+   */
   createKey() {
     let text = '';
     for (let i = 0; i < this.keyLength; i++) {
@@ -17,6 +25,7 @@ class RandomKeyGenerator {
     }
     return text;
   }
+
 }
 
 export default RandomKeyGenerator;

@@ -1,6 +1,6 @@
 /**
  * Use native xhr
- * @param opt
+ * @param {object} opt
  * @returns {Promise}
  */
 export const doRequest = (opt) => {
@@ -31,7 +31,7 @@ export const doRequest = (opt) => {
 
     xhr.onerror = () => {
       reject({
-        status: this.status,
+        status: xhr.status,
         statusText: xhr.statusText
       });
     };

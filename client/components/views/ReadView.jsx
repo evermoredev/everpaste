@@ -7,7 +7,21 @@ import { doRequest } from '../../modules/request';
 import { Condition } from '../../modules/components';
 import { Redirect } from 'react-router-dom';
 
+/**
+ * View for displaying the result of a paste
+ */
 class ReadView extends React.Component {
+
+  /**
+   * @param {string} docKey - Splits a docKey that may have a language extension
+   * @returns {object}
+   */
+  static splitDocKey = docKey => {
+    const docParts = docKey.split('.', 2);
+    return {
+      docKey: docParts[0], lang: docParts[1]
+    }
+  };
 
   constructor(props) {
     super(props);
@@ -32,16 +46,12 @@ class ReadView extends React.Component {
   }
 
   componentWillMount() {
-    const { docKey, lang } = this.splitDocKey(this.props.match.params.docKey);
+    // The request may come in with a language extenstion
+    const { docKey, lang } =
+      ReadView.splitDocKey(this.props.match.params.docKey);
     this.getDoc(docKey, lang);
   }
 
-  splitDocKey = docKey => {
-    const docParts = docKey.split('.', 2);
-    return {
-      docKey: docParts[0], lang: docParts[1]
-    }
-  };
 
   getDoc = (docKey, lang) => {
     doRequest({ url: `/api/${docKey}`})
@@ -124,17 +134,22 @@ class ReadView extends React.Component {
   };
 
   render() {
+    // All the redirects here are for 404s. Replace the current route instead of
+    // pushing.
     if (this.state.redirect)
-      return <Redirect to={this.state.redirect} push={true} />;
+      return <Redirect to={this.state.redirect} push={false} />;
 
-    const showFile = !!this.state.filename;
-    const showSecretForm = this.state.privacy == privacyOptions.encrypted && !showFile;
-    const showText = this.state.privacy != privacyOptions.encrypted && !showFile;
-    const isImage = showFile && this.state.filename.match(/\.(jpeg|jpg|gif|png)$/i);
+    const showFile = !!this.state.filename,
+          showSecretForm = this.state.privacy == privacyOptions.encrypted && !showFile,
+          showText = this.state.privacy != privacyOptions.encrypted && !showFile,
+          isImage = showFile && this.state.filename.match(/\.(jpeg|jpg|gif|png)$/i);
 
     return (
       <div
-        className={`read-view flex-container ${this.context.styleStore.theme}`}>
+        className={
+          `read-view flex-container ${this.context.styleStore.theme.className}`
+        }
+      >
         <HeaderBlock
           rawButton={this.rawButton}
           currentPaste={this.state}
@@ -202,12 +217,14 @@ class ReadView extends React.Component {
               <Condition condition={showFile}>
                 <div className="view-container text-center file-download">
                   <Condition condition={isImage}>
-                    <a href={`/api/file/${this.state.filename}`} target="_blank">
-                      <img src={`/api/file/${this.state.filename}`} />
+                    <a href={`/api/file/${this.state.docKey}`} target="_blank">
+                      <img src={`/api/file/${this.state.docKey}`} />
                     </a>
                   </Condition>
                   <Condition condition={!isImage}>
-                    <a href={`/api/file/${this.state.filename}`}>{this.state.filename}</a>
+                    <a href={`/api/file/${this.state.docKey}`}>
+                      {this.state.filename}
+                    </a>
                   </Condition>
                 </div>
               </Condition>

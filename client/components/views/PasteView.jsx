@@ -1,14 +1,26 @@
-import React  from 'react';
-import { HeaderBlock } from '../blocks';
-import { doRequest } from '../../modules/request';
-import { setCookies, getCookie } from '../../modules/cookies';
 import CryptoJS from 'crypto-js';
-import { privacyOptions } from '../../../shared/config/constants';
-import { Condition } from '../../modules/components';
-import { Redirect } from 'react-router-dom';
+import React  from 'react';
 import Dropzone from 'react-dropzone';
-import { fileValidation, pasteValidation } from '../../../shared/validations/paste';
+import { Redirect } from 'react-router-dom';
 
+import { HeaderBlock } from '../blocks';
+import { Condition } from '../../modules/components';
+import { setCookies, getCookie } from '../../modules/cookies';
+import { doRequest } from '../../modules/request';
+import {
+  expirationOptions,
+  getExpirationOption,
+  privacyOptions,
+  getPrivacyOption } from '../../../shared/config/constants';
+import {
+  fileValidation,
+  pasteValidation } from '../../../shared/validations/paste';
+
+/**
+ * View for submitting a paste
+ * This has become rather large after adding file uploading. Should probably
+ * be split into sub-components soon.
+ */
 class PasteView extends React.Component {
 
   static tabOptions = {
@@ -34,8 +46,8 @@ class PasteView extends React.Component {
       name: getCookie('name') || '',
       text: this.rawTxtFromEdit || '',
       file: null,
-      expiration: getCookie('expiration') || '1 days',
-      privacy: this.getPrivacyOption(getCookie('privacy')),
+      expiration: getExpirationOption(getCookie('expiration')),
+      privacy: getPrivacyOption(getCookie('privacy')),
       errors: '',
       redirect: null,
       tabOption: PasteView.tabOptions.text
@@ -54,6 +66,8 @@ class PasteView extends React.Component {
     }
   }
 
+  /****************************** Event Handlers ******************************/
+
   /**
    * Determines if the paste has enough text to be saved
    */
@@ -67,7 +81,7 @@ class PasteView extends React.Component {
 
   /**
    * Handle dropping of a file to the Dropzone
-   * @param file
+   * @param {object} file
    */
   onDrop = (file) => {
     // If array, grab the first file only
@@ -89,7 +103,7 @@ class PasteView extends React.Component {
 
   /**
    * Handle pasting of an image
-   * @param event
+   * @param {object} event
    */
   onPaste = (event) => {
     try {
@@ -107,13 +121,6 @@ class PasteView extends React.Component {
       // Ignore errors from older browsers
     }
   };
-
-  /**
-   * Returns the privacy option if it exists, otherwise public
-   * @param option
-   */
-  getPrivacyOption = (option) =>
-    (Object.keys(privacyOptions).includes(option)) ? option : privacyOptions.public;
 
   /**
    * Performs the save action for the paste
@@ -144,21 +151,22 @@ class PasteView extends React.Component {
       saveData.text = CryptoJS.AES.encrypt(saveData.text, encryptKey).toString();
     }
 
-    // TODO: Set multiple cookies at once
-    setCookies([
-      { name: 'name', value: saveData.name },
-      { name: 'expiration', value: saveData.expiration },
-      { name: 'privacy', value: saveData.privacy }
-    ]);
-
     // Make the request
     doRequest({
       method: 'POST',
       url: '/api',
       params: saveData
     }).then(data => {
+
+      // Set cookies after server response so we don't save bad data to cookies
+      setCookies([
+        { name: 'name', value: saveData.name },
+        { name: 'expiration', value: saveData.expiration },
+        { name: 'privacy', value: saveData.privacy }
+      ]);
+
       // If there is a secretKey let's redirect them to a page that shows
-      // the docKey and the secretKey, otherwise send them directly to the new paste
+      // the docKey & secretKey, otherwise send them directly to the new paste
       let redirect = (secretKey) ? {
           pathname: `/saved`,
           state: { docKey: data.key, secretKey }
@@ -199,7 +207,7 @@ class PasteView extends React.Component {
 
     return (
       <div
-        className={`paste-view flex-container ${this.context.styleStore.theme}`}
+        className={`paste-view flex-container ${this.context.styleStore.theme.className}`}
         onPaste={this.onPaste}
       >
         <HeaderBlock
@@ -239,17 +247,14 @@ class PasteView extends React.Component {
                 value={this.state.expiration}
                 onChange={this.handleChange}
               >
-                <option value="forever">Forever</option>
-                <option value="1 weeks">1 Week</option>
-                <option value="1 days">1 Day</option>
-                <option value="6 hours">6 Hours</option>
-                <option value="30 minutes">30 Minutes</option>
+                {expirationOptions.map((o, idx) => (
+                  <option key={idx} value={o}>{o}</option>
+                ))}
               </select>
             </div>
-            <div className="option">
+            <div className="radio-options">
               <div className="radio-option">
                 <input
-                  className="radio"
                   type="radio"
                   name="public"
                   value={privacyOptions.public}
@@ -260,7 +265,6 @@ class PasteView extends React.Component {
               </div>
               <div className="radio-option">
                 <input
-                  className="radio"
                   type="radio"
                   name="private"
                   value={privacyOptions.private}
@@ -272,7 +276,6 @@ class PasteView extends React.Component {
               <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
                 <div className="radio-option">
                   <input
-                    className="radio"
                     type="radio"
                     name="encrypt"
                     value={privacyOptions.encrypted}
@@ -282,7 +285,6 @@ class PasteView extends React.Component {
                   Private w/AES
                 </div>
               </Condition>
-
             </div>
           </div>
 

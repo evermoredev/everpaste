@@ -40,9 +40,9 @@
       position: absolute;
       background: #fff;
       width: 100%;
-      top: 0;
+      top: -10;
       left: 0;
-      z-index: -50;
+      z-index: 50;
       font-size: 25px;
       transform: translateY(6%);
       opacity: 0;
@@ -61,6 +61,10 @@
         display: block;
         transition: .3s;
         color: #002b36;
+        .disabled {
+          color: gray;
+          cursor: not-allowed;
+        }
         &:hover {
           background: #eee;
         }
@@ -71,7 +75,6 @@
       }
     }
     .mobile-overlay {
-      display: none;
       height: 100vh;
       width: 100%;
       position: absolute;

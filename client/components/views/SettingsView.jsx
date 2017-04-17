@@ -1,26 +1,37 @@
 import React from 'react';
 import { HeaderBlock } from '../blocks';
 
+/**
+ * View for changing the settings
+ */
 class SettingsView extends React.Component {
 
   constructor(props) {
     super(props);
   }
 
-  handleThemeChange = (event, className) => {
-    this.context.styleStore.setTheme(className);
+  handleThemeChange = (event, themeName) => {
+    this.context.styleStore.setTheme(themeName);
+    // Changing the context doesn't cause a re-render, so force one to see the
+    // new theme take effect
     this.forceUpdate();
   };
 
-  renderThemesList = () => this.context.styleStore.themes.map((t, idx) =>
-    <div
-      key={idx}
-      className={`${t.className} theme-selection`}
-      onClick={(event) => this.handleThemeChange(event, t.className)}>
-        {t.name}
-    </div>
-  );
+  renderThemesList = () => {
+    const themes = this.context.styleStore.themes;
+    return Object.keys(themes).map((k, idx) =>
+      <div
+        key={idx}
+        className={`${themes[k]} theme-selection`}
+        onClick={(event) => this.handleThemeChange(event, k)}>
+        {k}
+      </div>
+    );
+  };
 
+  /**
+   * Renders some sample code to show theme changes
+   */
   renderSampleCode = () => {
     return (
       <div className="settings-code-document">
@@ -42,7 +53,9 @@ class SettingsView extends React.Component {
                 <tr className="code-row">
                   <td className="line-number"></td>
                   <td className="code-col">&nbsp;&nbsp;
-                    <span className="hljs-comment">/** Print a hello message */</span>
+                    <span className="hljs-comment">
+                    /** Print a hello message */
+                    </span>
                   </td>
                 </tr>
                 <tr className="code-row">
@@ -138,13 +151,15 @@ class SettingsView extends React.Component {
 
   render() {
     return(
-      <div className={`settings-view flex-container ${this.context.styleStore.theme}`}>
+      <div className={
+        `settings-view flex-container ${this.context.styleStore.theme.className}`
+      }>
         <HeaderBlock disabled={{ raw: true, edit: true, save: true }} />
         <div className="view-container">
           <h2 className="settings-header">Select a Code Theme Below</h2>
           <div className="sample-code">{this.renderSampleCode()}</div>
           <div className="settings-sub-header">
-            Current Theme: {this.context.styleStore.themeDisplayName}
+            Current Theme: {this.context.styleStore.theme.name}
           </div>
           <div className="theme-container">{this.renderThemesList()}</div>
         </div>
