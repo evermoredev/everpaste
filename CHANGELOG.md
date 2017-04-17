@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add a script to generate and replace letsencrypt certs
 - Handle file uploads via curl
 
-## [1.0.0] - 2017-04-
+## [1.0.0] - 2017-04-17
 ### Added
 - Added a migrations api
 - Added sequelize orm

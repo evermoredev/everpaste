@@ -1,6 +1,8 @@
 # EverPaste
 
-EverPaste is a SPA PasteBin and Server built on top of Node.js.
+EverPaste is a SPA PasteBin built with React combined with a Server API built on top of Node.js.
+
+See it live at: [EverPaste.io](https://everpaste.io)
 
 ## Installation
 

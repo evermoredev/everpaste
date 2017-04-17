@@ -3,6 +3,7 @@ import cluster from 'cluster';
 import compression from 'compression';
 import express from 'express';
 import fs from 'fs';
+import helmet from 'helmet';
 import http from 'http';
 import https from 'https';
 import limiter from 'connect-ratelimit';
@@ -65,6 +66,10 @@ class Server {
   middleware() {
     // gzip http payloads
     this.app.use(compression());
+
+    // Add some default security like removing x-powered-by headers,
+    // sniffing of MIME types, frameguard protection, and a bit more.
+    this.app.use(helmet());
 
     // Set up location to serve static files
     this.app.use(express.static(__dirname + '/public'));
