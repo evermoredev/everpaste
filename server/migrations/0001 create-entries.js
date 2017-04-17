@@ -13,9 +13,9 @@ export const up = `
    name varchar(255),
    title varchar(255),
    filename varchar(255),
-   expiration timestamp,
-   created_at timestamp,
-   updated_at timestamp,
+   expiration timestamp with time zone,
+   created_at timestamp with time zone,
+   updated_at timestamp with time zone,
    unique(key));
 `;
 

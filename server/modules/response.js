@@ -1,6 +1,12 @@
 /**
  * Some helper functions for handling responses
  */
+import winston from 'winston';
+
+export const contentType = {
+  json:  { 'content-type': 'application/json' },
+  plain: { 'content-type': 'text/plain' }
+};
 
 /**
  * Ends the response with failing messages

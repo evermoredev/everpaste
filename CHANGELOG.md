@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Better error reporting for problems on startup
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
+- Handle file uploads via curl
 
 ## [1.0.0] - 2017-04-
 ### Added

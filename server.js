@@ -186,7 +186,7 @@ class Server {
       }).listen(serverConfig.port);
 
       // SSL Cert options
-      options = {
+      const options = {
         key: fs.readFileSync(serverConfig.certPrivateKey),
         cert: fs.readFileSync(serverConfig.certChain),
         ca: fs.readFileSync(serverConfig.certCa)

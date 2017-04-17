@@ -3,9 +3,7 @@ import path from 'path';
 import winston from 'winston';
 
 import { postgresTimestamp } from '../modules/_helpers';
-
-import { contentType } from '../config/constants';
-import { fail } from '../modules/response';
+import { contentType, fail } from '../modules/response';
 import { expirationOptions, privacyOptions } from '../../shared/config/constants';
 import { fileValidation, pasteValidation } from '../../shared/validations/paste';
 import { mime2ext } from '../../shared/modules/mime2ext';
@@ -90,8 +88,17 @@ class ApiController {
    * @returns {Promise.<void>}
    */
   async handlePost(req, res) {
-    let data = req.body;
-    data.file = req.files[0];
+    const data = req.body,
+          isCurl = req.headers['user-agent'].includes('curl'),
+          host = req.headers.host;
+
+    data.file = (req.files) ?  req.files[0] : null;
+
+    // Do some handling here in case of posting using curl
+    if (isCurl) {
+      data.expiration = (!data.expiration) ? 'Forever' : data.expiration;
+      data.privacy = (!data.privacy) ? privacyOptions.private : data.privacy;
+    }
 
     // First do some basic validation on the paste we received
     const validate = pasteValidation(data);
@@ -127,17 +134,26 @@ class ApiController {
     // Insert the query
     const created = await this.db.createSync('entries', data);
 
-    if (created) {
+    // If using curl, send back a url in plain text to the paste
+    if (created && isCurl) {
+      winston.verbose('Added document via curl: ', { key: data.key });
+      res.writeHead(200, contentType.plain);
+      return res.end(`${host}/${data.key}`);
+    }
+    // Otherwise a JSON response for the webapp to handle
+    else if (created) {
       winston.verbose('Added document: ', { key: data.key });
       res.writeHead(200, contentType.json);
-      res.end(JSON.stringify({ key: data.key }));
-    } else {
-      fail(res, {
-        clientMsg: 'Problem adding document. Please try again later.',
-        serverMsg: 'Error adding document for key: ' + data.key,
-        resCode: 500
-      });
+      return res.end(JSON.stringify({ key: data.key }));
     }
+
+    // Fail if we make it here
+    fail(res, {
+      clientMsg: 'Problem adding document. Please try again later.',
+      serverMsg: 'Error adding document for key: ' + data.key,
+      resCode: 500
+    });
+
   };
 
 }

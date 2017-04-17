@@ -44,8 +44,7 @@ class PublicListView extends React.Component {
           <Condition value={d.title} className="title" default="Untitled" />
           <Condition value={d.name} className="from-name" />
           <div className="created">
-            ({moment(d.createdAt).utc()
-                .from(moment.utc().format("YYYY-MM-DD H:mm:ss.SSS"))})
+            ({moment(d.createdAt).from(moment())})
           </div>
         </div>
       </Link>
