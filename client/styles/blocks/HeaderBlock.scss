@@ -79,6 +79,10 @@
       width: 100%;
       position: absolute;
       background: transparent;
+      overflow: hidden;
+      top: -60px;
+      left: 0;
+      z-index: -1;
     }
     .mobile-navicon {
       display: flex;
