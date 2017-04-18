@@ -1,7 +1,8 @@
 import CryptoJS from 'crypto-js';
+import { diffLines } from 'diff';
 import React  from 'react';
 import Dropzone from 'react-dropzone';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 import { HeaderBlock } from '../blocks';
 import { Condition } from '../../modules/components';
@@ -25,7 +26,8 @@ class PasteView extends React.Component {
 
   static tabOptions = {
     text: 1,
-    upload: 2
+    upload: 2,
+    diff: 3
   };
 
   constructor(props) {
@@ -36,6 +38,7 @@ class PasteView extends React.Component {
       this.rawTxtFromEdit = this.props.location.state.currentPaste.rawText;
       this.titleFromEdit = this.props.location.state.currentPaste.title;
       this.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
+      this.fromEdit = true;
     }
 
     // Set some defaults
@@ -151,6 +154,11 @@ class PasteView extends React.Component {
       saveData.text = CryptoJS.AES.encrypt(saveData.text, encryptKey).toString();
     }
 
+    // Add the forkedKey
+    if (this.docKeyFromEdit) {
+      saveData.forkedKey = this.docKeyFromEdit;
+    }
+
     // Make the request
     doRequest({
       method: 'POST',
@@ -189,17 +197,49 @@ class PasteView extends React.Component {
         onClick={() => this.setState({ tabOption: PasteView.tabOptions.text })}>
         Text
       </span>
-      <span
-        className={this.state.tabOption == PasteView.tabOptions.upload ? 'active' : ''}
-        onClick={() => this.setState({
-          tabOption: PasteView.tabOptions.upload,
-          privacy: (this.state.privacy == privacyOptions.encrypted) ?
-            privacyOptions.private : this.state.privacy
-        })}>
-        File Upload
-      </span>
+      <Condition condition={!this.fromEdit}>
+        <span
+          className={this.state.tabOption == PasteView.tabOptions.upload ? 'active' : ''}
+          onClick={() => this.setState({
+            tabOption: PasteView.tabOptions.upload,
+            privacy: (this.state.privacy == privacyOptions.encrypted) ?
+              privacyOptions.private : this.state.privacy
+          })}
+        >
+          File Upload
+        </span>
+      </Condition>
+      <Condition condition={this.fromEdit}>
+        <span
+          className={this.state.tabOption == PasteView.tabOptions.diff ? 'active' : ''}
+          onClick={() => this.setState({ tabOption: PasteView.tabOptions.diff })}
+        >
+          Show Diff
+        </span>
+      </Condition>
     </div>
   );
+
+  /**
+   * Renders the diff between text from an edit and the current text
+   */
+  renderDiff = () => {
+    if (!this.rawTxtFromEdit) return null;
+
+    // Make sure line endings are the same so they don't show up in diff
+    const oldText = this.rawTxtFromEdit.replace(/\r\n/g,'\n'),
+      newText = this.state.text.replace(/\r\n/g,'\n'),
+      diff = diffLines(oldText, newText, { newlineIsToken: true });
+
+    return diff.map((part, idx) => {
+      const spanClass = (part.added) ? 'added' : (part.removed) ? 'removed' : '';
+      return (
+        <pre key={idx} className={spanClass}>
+          {part.value}
+        </pre>
+      );
+    });
+  };
 
   render() {
     if (this.state.redirect)
@@ -273,7 +313,7 @@ class PasteView extends React.Component {
                 />
                 Private
               </div>
-              <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
+              <Condition condition={this.state.tabOption != PasteView.tabOptions.file}>
                 <div className="radio-option">
                   <input
                     type="radio"
@@ -287,6 +327,15 @@ class PasteView extends React.Component {
               </Condition>
             </div>
           </div>
+
+          <Condition condition={this.fromEdit}>
+            <div className="fork-info">
+              Forked from&nbsp;
+              <Link to={`/${this.docKeyFromEdit}`}>
+                {this.docKeyFromEdit}
+              </Link>
+            </div>
+          </Condition>
 
           <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
             <div className="text-container">
@@ -305,6 +354,15 @@ class PasteView extends React.Component {
                     privacyOptions.private : this.state.privacy
                 })}
               />
+            </div>
+          </Condition>
+
+          <Condition condition={this.state.tabOption == PasteView.tabOptions.diff}>
+            <div className="text-container">
+              <this.TabOptions />
+              <div className="diff-container">
+                {this.renderDiff()}
+              </div>
             </div>
           </Condition>
 

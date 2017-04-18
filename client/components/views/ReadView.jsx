@@ -1,11 +1,13 @@
+import CryptoJS from 'crypto-js';
+import { diffLines } from 'diff';
 import React from 'react';
+import { Redirect, Link } from 'react-router-dom';
+
 import { HeaderBlock } from '../blocks';
 import { privacyOptions } from '../../../shared/config/constants';
-import CryptoJS from 'crypto-js';
 import highlighter from '../../modules/highlighter';
 import { doRequest } from '../../modules/request';
 import { Condition } from '../../modules/components';
-import { Redirect } from 'react-router-dom';
 
 /**
  * View for displaying the result of a paste
@@ -36,13 +38,18 @@ class ReadView extends React.Component {
       privacy: '',
       secretKey: '',
       filename: '',
+      forkedKey: '',
+      forkedText: '',
 
       rawDisabled: true,
       editDisabled: true,
       error: '',
+      showDiff: false,
 
       redirect: null
-    }
+    };
+
+    this.initialState = this.state;
   }
 
   componentWillMount() {
@@ -52,11 +59,22 @@ class ReadView extends React.Component {
     this.getDoc(docKey, lang);
   }
 
+  /**
+   * Anytime we get here, reload the page, unless we're switching between
+   * the diffing.
+   */
+  componentWillReceiveProps(nextProps, nextState, nextContext) {
+    if (nextProps.location.state && nextProps.location.state.reload) {
+      this.setState(this.initialState, () => {
+        this.componentWillMount();
+      });
+    }
+  }
 
   getDoc = (docKey, lang) => {
     doRequest({ url: `/api/${docKey}`})
       .then((data) => {
-        let { title, text, name, privacy, filename } = data,
+        let { title, text, name, privacy, filename, forkedKey, forkedText } = data,
             { rawDisabled, editDisabled } = this.state,
             rawText;
 
@@ -69,13 +87,14 @@ class ReadView extends React.Component {
           editDisabled = false;
         }
         this.setState({
-          title, text, rawText, name, docKey,
+          title, text, rawText, name, docKey, forkedKey, forkedText,
           privacy, lang, rawDisabled, editDisabled,
           filename: filename
         });
         this.context.currentPaste = this.state;
       })
       .catch((error) => {
+      console.log(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -126,6 +145,24 @@ class ReadView extends React.Component {
         </div>
       )
     }
+  };
+
+  renderDiff = () => {
+    if (!this.state.forkedText || !this.state.rawText) return null;
+
+    // Make sure line endings are the same so they don't show up in diff
+    const oldText = this.state.forkedText.replace(/\r\n/g,'\n'),
+      newText = this.state.rawText.replace(/\r\n/g,'\n'),
+      diff = diffLines(oldText, newText, { newlineIsToken: true });
+
+    return diff.map((part, idx) => {
+      const spanClass = (part.added) ? 'added' : (part.removed) ? 'removed' : '';
+      return (
+        <pre key={idx} className={spanClass}>
+          {part.value}
+        </pre>
+      );
+    });
   };
 
   rawButton = () => {
@@ -199,6 +236,7 @@ class ReadView extends React.Component {
           <Condition condition={!showSecretForm}>
             <div className="view-container hljs">
               <Condition value={this.state.error} style={{ color: 'red' }} />
+
               <div className="code-information-container">
                 <div className="unselectable code-title">
                   <Condition value={this.state.title} default="Untitled" />
@@ -208,9 +246,33 @@ class ReadView extends React.Component {
                 </div>
               </div>
 
-              <Condition condition={showText}>
+              <Condition condition={showText && this.state.forkedKey}>
+                <div className="fork-info">
+                  Forked from&nbsp;
+                  <Link to={{
+                    pathname: `/${this.state.forkedKey}`,
+                    state: { reload: true }
+                  }}>
+                    {this.state.forkedKey}
+                  </Link>&nbsp;|&nbsp;
+                  <Condition condition={!this.state.showDiff}>
+                    <span onClick={() => this.setState({ showDiff: true })}>Show diff</span>
+                  </Condition>
+                  <Condition condition={this.state.showDiff}>
+                    <span onClick={() => this.setState({ showDiff: false })}>Hide diff</span>
+                  </Condition>
+                </div>
+              </Condition>
+
+              <Condition condition={showText && !this.state.showDiff}>
                 <div className="code-document">
                   {this.renderCodeBlock()}
+                </div>
+              </Condition>
+
+              <Condition condition={showText && this.state.showDiff}>
+                <div className="code-document">
+                  {this.renderDiff()}
                 </div>
               </Condition>
 

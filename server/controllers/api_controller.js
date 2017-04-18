@@ -28,7 +28,21 @@ class ApiController {
 
     // Return the data object if there's text available or if it's a file paste
     // and the file still exists
-    if (data && (data.text || (data.filename && ApiController.getFilePath(data.filename)))) {
+    const stillExists = data &&
+      (data.text || (data.filename && ApiController.getFilePath(data.filename)));
+
+    // Send back data the paste was forked from
+    if (stillExists && data.forkedKey) {
+      const forkedData = await this.db.models.entries.getEntry(data.forkedKey);
+      if (forkedData && forkedData.text && forkedData.privacy != privacyOptions.encrypted) {
+        data.forkedText = forkedData.text;
+      } else {
+        // Send back no forked key
+        data.forkedKey = null;
+      }
+    }
+
+    if (stillExists) {
       winston.verbose('Retrieved document', { key });
       res.end(JSON.stringify(data));
     } else {

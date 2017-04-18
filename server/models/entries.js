@@ -27,6 +27,10 @@ export default (sequelize, db) => {
     title: Sequelize.STRING,
     filename: Sequelize.STRING,
     expiration: Sequelize.STRING,
+    forkedKey: {
+      type: Sequelize.STRING,
+      field: 'forked_key'
+    },
     createdAt: {
       type: Sequelize.DATE,
       field: 'created_at'
