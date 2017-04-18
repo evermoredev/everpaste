@@ -10,3 +10,4 @@ shared/config/config.js
 server/uploads/
 public/js/app.*.js
 public/index.html
+public/img/*

@@ -78,7 +78,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(__dirname, '../../client/index.ejs'),
       hash: true,
-      title: serverConfig.title,
+      // Not sure why default is needed here.
+      title: serverConfig.default.title,
       minify: {
         collapseWhitespace: false
       }
