@@ -1,11 +1,12 @@
-import React from 'react';
-import { HeaderBlock } from '../blocks';
-import { privacyOptions } from '../../../shared/config/constants';
 import CryptoJS from 'crypto-js';
+import React from 'react';
+import { Redirect, Link } from 'react-router-dom';
+
+import { DiffBlock, HeaderBlock } from '../blocks';
+import { privacyOptions } from '../../../shared/config/constants';
 import highlighter from '../../modules/highlighter';
 import { doRequest } from '../../modules/request';
 import { Condition } from '../../modules/components';
-import { Redirect } from 'react-router-dom';
 
 /**
  * View for displaying the result of a paste
@@ -36,13 +37,18 @@ class ReadView extends React.Component {
       privacy: '',
       secretKey: '',
       filename: '',
+      forkedKey: '',
+      forkedText: '',
 
       rawDisabled: true,
       editDisabled: true,
       error: '',
+      showDiff: false,
 
       redirect: null
-    }
+    };
+
+    this.initialState = this.state;
   }
 
   componentWillMount() {
@@ -52,11 +58,29 @@ class ReadView extends React.Component {
     this.getDoc(docKey, lang);
   }
 
+  /**
+   * Reload the component if the url has changed after the component has already
+   * mounted, or if we receive a 'reload: true' prop from the router.
+   *
+   * This fixes back button issues when only the url changes, but not the
+   * component.
+   */
+  componentWillReceiveProps(nextProps, nextContext) {
+    const reloadComponent = (
+      (nextProps.location.state && nextProps.location.state.reload) ||
+      (this.props.match.url != nextProps.match.url)
+    );
+    if (reloadComponent) {
+      this.setState(this.initialState, () => {
+        this.componentWillMount();
+      });
+    }
+  }
 
   getDoc = (docKey, lang) => {
     doRequest({ url: `/api/${docKey}`})
       .then((data) => {
-        let { title, text, name, privacy, filename } = data,
+        let { title, text, name, privacy, filename, forkedKey, forkedText } = data,
             { rawDisabled, editDisabled } = this.state,
             rawText;
 
@@ -69,7 +93,7 @@ class ReadView extends React.Component {
           editDisabled = false;
         }
         this.setState({
-          title, text, rawText, name, docKey,
+          title, text, rawText, name, docKey, forkedKey, forkedText,
           privacy, lang, rawDisabled, editDisabled,
           filename: filename
         });
@@ -128,6 +152,7 @@ class ReadView extends React.Component {
     }
   };
 
+
   rawButton = () => {
     const win = window.open("", '_blank');
     win.document.body.innerHTML = '<pre>' + this.state.rawText + '</pre>';
@@ -173,24 +198,16 @@ class ReadView extends React.Component {
                 This document is encrypted. Please enter Secret Key below.
               </h3>
               <form
-                className="pure-form"
-                style={{ textAlign: 'center' }}
+                className="secret-form"
                 onSubmit={this.handleSecretKeySubmit} >
-                <fieldset>
-                    <div>
-                      <label htmlFor="secretKey">
-                        <input
-                          style={{ marginLeft: '10px' }}
-                          className="input-dark"
-                          type="password"
-                          name="secretKey"
-                          value={this.state.secretKey}
-                          placeholder="Secret Key"
-                          onChange={this.handleChange}
-                        />
-                      </label>
-                    </div>
-                </fieldset>
+                <input
+                  className="input-dark"
+                  type="password"
+                  name="secretKey"
+                  value={this.state.secretKey}
+                  placeholder="Secret Key"
+                  onChange={this.handleChange}
+                />
               </form>
               <Condition value={this.state.error} style={{ color: 'red' }} />
             </div>
@@ -199,6 +216,7 @@ class ReadView extends React.Component {
           <Condition condition={!showSecretForm}>
             <div className="view-container hljs">
               <Condition value={this.state.error} style={{ color: 'red' }} />
+
               <div className="code-information-container">
                 <div className="unselectable code-title">
                   <Condition value={this.state.title} default="Untitled" />
@@ -208,10 +226,38 @@ class ReadView extends React.Component {
                 </div>
               </div>
 
-              <Condition condition={showText}>
+              <Condition condition={showText && this.state.forkedKey}>
+                <div className="fork-info">
+                  Forked from&nbsp;
+                  <Link to={{
+                    pathname: `/${this.state.forkedKey}`,
+                    state: { reload: true }
+                  }}>
+                    {this.state.forkedKey}
+                  </Link>
+                  <span className="white-text">
+                    &nbsp;|&nbsp;
+                  </span>
+                  <Condition condition={!this.state.showDiff}>
+                    <span onClick={() => this.setState({ showDiff: true })}>Show diff</span>
+                  </Condition>
+                  <Condition condition={this.state.showDiff}>
+                    <span onClick={() => this.setState({ showDiff: false })}>Hide diff</span>
+                  </Condition>
+                </div>
+              </Condition>
+
+              <Condition condition={showText && !this.state.showDiff}>
                 <div className="code-document">
                   {this.renderCodeBlock()}
                 </div>
+              </Condition>
+
+              <Condition condition={showText && this.state.showDiff}>
+                <DiffBlock
+                  oldText={this.state.forkedText}
+                  newText={this.state.rawText}
+                />
               </Condition>
 
               <Condition condition={showFile}>

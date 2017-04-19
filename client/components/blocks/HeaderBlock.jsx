@@ -122,7 +122,7 @@ class HeaderBlock extends React.Component {
 
           { /** Desktop Navigation **/ }
           <ul className='desktop-navicon'>
-            {this.renderLink({to: '/', iconClass: 'fa fa-plus', name: 'New', state: { clicked: true }})}
+            {this.renderLink({to: '/', iconClass: 'fa fa-plus', name: 'New', state: { reload: true }})}
             {this.renderActionLink({ action: this.props.saveButton, name: 'Save', iconClass: 'fa fa-floppy-o' })}
             {this.renderLink({to: `/edit`, iconClass: 'fa fa-pencil', name: 'Edit', state: { editLink: true, currentPaste: this.props.currentPaste }})}
             {this.renderActionLink({ action: this.props.rawButton, name: 'Raw', iconClass: 'fa fa-files-o' })}
