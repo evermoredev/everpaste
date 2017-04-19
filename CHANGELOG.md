@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add a script to generate and replace letsencrypt certs
 - Handle file uploads via curl
 
+## [1.1.0] - 2017-04-19
+### Added
+- Added diffing view to both edit and read views
+
+### Fixed
+- Form styling for secret key entry
+
 ## [1.0.1] - 2017-04-18
 ### Fixed
 - Fixed style on mobile nav

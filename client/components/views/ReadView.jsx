@@ -1,9 +1,8 @@
 import CryptoJS from 'crypto-js';
-import { diffLines } from 'diff';
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 
-import { HeaderBlock } from '../blocks';
+import { DiffBlock, HeaderBlock } from '../blocks';
 import { privacyOptions } from '../../../shared/config/constants';
 import highlighter from '../../modules/highlighter';
 import { doRequest } from '../../modules/request';
@@ -60,11 +59,18 @@ class ReadView extends React.Component {
   }
 
   /**
-   * Anytime we get here, reload the page, unless we're switching between
-   * the diffing.
+   * Reload the component if the url has changed after the component has already
+   * mounted, or if we receive a 'reload: true' prop from the router.
+   *
+   * This fixes back button issues when only the url changes, but not the
+   * component.
    */
-  componentWillReceiveProps(nextProps, nextState, nextContext) {
-    if (nextProps.location.state && nextProps.location.state.reload) {
+  componentWillReceiveProps(nextProps, nextContext) {
+    const reloadComponent = (
+      (nextProps.location.state && nextProps.location.state.reload) ||
+      (this.props.match.url != nextProps.match.url)
+    );
+    if (reloadComponent) {
       this.setState(this.initialState, () => {
         this.componentWillMount();
       });
@@ -94,7 +100,6 @@ class ReadView extends React.Component {
         this.context.currentPaste = this.state;
       })
       .catch((error) => {
-      console.log(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -147,23 +152,6 @@ class ReadView extends React.Component {
     }
   };
 
-  renderDiff = () => {
-    if (!this.state.forkedText || !this.state.rawText) return null;
-
-    // Make sure line endings are the same so they don't show up in diff
-    const oldText = this.state.forkedText.replace(/\r\n/g,'\n'),
-      newText = this.state.rawText.replace(/\r\n/g,'\n'),
-      diff = diffLines(oldText, newText, { newlineIsToken: true });
-
-    return diff.map((part, idx) => {
-      const spanClass = (part.added) ? 'added' : (part.removed) ? 'removed' : '';
-      return (
-        <pre key={idx} className={spanClass}>
-          {part.value}
-        </pre>
-      );
-    });
-  };
 
   rawButton = () => {
     const win = window.open("", '_blank');
@@ -210,24 +198,16 @@ class ReadView extends React.Component {
                 This document is encrypted. Please enter Secret Key below.
               </h3>
               <form
-                className="pure-form"
-                style={{ textAlign: 'center' }}
+                className="secret-form"
                 onSubmit={this.handleSecretKeySubmit} >
-                <fieldset>
-                    <div>
-                      <label htmlFor="secretKey">
-                        <input
-                          style={{ marginLeft: '10px' }}
-                          className="input-dark"
-                          type="password"
-                          name="secretKey"
-                          value={this.state.secretKey}
-                          placeholder="Secret Key"
-                          onChange={this.handleChange}
-                        />
-                      </label>
-                    </div>
-                </fieldset>
+                <input
+                  className="input-dark"
+                  type="password"
+                  name="secretKey"
+                  value={this.state.secretKey}
+                  placeholder="Secret Key"
+                  onChange={this.handleChange}
+                />
               </form>
               <Condition value={this.state.error} style={{ color: 'red' }} />
             </div>
@@ -254,7 +234,10 @@ class ReadView extends React.Component {
                     state: { reload: true }
                   }}>
                     {this.state.forkedKey}
-                  </Link>&nbsp;|&nbsp;
+                  </Link>
+                  <span className="white-text">
+                    &nbsp;|&nbsp;
+                  </span>
                   <Condition condition={!this.state.showDiff}>
                     <span onClick={() => this.setState({ showDiff: true })}>Show diff</span>
                   </Condition>
@@ -271,9 +254,10 @@ class ReadView extends React.Component {
               </Condition>
 
               <Condition condition={showText && this.state.showDiff}>
-                <div className="code-document">
-                  {this.renderDiff()}
-                </div>
+                <DiffBlock
+                  oldText={this.state.forkedText}
+                  newText={this.state.rawText}
+                />
               </Condition>
 
               <Condition condition={showFile}>

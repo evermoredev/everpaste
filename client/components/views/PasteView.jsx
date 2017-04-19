@@ -4,7 +4,7 @@ import React  from 'react';
 import Dropzone from 'react-dropzone';
 import { Redirect, Link } from 'react-router-dom';
 
-import { HeaderBlock } from '../blocks';
+import { DiffBlock, HeaderBlock } from '../blocks';
 import { Condition } from '../../modules/components';
 import { setCookies, getCookie } from '../../modules/cookies';
 import { doRequest } from '../../modules/request';
@@ -43,7 +43,6 @@ class PasteView extends React.Component {
 
     // Set some defaults
     this.state = {
-      age: Date.now(),
       from: this.docKeyFromEdit,
       title: this.titleFromEdit || '',
       name: getCookie('name') || '',
@@ -60,12 +59,9 @@ class PasteView extends React.Component {
 
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
-    // This is a way to get the page to return to initial state if the
-    // user clicks the new paste button while on this route already
-    if (nextProps.location.state && nextProps.location.state.clicked) {
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (nextProps.location.state && nextProps.location.state.reload) {
       this.setState(this.initialState);
-      this.setState({ age: Date.now() });
     }
   }
 
@@ -360,9 +356,10 @@ class PasteView extends React.Component {
           <Condition condition={this.state.tabOption == PasteView.tabOptions.diff}>
             <div className="text-container">
               <this.TabOptions />
-              <div className="diff-container">
-                {this.renderDiff()}
-              </div>
+              <DiffBlock
+                oldText={this.rawTxtFromEdit}
+                newText={this.state.text}
+              />
             </div>
           </Condition>
 
