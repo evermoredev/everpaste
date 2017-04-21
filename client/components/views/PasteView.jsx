@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js';
-import { diffLines } from 'diff';
+import PropTypes from 'prop-types';
 import React  from 'react';
 import Dropzone from 'react-dropzone';
 import { Redirect, Link } from 'react-router-dom';
@@ -32,21 +32,12 @@ class PasteView extends React.Component {
 
   constructor(props) {
     super(props);
-
-    // If we're coming from an edit, grab the currentPaste data
-    if (this.props.location.state && this.props.location.state.currentPaste) {
-      this.rawTxtFromEdit = this.props.location.state.currentPaste.rawText;
-      this.titleFromEdit = this.props.location.state.currentPaste.title;
-      this.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
-      this.fromEdit = true;
-    }
-
+    
     // Set some defaults
-    this.state = {
-      from: this.docKeyFromEdit,
-      title: this.titleFromEdit || '',
+    this.initialState = {
+      title: '',
       name: getCookie('name') || '',
-      text: this.rawTxtFromEdit || '',
+      text: '',
       file: null,
       expiration: getExpirationOption(getCookie('expiration')),
       privacy: getPrivacyOption(getCookie('privacy')),
@@ -54,14 +45,33 @@ class PasteView extends React.Component {
       redirect: null,
       tabOption: PasteView.tabOptions.text
     };
+    
+    this.state = Object.assign({}, this.initialState);
 
-    this.initialState = this.state;
+    // If we're coming from an edit, grab the currentPaste data
+    if (this.props.location.state && this.props.location.state.currentPaste) {
+      // These items don't need to be on state. Saved to we can reference,
+      // like diffing current text vs forked text
+      this.state.rawTxtFromEdit = this.props.location.state.currentPaste.rawText || '';
+      this.state.titleFromEdit = this.props.location.state.currentPaste.title || '';
+      this.state.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
+      this.state.fromEdit = true;
+
+      this.state.text = this.state.rawTxtFromEdit;
+      this.state.title = this.state.titleFromEdit;
+    }
+
 
   }
 
+  /**
+   * Reset the state if the router told us to reload
+   * (The user clicked the + button again)
+   */
   componentWillReceiveProps(nextProps, nextContext) {
     if (nextProps.location.state && nextProps.location.state.reload) {
-      this.setState(this.initialState);
+      this.state = Object.assign({}, this.initialState);
+      this.setState(this.state);
     }
   }
 
@@ -77,6 +87,22 @@ class PasteView extends React.Component {
 
   handlePrivacyRadio = (event) =>
     this.setState({ privacy: event.currentTarget.value });
+
+  /**
+   * Currently handles tab events so tabbing in a text area works
+   * @param event
+   */
+  handleKeyDown = (event) => {
+    if (event.keyCode === 9) {
+      event.preventDefault();
+      const val = this.state.text,
+        start = event.target.selectionStart,
+        end = event.target.selectionEnd;
+
+      this.setState({ text: val.substring(0, start) + '\t' + val.substring(end) },
+        () => this.textArea.selectionStart = this.textArea.selectionEnd = start + 1);
+    }
+  };
 
   /**
    * Handle dropping of a file to the Dropzone
@@ -151,8 +177,8 @@ class PasteView extends React.Component {
     }
 
     // Add the forkedKey
-    if (this.docKeyFromEdit) {
-      saveData.forkedKey = this.docKeyFromEdit;
+    if (this.state.docKeyFromEdit) {
+      saveData.forkedKey = this.state.docKeyFromEdit;
     }
 
     // Make the request
@@ -193,7 +219,7 @@ class PasteView extends React.Component {
         onClick={() => this.setState({ tabOption: PasteView.tabOptions.text })}>
         Text
       </span>
-      <Condition condition={!this.fromEdit}>
+      <Condition condition={!this.state.fromEdit}>
         <span
           className={this.state.tabOption == PasteView.tabOptions.upload ? 'active' : ''}
           onClick={() => this.setState({
@@ -205,7 +231,7 @@ class PasteView extends React.Component {
           File Upload
         </span>
       </Condition>
-      <Condition condition={this.fromEdit}>
+      <Condition condition={this.state.fromEdit}>
         <span
           className={this.state.tabOption == PasteView.tabOptions.diff ? 'active' : ''}
           onClick={() => this.setState({ tabOption: PasteView.tabOptions.diff })}
@@ -215,27 +241,6 @@ class PasteView extends React.Component {
       </Condition>
     </div>
   );
-
-  /**
-   * Renders the diff between text from an edit and the current text
-   */
-  renderDiff = () => {
-    if (!this.rawTxtFromEdit) return null;
-
-    // Make sure line endings are the same so they don't show up in diff
-    const oldText = this.rawTxtFromEdit.replace(/\r\n/g,'\n'),
-      newText = this.state.text.replace(/\r\n/g,'\n'),
-      diff = diffLines(oldText, newText, { newlineIsToken: true });
-
-    return diff.map((part, idx) => {
-      const spanClass = (part.added) ? 'added' : (part.removed) ? 'removed' : '';
-      return (
-        <pre key={idx} className={spanClass}>
-          {part.value}
-        </pre>
-      );
-    });
-  };
 
   render() {
     if (this.state.redirect)
@@ -324,11 +329,11 @@ class PasteView extends React.Component {
             </div>
           </div>
 
-          <Condition condition={this.fromEdit}>
+          <Condition condition={this.state.fromEdit}>
             <div className="fork-info">
               Forked from&nbsp;
-              <Link to={`/${this.docKeyFromEdit}`}>
-                {this.docKeyFromEdit}
+              <Link to={`/${this.state.docKeyFromEdit}`}>
+                {this.state.docKeyFromEdit}
               </Link>
             </div>
           </Condition>
@@ -337,11 +342,12 @@ class PasteView extends React.Component {
             <div className="text-container">
               <this.TabOptions />
               <textarea
-                key={this.state.age}
+                ref={(textarea) => { this.textArea = textarea; }}
                 className="hljs"
                 name="text"
                 placeholder="  Paste Text Here"
-                defaultValue={this.state.text}
+                value={this.state.text}
+                onKeyDown={this.handleKeyDown}
                 onChange={this.handleChange}
                 spellCheck="false"
                 onDragEnter={() => this.setState({
@@ -357,7 +363,7 @@ class PasteView extends React.Component {
             <div className="text-container">
               <this.TabOptions />
               <DiffBlock
-                oldText={this.rawTxtFromEdit}
+                oldText={this.state.rawTxtFromEdit}
                 newText={this.state.text}
               />
             </div>
@@ -369,7 +375,9 @@ class PasteView extends React.Component {
               <Dropzone className="dropzone" onDrop={this.onDrop} multiple={false}>
                 <div>
                   <div>Drag a file here or click to open dialogue.</div>
-                  <div>(Files will be deleted regularly to conserve storage.)</div>
+                  <div>
+                    (Files will be deleted regularly to conserve storage.)
+                  </div>
                 </div>
               </Dropzone>
             </div>
@@ -383,7 +391,7 @@ class PasteView extends React.Component {
 }
 
 PasteView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default PasteView;

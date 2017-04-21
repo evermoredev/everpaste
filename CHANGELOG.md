@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add a script to generate and replace letsencrypt certs
 - Handle file uploads via curl
 
+## [1.2.0] - 2017-04-21
+### Added
+- Added highlighting of diffed text in Read View
+- Tab detection in textarea of pasteview
+
+### Changed
+- Added prop-types package preparing for react 16 deprecation
+- Updated several packages
+
 ## [1.1.0] - 2017-04-19
 ### Added
 - Added diffing view to both edit and read views

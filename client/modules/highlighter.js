@@ -3,12 +3,18 @@
  * wraps in columns to avoid the terrible horizontal scrolling that most
  * html views use when displaying code.
  *
+ * Options include:
+ *   rowClassName: additional classNames for each table row
+ *   hideTableWrapper: leave the <table></table> tags off
+ *   hideLineNumbers: leaves the show-line-number class off
  */
 import hljs from 'highlight.js';
 import { htmlEscapeStr } from './_helpers';
 
 const highlight = (code, options = {}) => {
   const { lang } = options;
+  options.rowClassName = options.rowClassName || '';
+
   let codeBuf;
 
   // HighlightJS throws an error if the language you're trying doesn't exist.
@@ -24,14 +30,36 @@ const highlight = (code, options = {}) => {
     codeBuf = hljs.highlightAuto(code).value;
   }
 
-  // Add Line Numbers and wrap in a table
   codeBuf =
     codeBuf.replace(/^\s+/, (emptyStr) => emptyStr.replace(/\s/g, '&nbsp;'));
-  let buf = '<table class="code-table hljs">';
+
+  if (options.removeTrailingNewLine) {
+    codeBuf = codeBuf.replace(/(\n|\r\n)$/, '');
+  }
+
+  // create the classname for each row
+  let rowClassName = 'code-row';
+  if (!options.hideLineNumbers) {
+    rowClassName += ' show-line-number';
+  }
+  if (options.rowClassName) {
+    rowClassName += ` ${options.rowClassName}`;
+  }
+
+  // Add Line Numbers and wrap in a table
+  let buf = '';
+  if (!options.hideTableWrapper) {
+    buf = '<table class="code-table hljs">';
+  }
+
   codeBuf.split('\n').forEach((s, i) => {
-    buf += `<tr class="code-row"><td class="line-number"></td><td class="code-col">${s}</td></tr>`;
+    buf += `<tr class="${rowClassName}">`;
+    buf += `<td class="line-number"></td><td class="code-col">${s}</td></tr>`;
   });
-  buf += '</table>';
+
+  if (!options.hideTableWrapper) {
+    buf += '</table>';
+  }
 
   return buf;
 };

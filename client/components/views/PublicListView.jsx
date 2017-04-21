@@ -1,4 +1,5 @@
 import moment from 'moment';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -77,7 +78,7 @@ class PublicListView extends React.Component {
 }
 
 PublicListView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default PublicListView;

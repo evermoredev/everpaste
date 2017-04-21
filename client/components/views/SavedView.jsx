@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 
@@ -86,7 +87,7 @@ class SavedView extends React.Component {
 }
 
 SavedView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default SavedView;

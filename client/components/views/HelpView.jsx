@@ -1,4 +1,5 @@
 import marked from 'marked';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { HeaderBlock } from '../blocks';
@@ -62,7 +63,7 @@ class HelpView extends React.Component {
 }
 
 HelpView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default HelpView;

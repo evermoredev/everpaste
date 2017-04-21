@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { HeaderBlock } from '../blocks';
 
@@ -170,7 +171,7 @@ class SettingsView extends React.Component {
 }
 
 SettingsView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default SettingsView;

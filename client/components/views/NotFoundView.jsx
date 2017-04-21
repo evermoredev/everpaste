@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { HeaderBlock } from '../blocks';
 
@@ -43,7 +44,7 @@ class NotFoundView extends React.Component {
 }
 
 NotFoundView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default NotFoundView;

@@ -1,6 +1,12 @@
 import { diffLines } from 'diff';
 import React from 'react';
 
+import LoaderBlock from './LoaderBlock';
+
+/**
+ * This block is used primarily to show a diff in the PasteView when editing
+ * on a forked paste.
+ */
 class DiffBlock extends React.Component {
 
   static replaceNewlines(text) {
@@ -28,6 +34,7 @@ class DiffBlock extends React.Component {
         </pre>
       );
     });
+
   };
 
   render() {
