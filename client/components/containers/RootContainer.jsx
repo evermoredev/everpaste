@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -59,8 +60,8 @@ class RootContainer extends React.Component {
  * @type {{styleStore: *, currentPaste: *}}
  */
 RootContainer.childContextTypes = {
-  styleStore: React.PropTypes.object,
-  currentPaste: React.PropTypes.object
+  styleStore: PropTypes.object,
+  currentPaste: PropTypes.object
 };
 
 export default RootContainer;

@@ -1,9 +1,11 @@
 import CryptoJS from 'crypto-js';
+import PropTypes from 'prop-types';
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 
-import { DiffBlock, HeaderBlock } from '../blocks';
+import { DiffBlock, HeaderBlock, LoaderBlock } from '../blocks';
 import { privacyOptions } from '../../../shared/config/constants';
+import { getHighlightedDiffText } from '../../modules/_helpers';
 import highlighter from '../../modules/highlighter';
 import { doRequest } from '../../modules/request';
 import { Condition } from '../../modules/components';
@@ -39,6 +41,7 @@ class ReadView extends React.Component {
       filename: '',
       forkedKey: '',
       forkedText: '',
+      diffText: '',
 
       rawDisabled: true,
       editDisabled: true,
@@ -100,6 +103,7 @@ class ReadView extends React.Component {
         this.context.currentPaste = this.state;
       })
       .catch((error) => {
+        console.log(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -135,23 +139,45 @@ class ReadView extends React.Component {
   handleChange = (event) =>
     this.setState({ [event.target.name]: event.target.value });
 
+  handleShowDiff = () => {
+    this.setState({ showDiff: true });
+    if (!this.state.diffText) {
+      this.setState({
+        diffText: getHighlightedDiffText(
+          this.state.forkedText, this.state.rawText, this.state.lang
+        )
+      });
+    }
+  };
+
   renderCodeBlock = () => {
     if (this.state.text) {
       return (
         <pre>
-          <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
+          <code dangerouslySetInnerHTML={{__html: this.state.text}}/>
         </pre>
-      )
-    } else {
-      return (
-        <div className="loader hljs">
-          <span>&#123;</span>
-          <span>&#125;</span>
-        </div>
-      )
+      );
     }
+
+    return (<LoaderBlock />);
   };
 
+  renderDiffBlock = () => {
+    if (this.state.diffText) {
+      return (
+        <pre>
+          <code>
+            <table
+              className="code-table hljs"
+              dangerouslySetInnerHTML={{__html: this.state.diffText}}
+            />
+          </code>
+        </pre>
+      );
+    }
+
+    return (<LoaderBlock />);
+  };
 
   rawButton = () => {
     const win = window.open("", '_blank');
@@ -239,10 +265,19 @@ class ReadView extends React.Component {
                     &nbsp;|&nbsp;
                   </span>
                   <Condition condition={!this.state.showDiff}>
-                    <span onClick={() => this.setState({ showDiff: true })}>Show diff</span>
+                    <span
+                      className="diff-option"
+                      onClick={this.handleShowDiff}
+                    >
+                      Show diff
+                    </span>
                   </Condition>
                   <Condition condition={this.state.showDiff}>
-                    <span onClick={() => this.setState({ showDiff: false })}>Hide diff</span>
+                    <span className="diff-option"
+                          onClick={() => this.setState({ showDiff: false })}
+                    >
+                      Hide diff
+                    </span>
                   </Condition>
                 </div>
               </Condition>
@@ -254,10 +289,9 @@ class ReadView extends React.Component {
               </Condition>
 
               <Condition condition={showText && this.state.showDiff}>
-                <DiffBlock
-                  oldText={this.state.forkedText}
-                  newText={this.state.rawText}
-                />
+                <div className="code-document">
+                  {this.renderDiffBlock()}
+                </div>
               </Condition>
 
               <Condition condition={showFile}>
@@ -284,7 +318,7 @@ class ReadView extends React.Component {
 }
 
 ReadView.contextTypes = {
-  styleStore: React.PropTypes.object
+  styleStore: PropTypes.object
 };
 
 export default ReadView;
