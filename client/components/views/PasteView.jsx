@@ -248,20 +248,19 @@ class PasteView extends React.Component {
 
     return (
       <div
-        className={`paste-view flex-container ${this.context.styleStore.theme.className}`}
+        className={`view`}
         onPaste={this.onPaste}
       >
         <HeaderBlock
           saveButton={this.saveButton}
           disabled={{ raw: true, edit: true, save: !this.hasText() }}
         />
-        <div className="view-container">
-          <Condition value={this.state.errors} className="error-messages" />
+        <div className="view-container flex-col">
+          <Condition value={this.state.errors} className="red-text text-center" />
           <div className="options-container">
             <div className="option">
               <span className="label">Title:</span>
               <input
-                className="input-dark"
                 type="text"
                 name="title"
                 value={this.state.title}
@@ -272,7 +271,6 @@ class PasteView extends React.Component {
             <div className="option">
               <span className="label">Name:</span>
               <input
-                className="input-dark"
                 type="text"
                 name="name"
                 value={this.state.name}
@@ -283,7 +281,6 @@ class PasteView extends React.Component {
             <div className="option">
               <span className="label">Expiration:</span>
               <select
-                className="input-dark"
                 name="expiration"
                 value={this.state.expiration}
                 onChange={this.handleChange}
@@ -330,7 +327,7 @@ class PasteView extends React.Component {
           </div>
 
           <Condition condition={this.state.fromEdit}>
-            <div className="fork-info">
+            <div className="text-center light-blue-text">
               Forked from&nbsp;
               <Link to={`/${this.state.docKeyFromEdit}`}>
                 {this.state.docKeyFromEdit}

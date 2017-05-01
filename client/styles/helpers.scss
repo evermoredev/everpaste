@@ -1,7 +1,24 @@
-.white-text { color: white; }
 .baseline { vertical-align: baseline; }
+.c-pointer { cursor: pointer; }
+.d-block { display: block; }
+.d-inline { display: inline; }
+.flex-auto { flex: auto; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-row { display: flex; flex-direction: row; flex-wrap: wrap; }
+.italic { font-style: italic; }
 .margin-auto { margin: 0 auto; }
+.m-10 { margin: 10px; }
+.mb-10 { margin-bottom: 10px; }
+.ml-10 { margin-left: 10px; }
+.mr-10 { margin-right: 10px; }
+.mt-10 { margin-top: 10px; }
+.pr-5 { padding-right: 5px; }
+.p-10 { padding: 10px; }
+.pl-20 { padding-left: 20px !important; }
+.overflow-auto { overflow: auto; }
 .text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
 .unselectable {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

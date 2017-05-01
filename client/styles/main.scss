@@ -1,17 +1,16 @@
 /* Vendors */
 @import 'vendors/normalize.scss';
 
-/* Helpers */
-@import 'helpers.scss';
 
 /* Themes */
 @import 'themes/index.scss';
 
-/* Blocks */
-@import 'blocks/HeaderBlock.scss';
-
-/* Views */
-@import 'views/index.scss';
+@import 'blocks.scss';
+@import 'colors.scss';
+@import 'forms.scss';
+@import 'helpers.scss';
+@import 'tables.scss';
+@import 'views.scss';
 
 body {
   background: #282c34;
@@ -20,6 +19,7 @@ body {
 a {
   text-decoration: none;
   cursor: pointer;
+  color: inherit;
 }
 
 pre {
@@ -30,67 +30,11 @@ ul {
   padding: 0;
 }
 
-.line-number {
-  vertical-align: top;
-  color: #8d8d89;
-}
-
-.code-title {
-  text-align: center;
-  font-size: 1.3em;
-  font-family: $primary-font;
-  font-weight: bold;
-  padding-left: 8px;
-  .from-name {
-    color: #bfb5b5;
-    padding-left: 10px;
-    font-size: 0.8em;
-  }
-}
-
-.code-table {
-  line-height: .8;
-  overflow: hidden;
-  counter-reset: code-table;
-
-  tr:not(.removed) td:nth-of-type(1)::before {
-    counter-increment: code-table;
-    content: counter(code-table) ' ';
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  tr.removed td:nth-of-type(1)::before {
-    content: '-';
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  tr td:nth-of-type(1) {
-    padding-right: 10px;
-  }
-
-  tr.code-row {
-    word-break: break-all;
-    word-break: break-word;
-  }
-  td.code-col {
-    white-space: pre-wrap;
-    width: 100%;
-  }
-  td.line-number {
-    white-space: nowrap;
-  }
-}
-
-
-.settings-code-document {
-  padding-top: 10px;
+.theme-selection {
+  width: 200px;
+  height: 25px;
+  color: #abb2bf;
+  transition: 0.2s;
 }
 
 /* Loader Animation */
@@ -107,6 +51,18 @@ ul {
     &:nth-child(odd) {
       animation-delay: 0.4s;
     }
+  }
+}
+
+.file-download {
+  text-decoration: none;
+  color: #c3baba;
+  a {
+    color: #c3baba;
+  }
+  img {
+    max-width: 500px;
+    max-height: 500px;
   }
 }
 

@@ -39,15 +39,15 @@ class PublicListView extends React.Component {
   };
 
   renderDocsList = () => this.state.docList.map((d, idx) => (
-    <div className="public-list-item" key={idx}>
+    <div key={idx}>
       <Link to={`/${d.key}`}>
-        <div className="public-paste">
-          <Condition value={d.title} className="title" default="Untitled" />
-          <Condition value={d.name} className="from-name" />
-          <div className="created">
+        <span className="off-white-text">
+          <Condition value={d.title} className="pr-5" default="Untitled" />
+          <Condition value={d.name} className="pr-5 brown-text" />
+          <span className="italic">
             ({moment(d.createdAt).from(moment())})
-          </div>
-        </div>
+          </span>
+        </span>
       </Link>
     </div>
   ));
@@ -55,8 +55,9 @@ class PublicListView extends React.Component {
   render() {
     return (
       <div className={
-        `public-list-view flex-container ${this.context.styleStore.theme.className}`
+        `view flex-container ${this.context.styleStore.theme.className}`
       }>
+
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />

@@ -1,0 +1,162 @@
+@import './variables.scss';
+
+.options-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  color: white;
+  justify-content: center;
+
+  .option {
+    display: flex;
+    text-align: left;
+    width: 290px;
+    vertical-align: baseline;
+    margin: 5px;
+    .label {
+      margin-top: auto;
+    }
+    select {
+      margin-left: 10px;
+      width: 188px;
+      padding: 0.4em 0.6em;
+    }
+    input[name=title] {
+      margin-left: 10px;
+      width: 229px;
+      padding: 0.5em 0.6em;
+    }
+    input[name=name] {
+      margin-left: 10px;
+      width: 216px;
+      padding: 0.5em 0.6em;
+    }
+  }
+
+  .radio-options {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 320px;
+    margin-top: 10px;
+    input {
+      margin-right: 5px;
+    }
+  }
+  .radio-option {
+    margin-right: 13px;
+  }
+}
+
+.tab-options {
+  text-align: left;
+  span {
+    cursor: pointer;
+    color: #abb2bf;
+    padding: 5px 10px 0 5px;
+  }
+  span.active {
+    border: 1px solid #5891cb;
+    border-bottom: none;
+    box-shadow: none;
+    outline: none;
+    color: #56b6c2;
+  }
+}
+
+.text-container {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  text-align: center;
+  padding: 5px;
+}
+
+.option-container {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+}
+
+.upload-container {
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  .dropzone {
+    display: flex;
+    flex: auto;
+    color: #abb2bf;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    align-items: center;
+    font-size: 25px;
+    div {
+      margin: 0 auto;
+    }
+  }
+}
+
+textarea {
+  background: transparent;
+  color: #abb2bf;
+  width: 100%;
+  font-family: $code-font;
+  border: 1px solid #abb2bf;
+  transition: .4s;
+  padding: 20px;
+  border-radius: 3px;
+  resize: none;
+  flex: auto;
+  &:focus,
+  &:active {
+    outline: none;
+    border: 1px solid #5891cb;
+    color: #56b6c2;
+  }
+  &::-webkit-input-placeholder {
+    font-family: $primary-font;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    font-size: 30px;
+    position: relative;
+    top: -10px;
+    color: #abb2bf;
+    &:focus,
+    &:active {
+      color: #56b6c2;
+    }
+  }
+}
+
+input, select {
+  display: inline-block;
+  color: #abb2bf;
+  font-family: $primary-font;
+  font-size: 100%;
+  line-height: 1.15;
+  background: transparent;
+  box-shadow: none;
+  margin: 0 auto;
+  position: relative;
+  top: 8px;
+  transition: .4s;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  vertical-align: super;
+  box-sizing: border-box;
+  &::-webkit-input-placeholder {
+    color: inherit;
+  }
+  &:focus,
+  &:active {
+    border: 1px solid #5891cb;
+    box-shadow: none;
+    outline: none;
+    color: #56b6c2;
+  }
+}
