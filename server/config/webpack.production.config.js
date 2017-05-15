@@ -21,7 +21,8 @@ webpackConfig.plugins.unshift(
       NODE_ENV: JSON.stringify('production')
     }
   }),
-  new webpack.optimize.UglifyJsPlugin()
+  new webpack.optimize.UglifyJsPlugin(),
+  new webpack.optimize.AggressiveMergingPlugin()
 );
 
 module.exports = webpackConfig;

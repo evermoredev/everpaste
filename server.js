@@ -1,4 +1,5 @@
 import bodyParser from 'body-parser';
+import child_process from 'child_process';
 import cluster from 'cluster';
 import compression from 'compression';
 import express from 'express';
@@ -30,6 +31,12 @@ class Server {
 
   constructor() {
     this.app = express();
+  }
+
+  static removeBuildFiles() {
+    // This is relative to where you start the server
+    const command = 'rm -f ./public/js/app.* && rm -f ./public/index.html';
+    child_process.execSync(command);
   }
 
   /**
@@ -108,10 +115,11 @@ class Server {
    * WARNING: Uncommenting the migrations.down() will probably cause loss of
    * data. Not for production.
    */
-  async migrations() {
-    const migrations = new Migrations();
-    // await migrations.down();
-    await migrations.up();
+  static async migrations() {
+    // Make sure migrations only run once
+    const migration = new Migrations();
+    // await migration.down();
+    await migration.up();
   }
 
   /**
@@ -214,12 +222,22 @@ class Server {
   }
 
   /**
+   * This sets up the server with things that only need to happen once in case
+   * of multiple processes. For example, we don't want to run migrations for
+   * each child process.
+   * @returns {Promise.<void>}
+   */
+  static async initialize() {
+    await Server.migrations();
+    Server.removeBuildFiles();
+  };
+
+  /**
    * Builds and runs the server based on the current configuration
    */
   async run() {
     // Database operations. Comment these out if there's no database
     await this.database();
-    await this.migrations();
     // Logging and middleware
     this.logging();
     this.middleware();
@@ -237,24 +255,21 @@ class Server {
 
 
 /**
- * If this is the production server, utilize all the cpus
+ * Run an instance of the production server for each cpu
  */
-if (serverConfig.production) {
-
-  if (cluster.isMaster) {
-    // Start workers and listen for messages containing notifyRequest
-    os.cpus().forEach((cpu) => {
-      winston.info(`Starting node worker on ${cpu.model}`);
-      cluster.fork();
-    });
-  } else {
-    // Run an instance of a server on each cluster
-    const server = new Server();
-    server.run();
-  }
-
+if (cluster.isMaster) {
+  Server.initialize().then(() => {
+    if (serverConfig.production) {
+      os.cpus().forEach((cpu) => {
+        winston.info(`Starting node worker on ${cpu.model}`);
+        cluster.fork();
+      });
+    } else {
+      const server = new Server();
+      server.run();
+    }
+  });
 } else {
-  // Dev server
   const server = new Server();
   server.run();
 }
