@@ -14,12 +14,12 @@ class NotFoundView extends React.Component {
   render() {
     return (
       <div className={
-        `not-found-view flex-container ${this.context.styleStore.theme.className}`
+        `view ${this.context.styleStore.theme.className}`
       }>
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
-        <div className="view-container">
+        <div className="view-container white-text margin-auto">
           <pre>
             <br /><br />
             &nbsp;&nbsp;&nbsp;The paste you're looking for<br />

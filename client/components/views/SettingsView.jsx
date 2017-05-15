@@ -35,7 +35,7 @@ class SettingsView extends React.Component {
    */
   renderSampleCode = () => {
     return (
-      <div className="settings-code-document">
+      <div>
         <pre>
           <code>
             <table className="code-table hljs">
@@ -153,16 +153,16 @@ class SettingsView extends React.Component {
   render() {
     return(
       <div className={
-        `settings-view flex-container ${this.context.styleStore.theme.className}`
+        `view ${this.context.styleStore.theme.className}`
       }>
         <HeaderBlock disabled={{ raw: true, edit: true, save: true }} />
-        <div className="view-container">
-          <h2 className="settings-header">Select a Code Theme Below</h2>
+        <div className="view-container gray-text">
+          <h2 className="text-center">Select a Code Theme Below</h2>
           <div className="sample-code">{this.renderSampleCode()}</div>
-          <div className="settings-sub-header">
+          <div className="text-center m-10">
             Current Theme: {this.context.styleStore.theme.name}
           </div>
-          <div className="theme-container">{this.renderThemesList()}</div>
+          <div className="flex-row">{this.renderThemesList()}</div>
         </div>
       </div>
     );

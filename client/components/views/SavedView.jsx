@@ -49,7 +49,7 @@ class SavedView extends React.Component {
 
     return (
       <div className={
-        `saved-view flex-container ${this.context.styleStore.theme.className}`
+        `view ${this.context.styleStore.theme.className}`
       }>
         <HeaderBlock
           disabled={{
@@ -58,27 +58,23 @@ class SavedView extends React.Component {
             save: true
           }}
         />
-        <div className="view-container">
+        <div className="view-container flex-col white-text red-links">
           <div className="text-center">
             Document Key: <Link to={`/${docKey}`}>{docKey}</Link>
           </div>
-          <div className="text-center" style={{ marginTop: '10px' }}>
+          <div className="text-center m-10">
             Secret Key
             <Condition condition={document.queryCommandSupported('copy')}>
-              <span onClick={this.copyToClipboard} style={{ color: 'white'}}>
+              <span onClick={this.copyToClipboard}>
                 &nbsp;<i className="fa fa-clipboard" />&nbsp;
                 {this.state.copied}
               </span>
             </Condition>
           </div>
-          <form className="pure-form">
-            <div className="text-container">
               <textarea
                 ref={(textarea) => this.textArea = textarea}
                 readOnly value={secretKey}
               />
-            </div>
-          </form>
         </div>
       </div>
     );

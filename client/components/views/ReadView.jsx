@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 
-import { DiffBlock, HeaderBlock, LoaderBlock } from '../blocks';
+import { HeaderBlock, LoaderBlock } from '../blocks';
 import { privacyOptions } from '../../../shared/config/constants';
 import { getHighlightedDiffText } from '../../modules/_helpers';
 import highlighter from '../../modules/highlighter';
@@ -198,7 +198,7 @@ class ReadView extends React.Component {
     return (
       <div
         className={
-          `read-view flex-container ${this.context.styleStore.theme.className}`
+          `view ${this.context.styleStore.theme.className}`
         }
       >
         <HeaderBlock
@@ -217,17 +217,15 @@ class ReadView extends React.Component {
           This block is for text views that are not related to file uploads
         */}
           <Condition condition={showSecretForm}>
-            <div
-              className="view-container"
-              style={{ margin: '0 auto', textAlign: 'center' }}>
-              <h3 style={{ width: '100%', color: 'white' }}>
+            <div className="view-container margin-auto text-center">
+              <h3 className="white-text">
                 This document is encrypted. Please enter Secret Key below.
               </h3>
               <form
-                className="secret-form"
+                className=""
                 onSubmit={this.handleSecretKeySubmit} >
                 <input
-                  className="input-dark"
+                  className="p-10"
                   type="password"
                   name="secretKey"
                   value={this.state.secretKey}
@@ -235,21 +233,25 @@ class ReadView extends React.Component {
                   onChange={this.handleChange}
                 />
               </form>
-              <Condition value={this.state.error} style={{ color: 'red' }} />
+              <Condition value={this.state.error} className="red-text" />
             </div>
           </Condition>
 
           <Condition condition={!showSecretForm}>
             <div className="view-container hljs">
-              <Condition value={this.state.error} style={{ color: 'red' }} />
+              <Condition value={this.state.error} className="red-text" />
 
-              <div className="code-information-container">
-                <div className="unselectable code-title">
-                  <Condition value={this.state.title} default="Untitled" />
+              <div className="unselectable text-center">
+                <h3 className="m-10">
+                  <Condition
+                    className="hljs-keyword"
+                    value={this.state.title}
+                    default="Untitled"
+                  />
                   <Condition condition={this.state.name}>
-                    <span className="from-name">from {this.state.name}</span>
+                    <span className="italic">&nbsp;from {this.state.name}</span>
                   </Condition>
-                </div>
+                </h3>
               </div>
 
               <Condition condition={showText && this.state.forkedKey}>
@@ -266,14 +268,14 @@ class ReadView extends React.Component {
                   </span>
                   <Condition condition={!this.state.showDiff}>
                     <span
-                      className="diff-option"
+                      className="c-pointer"
                       onClick={this.handleShowDiff}
                     >
                       Show diff
                     </span>
                   </Condition>
                   <Condition condition={this.state.showDiff}>
-                    <span className="diff-option"
+                    <span className="c-pointer"
                           onClick={() => this.setState({ showDiff: false })}
                     >
                       Hide diff

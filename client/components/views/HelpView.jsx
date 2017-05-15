@@ -38,14 +38,14 @@ class HelpView extends React.Component {
   render() {
     return (
       <div className={
-        `help-view flex-container ${this.context.styleStore.theme.className}`
+        `view ${this.context.styleStore.theme.className}`
       }>
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
-        <div className="view-container">
+        <div className="view-container white-text red-links pl-20">
           <div>
-            Please submit bug reports or feature requests to:
+            Please submit bug reports or feature requests to:&nbsp;
             <a href="https://github.com/evermoredev/everpaste/issues">
               EverPaste Repo
             </a>

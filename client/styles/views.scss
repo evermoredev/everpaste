@@ -1,0 +1,12 @@
+.view {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  flex: auto;
+  overflow: auto;
+  .view-container {
+    flex: auto;
+    overflow: auto;
+    padding: 5px;
+  }
+}

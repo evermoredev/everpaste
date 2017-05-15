@@ -84,7 +84,7 @@ class ApiController {
 
     fail(res, {
       clientMsg: 'File not found.',
-      serverMsg: 'Problem serving file: ' + e,
+      serverMsg: 'Problem serving file: ' + key,
     });
   }
 
