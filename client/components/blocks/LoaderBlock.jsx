@@ -20,4 +20,6 @@ class LoaderBlock extends React.Component {
 
 }
 
+LoaderBlock.displayName = 'LoaderBlock';
+
 export default LoaderBlock;

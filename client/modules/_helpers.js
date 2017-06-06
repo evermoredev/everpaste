@@ -14,9 +14,9 @@ export const htmlEscapeStr = str => {
 };
 
 export const getHighlightedDiffText = (oldText, newText, highlightLang) => {
-  oldText = (oldText || '').replace(/\r\n/g,'\n');
-  newText = (newText || '').replace(/\r\n/g,'\n');
-  const diff = diffLines(oldText, newText, { newlineIsToken: true });
+  const oText = (oldText || '').replace(/\r\n/g, '\n'),
+    nText = (newText || '').replace(/\r\n/g, '\n');
+  const diff = diffLines(oText, nText, { newlineIsToken: true });
 
   return diff.map((part, idx) => {
     const spanClass = (part.added) ? 'added' : (part.removed) ? 'removed' : '';
@@ -26,7 +26,7 @@ export const getHighlightedDiffText = (oldText, newText, highlightLang) => {
       hideLineNumbers: true,
       rowClassName: spanClass,
       hideTableWrapper: true,
-      removeTrailingNewLine: (spanClass == 'added' || spanClass == 'removed')
+      removeTrailingNewLine: (spanClass === 'added' || spanClass === 'removed')
     });
   }).join('');
 };

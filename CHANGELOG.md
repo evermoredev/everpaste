@@ -11,13 +11,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changing scss files except for main.scss not triggering hot reload
 
 ### TODOs
-- Better error reporting for problems on startup
+- More eslint cleaning
 - Handle larger files
 - Add a script to generate and replace letsencrypt certs
 - Handle file uploads via curl
 
-## [1.3.0] - 2017-05-15
+## [1.4.0] - 2017-06-06
+### Changed
+- Updated components following strict eslint guidelines
+- Retain file extensions instead of having server guess
+- Updated several packages
 
+### Fixed
+- Fixed missing eslint package for react
+
+## [1.3.0] - 2017-05-15
 ### Changed
 - Server optimizations
 - Overhauled css, reducing duplication

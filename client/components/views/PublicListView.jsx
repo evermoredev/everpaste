@@ -34,18 +34,20 @@ class PublicListView extends React.Component {
         });
       })
       .catch(error => {
-        // console.log(error);
+        if (error) {
+          // console.log(error);
+        }
       });
   };
 
-  renderDocsList = () => this.state.docList.map((d, idx) => (
+  renderDocsList = () => this.state.docList.map((doc, idx) => (
     <div key={idx}>
-      <Link to={`/${d.key}`}>
+      <Link to={`/${doc.key}`}>
         <span className="off-white-text">
-          <Condition value={d.title} className="pr-5" default="Untitled" />
-          <Condition value={d.name} className="pr-5 brown-text" />
+          <Condition value={doc.title} className="pr-5" default="Untitled" />
+          <Condition value={doc.name} className="pr-5 brown-text" />
           <span className="italic">
-            ({moment(d.createdAt).from(moment())})
+            ({moment(doc.createdAt).from(moment())})
           </span>
         </span>
       </Link>
@@ -55,8 +57,8 @@ class PublicListView extends React.Component {
   render() {
     return (
       <div className={
-        `view flex-container ${this.context.styleStore.theme.className}`
-      }>
+        `view flex-container ${this.context.styleStore.theme.className}`}
+      >
 
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}

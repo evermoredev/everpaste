@@ -17,7 +17,7 @@ class HelpView extends React.Component {
     // Initially set text to empty until it's loaded from github
     this.state = {
       text: ''
-    }
+    };
   }
 
   /**
@@ -28,18 +28,20 @@ class HelpView extends React.Component {
       url: `https://raw.githubusercontent.com/evermoredev/everpaste/master/CHANGELOG.md`
     })
     .then(data => {
-      this.setState({ text: data })
+      this.setState({ text: data });
     })
     .catch(error => {
-      this.setState({ text: 'Problem loading help from github.'})
+      if (error) {
+        this.setState({ text: 'Problem loading help from github.' });
+      }
     });
   }
 
   render() {
     return (
       <div className={
-        `view ${this.context.styleStore.theme.className}`
-      }>
+        `view ${this.context.styleStore.theme.className}`}
+      >
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
@@ -52,9 +54,8 @@ class HelpView extends React.Component {
           </div>
           <div
             className="code-document"
-            dangerouslySetInnerHTML={{__html: marked(this.state.text) }}
-          >
-          </div>
+            dangerouslySetInnerHTML={{ __html: marked(this.state.text) }}
+          />
         </div>
       </div>
     );
@@ -65,5 +66,7 @@ class HelpView extends React.Component {
 HelpView.contextTypes = {
   styleStore: PropTypes.object
 };
+
+HelpView.displayName = 'HelpView';
 
 export default HelpView;

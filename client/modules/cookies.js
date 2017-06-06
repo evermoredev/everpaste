@@ -18,6 +18,6 @@ export const setCookies = (cookies) => {
 };
 
 export const getCookie = (k) => {
-  let cookies = cookie.parse(document.cookie);
+  const cookies = cookie.parse(document.cookie);
   return cookies[k];
 };

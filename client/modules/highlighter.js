@@ -19,7 +19,7 @@ const highlight = (code, options = {}) => {
 
   // HighlightJS throws an error if the language you're trying doesn't exist.
   try {
-    if (lang == 'txt') {
+    if (lang === 'txt') {
       codeBuf = htmlEscapeStr(code);
     } else if (lang) {
       codeBuf = hljs.highlight(code, lang).value;
@@ -52,9 +52,9 @@ const highlight = (code, options = {}) => {
     buf = '<table class="code-table hljs">';
   }
 
-  codeBuf.split('\n').forEach((s, i) => {
+  codeBuf.split('\n').forEach((str) => {
     buf += `<tr class="${rowClassName}">`;
-    buf += `<td class="line-number"></td><td class="code-col">${s}</td></tr>`;
+    buf += `<td class="line-number"></td><td class="code-col">${str}</td></tr>`;
   });
 
   if (!options.hideTableWrapper) {

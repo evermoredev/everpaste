@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 import PropTypes from 'prop-types';
-import React  from 'react';
+import React from 'react';
 import Dropzone from 'react-dropzone';
 import { Redirect, Link } from 'react-router-dom';
 
@@ -32,7 +32,7 @@ class PasteView extends React.Component {
 
   constructor(props) {
     super(props);
-    
+
     // Set some defaults
     this.initialState = {
       title: '',
@@ -45,15 +45,17 @@ class PasteView extends React.Component {
       redirect: null,
       tabOption: PasteView.tabOptions.text
     };
-    
+
     this.state = Object.assign({}, this.initialState);
 
     // If we're coming from an edit, grab the currentPaste data
     if (this.props.location.state && this.props.location.state.currentPaste) {
       // These items don't need to be on state. Saved to we can reference,
       // like diffing current text vs forked text
-      this.state.rawTxtFromEdit = this.props.location.state.currentPaste.rawText || '';
-      this.state.titleFromEdit = this.props.location.state.currentPaste.title || '';
+      this.state.rawTxtFromEdit =
+        this.props.location.state.currentPaste.rawText || '';
+      this.state.titleFromEdit =
+        this.props.location.state.currentPaste.title || '';
       this.state.docKeyFromEdit = this.props.location.state.currentPaste.docKey;
       this.state.fromEdit = true;
 
@@ -111,12 +113,13 @@ class PasteView extends React.Component {
   onDrop = (file) => {
     // If array, grab the first file only
     file = file[0] || file;
+    console.log(file);
     const validate = fileValidation(file);
     if (validate.passed) {
       // Don't re-render, save one file
       this.state.file = file;
       // In case we got here with privacy set as encryption
-      if (this.state.privacy == privacyOptions.encrypted) {
+      if (this.state.privacy === privacyOptions.encrypted) {
         this.state.privacy = privacyOptions.private;
       }
       // Invoke saving automatically
@@ -142,7 +145,7 @@ class PasteView extends React.Component {
           this.onDrop(file);
         }
       }
-    } catch(e) {
+    } catch(err) {
       // Ignore errors from older browsers
     }
   };
@@ -166,14 +169,16 @@ class PasteView extends React.Component {
 
     // Handle encryption
     let secretKey;
-    if (this.state.privacy == privacyOptions.encrypted) {
-      let arr = new Uint8Array(1024);
+    if (this.state.privacy === privacyOptions.encrypted) {
+      const arr = new Uint8Array(1024);
       // User the non armored key for encryption
-      let encryptKey = String.fromCharCode(...window.crypto.getRandomValues(arr));
+      const encryptKey =
+        String.fromCharCode(...window.crypto.getRandomValues(arr));
       // Create the user friendly/armored key for display
       secretKey = btoa(encryptKey);
       // Encrypt the text to be sent to the server
-      saveData.text = CryptoJS.AES.encrypt(saveData.text, encryptKey).toString();
+      saveData.text =
+        CryptoJS.AES.encrypt(saveData.text, encryptKey).toString();
     }
 
     // Add the forkedKey
@@ -197,15 +202,18 @@ class PasteView extends React.Component {
 
       // If there is a secretKey let's redirect them to a page that shows
       // the docKey & secretKey, otherwise send them directly to the new paste
-      let redirect = (secretKey) ? {
-          pathname: `/saved`,
-          state: { docKey: data.key, secretKey }
-        } : {
-          pathname: `/${data.key}`
-        };
+      const redirect = (secretKey) ? {
+        pathname: `/saved`,
+        state: { docKey: data.key, secretKey }
+      } : {
+        pathname: `/${data.key}`
+      };
       this.setState({ redirect });
-    }).catch(err => {
-      this.setState({ errors: err.message });
+    })
+    .catch((err) => {
+      if (err) {
+        this.setState({ errors: err.message });
+      }
     });
   };
 
@@ -215,16 +223,16 @@ class PasteView extends React.Component {
   TabOptions = () => (
     <div className="tab-options">
       <span
-        className={this.state.tabOption == PasteView.tabOptions.text ? 'active' : ''}
+        className={this.state.tabOption === PasteView.tabOptions.text ? 'active' : ''}
         onClick={() => this.setState({ tabOption: PasteView.tabOptions.text })}>
         Text
       </span>
       <Condition condition={!this.state.fromEdit}>
         <span
-          className={this.state.tabOption == PasteView.tabOptions.upload ? 'active' : ''}
+          className={this.state.tabOption === PasteView.tabOptions.upload ? 'active' : ''}
           onClick={() => this.setState({
             tabOption: PasteView.tabOptions.upload,
-            privacy: (this.state.privacy == privacyOptions.encrypted) ?
+            privacy: (this.state.privacy === privacyOptions.encrypted) ?
               privacyOptions.private : this.state.privacy
           })}
         >
@@ -233,7 +241,7 @@ class PasteView extends React.Component {
       </Condition>
       <Condition condition={this.state.fromEdit}>
         <span
-          className={this.state.tabOption == PasteView.tabOptions.diff ? 'active' : ''}
+          className={this.state.tabOption === PasteView.tabOptions.diff ? 'active' : ''}
           onClick={() => this.setState({ tabOption: PasteView.tabOptions.diff })}
         >
           Show Diff
@@ -243,8 +251,9 @@ class PasteView extends React.Component {
   );
 
   render() {
-    if (this.state.redirect)
+    if (this.state.redirect) {
       return <Redirect to={this.state.redirect} push={true} />;
+    }
 
     return (
       <div
@@ -256,7 +265,10 @@ class PasteView extends React.Component {
           disabled={{ raw: true, edit: true, save: !this.hasText() }}
         />
         <div className="view-container flex-col">
-          <Condition value={this.state.errors} className="red-text text-center" />
+          <Condition
+            value={this.state.errors}
+            className="red-text text-center"
+          />
           <div className="options-container">
             <div className="option">
               <span className="label">Title:</span>
@@ -285,8 +297,8 @@ class PasteView extends React.Component {
                 value={this.state.expiration}
                 onChange={this.handleChange}
               >
-                {expirationOptions.map((o, idx) => (
-                  <option key={idx} value={o}>{o}</option>
+                {expirationOptions.map((opt, idx) => (
+                  <option key={idx} value={opt}>{opt}</option>
                 ))}
               </select>
             </div>
@@ -296,7 +308,7 @@ class PasteView extends React.Component {
                   type="radio"
                   name="public"
                   value={privacyOptions.public}
-                  checked={this.state.privacy == privacyOptions.public}
+                  checked={this.state.privacy === privacyOptions.public}
                   onChange={this.handlePrivacyRadio}
                 />
                 Public
@@ -306,18 +318,20 @@ class PasteView extends React.Component {
                   type="radio"
                   name="private"
                   value={privacyOptions.private}
-                  checked={this.state.privacy == privacyOptions.private}
+                  checked={this.state.privacy === privacyOptions.private}
                   onChange={this.handlePrivacyRadio}
                 />
                 Private
               </div>
-              <Condition condition={this.state.tabOption != PasteView.tabOptions.file}>
+              <Condition
+                condition={this.state.tabOption !== PasteView.tabOptions.file}
+              >
                 <div className="radio-option">
                   <input
                     type="radio"
                     name="encrypt"
                     value={privacyOptions.encrypted}
-                    checked={this.state.privacy == privacyOptions.encrypted}
+                    checked={this.state.privacy === privacyOptions.encrypted}
                     onChange={this.handlePrivacyRadio}
                   />
                   Private w/AES
@@ -335,7 +349,9 @@ class PasteView extends React.Component {
             </div>
           </Condition>
 
-          <Condition condition={this.state.tabOption == PasteView.tabOptions.text}>
+          <Condition
+            condition={this.state.tabOption === PasteView.tabOptions.text}
+          >
             <div className="text-container">
               <this.TabOptions />
               <textarea
@@ -349,14 +365,16 @@ class PasteView extends React.Component {
                 spellCheck="false"
                 onDragEnter={() => this.setState({
                   tabOption: PasteView.tabOptions.upload,
-                  privacy: (this.state.privacy == privacyOptions.encrypted) ?
+                  privacy: (this.state.privacy === privacyOptions.encrypted) ?
                     privacyOptions.private : this.state.privacy
                 })}
               />
             </div>
           </Condition>
 
-          <Condition condition={this.state.tabOption == PasteView.tabOptions.diff}>
+          <Condition
+            condition={this.state.tabOption === PasteView.tabOptions.diff}
+          >
             <div className="text-container">
               <this.TabOptions />
               <DiffBlock
@@ -366,10 +384,16 @@ class PasteView extends React.Component {
             </div>
           </Condition>
 
-          <Condition condition={this.state.tabOption == PasteView.tabOptions.upload}>
+          <Condition
+            condition={this.state.tabOption === PasteView.tabOptions.upload}
+          >
             <div className="upload-container">
               <this.TabOptions />
-              <Dropzone className="dropzone" onDrop={this.onDrop} multiple={false}>
+              <Dropzone
+                className="dropzone"
+                onDrop={this.onDrop}
+                multiple={false}
+              >
                 <div>
                   <div>Drag a file here or click to open dialogue.</div>
                   <div>
@@ -390,5 +414,7 @@ class PasteView extends React.Component {
 PasteView.contextTypes = {
   styleStore: PropTypes.object
 };
+
+PasteView.displayName = 'PasteView';
 
 export default PasteView;

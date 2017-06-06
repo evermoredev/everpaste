@@ -3,8 +3,8 @@
  * and adds some optimizations.
  */
 
-const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
-const webpack = require('webpack'); //to access built-in plugins
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
 
 const serverConfig = require('./config.js');
