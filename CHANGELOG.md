@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.4.0] - 2017-06-06
 ### Changed
 - Updated components following strict eslint guidelines
-- Retain file extensions instead of having server guess
+- Retain filenames
+- Move files to uploads/docKey/filename
 - Updated several packages
 
 ### Fixed

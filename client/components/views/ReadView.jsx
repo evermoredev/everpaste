@@ -301,12 +301,15 @@ class ReadView extends React.Component {
             <Condition condition={showFile}>
               <div className="view-container text-center file-download">
                 <Condition condition={isImage}>
-                  <a href={`/api/file/${this.state.docKey}`} target="_blank">
-                    <img src={`/api/file/${this.state.docKey}`} />
+                  <a
+                    href={`/api/file/${this.state.docKey}/${this.state.filename}`}
+                    target="_blank"
+                  >
+                    <img src={`/api/file/${this.state.docKey}/${this.state.filename}`} />
                   </a>
                 </Condition>
                 <Condition condition={!isImage}>
-                  <a href={`/api/file/${this.state.docKey}`}>
+                  <a href={`/api/file/${this.state.docKey}/${this.state.filename}`}>
                     {this.state.filename}
                   </a>
                 </Condition>

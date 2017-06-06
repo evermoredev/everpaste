@@ -128,15 +128,15 @@ class Server {
    */
   routing() {
     // multer for file uploads
-    let upload  = multer({ storage: multer.memoryStorage() }).any();
+    const upload = multer({ storage: multer.memoryStorage() }).any();
     // api calls for the server to handle
     this.app.post('/api',
       (req, res) =>
         upload(req, res, (err) => this.apiController.handlePost(req, res)));
     this.app.get('/api/list',
       (req, res) => this.apiController.handleGetList(req, res));
-    this.app.get('/api/file/:id',
-      (req, res) => this.apiController.handleGetFile(req.params.id, res));
+    this.app.get('/api/file/:key/:filename',
+      (req, res) => this.apiController.handleGetFile(req.params, res));
     this.app.get('/api/:id',
       (req, res) => this.apiController.handleGet(req.params.id, res));
   }
