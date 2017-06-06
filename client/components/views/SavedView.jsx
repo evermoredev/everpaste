@@ -17,7 +17,7 @@ class SavedView extends React.Component {
 
     this.state = {
       copied: ''
-    }
+    };
   }
 
   /**
@@ -28,7 +28,7 @@ class SavedView extends React.Component {
     this.textArea.select();
     try {
       document.execCommand('copy');
-      this.setState({ copied: 'Copied!'});
+      this.setState({ copied: 'Copied!' });
       event.target.focus();
     } catch (err) {
       // Document not copied
@@ -43,14 +43,14 @@ class SavedView extends React.Component {
     try {
       docKey = this.props.location.state.docKey;
       secretKey = this.props.location.state.secretKey;
-    } catch(e) {
-      return <Redirect to="/" push={false} />
+    } catch(error) {
+      return <Redirect to="/" push={false} />;
     }
 
     return (
       <div className={
-        `view ${this.context.styleStore.theme.className}`
-      }>
+        `view ${this.context.styleStore.theme.className}`}
+      >
         <HeaderBlock
           disabled={{
             raw: true,
@@ -71,10 +71,10 @@ class SavedView extends React.Component {
               </span>
             </Condition>
           </div>
-              <textarea
-                ref={(textarea) => this.textArea = textarea}
-                readOnly value={secretKey}
-              />
+          <textarea
+            ref={(textarea) => this.textArea = textarea}
+            readOnly value={secretKey}
+          />
         </div>
       </div>
     );

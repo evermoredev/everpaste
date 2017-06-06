@@ -224,7 +224,6 @@
     "no-process-env": ["warn"], // disallow the use of process.env
     "no-process-exit": ["warn"], // disallow the use of process.exit()
     "no-restricted-modules": ["error", "cluster"], // disallow specified modules when loaded by require
-    "no-sync": ["warn"], // disallow synchronous methods
 
     /**
      * ECMAScript 6
@@ -375,9 +374,7 @@
      * DisplayName allows you to name your component. This name is used by React in debugging messages
      */
     "react/display-name": ["warn", { "ignoreTranspilerName": true }],
-
     "react/forbid-prop-types": ["off", { "forbid": ["string-of-disallowed-proptypes"] }], // Forbid certain propTypes
-    "react/no-comment-textnodes": ["warn"], // Prevent comments from being inserted as text nodes
     "react/no-danger": ["off"], // Prevent usage of dangerous JSX properties
     "react/no-did-mount-set-state": ["error"],// Prevent usage of setState in componentDidMount
     "react/no-did-update-set-state": ["warn"], // Prevent usage of setState in componentDidUpdate
@@ -392,7 +389,6 @@
     "react/prefer-stateless-function": ["off"], // Enforce stateless React Components to be written as a pure function
     "react/prop-types": ["off"], // Prevent missing props validation in a React component definition
     "react/react-in-jsx-scope": ["warn"], // Prevent missing React when using JSX
-    "react/require-extension": ["warn", { "extensions": [".js", ".jsx"] }], // Restrict file extensions that may be required
     "react/require-optimization": ["warn"], // Enforce React components to have a shouldComponentUpdate method
     "react/require-render-return": ["warn"], // Enforce ES5 or ES6 class for returning value in render function
     "react/self-closing-comp": ["error", {
@@ -401,12 +397,10 @@
     }], // Prevent extra closing tags for components without children
     "react/sort-comp": ["error"], //  Enforce component methods order
     "react/sort-prop-types": ["off"], // Enforce propTypes declarations alphabetical sorting
-    "react/wrap-multilines": ["error"], // Prevent missing parentheses around multiline JSX
 
     /**
      * JSX Rules
      */
-
     "react/jsx-boolean-value": ["error", "always"], // Enforce boolean attributes notation in JSX
     "react/jsx-closing-bracket-location": ["error"], // Validate closing bracket location in JSX
     "react/jsx-curly-spacing": ["warn", "never"], // Enforce or disallow spaces inside of curly braces in JSX attributes
@@ -430,7 +424,8 @@
     "react/jsx-sort-props": ["off"], // Enforce props alphabetical sorting
     "react/jsx-space-before-closing": ["error"], // Validate spacing before closing bracket in JSX
     "react/jsx-uses-react": ["warn"], // Prevent React to be incorrectly marked as unused
-    "react/jsx-uses-vars": ["warn"] // Prevent variables used in JSX to be incorrectly marked as unused
+    "react/jsx-uses-vars": ["warn"], // Prevent variables used in JSX to be incorrectly marked as unused
+    "react/jsx-wrap-multilines": ["error"] // Prevent missing parentheses around multiline JSX
   }
 
 }

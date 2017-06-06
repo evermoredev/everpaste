@@ -4,7 +4,7 @@
  */
 
 const path = require('path');
-const webpack = require('webpack'); //to access built-in plugins
+const webpack = require('webpack');
 
 const webpackConfig = require('./webpack.config');
 

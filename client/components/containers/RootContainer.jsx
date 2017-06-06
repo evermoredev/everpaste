@@ -64,4 +64,6 @@ RootContainer.childContextTypes = {
   currentPaste: PropTypes.object
 };
 
+RootContainer.displayName = 'RootContainer';
+
 export default RootContainer;

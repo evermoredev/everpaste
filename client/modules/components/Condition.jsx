@@ -23,9 +23,9 @@ import React from 'react';
  *       </form>
  *     </Condition>
  *
- *     In this example we display all the children element of Condition (the form)
- *     if the condition being passed in is true. This is a lot cleaner in jsx than
- *     curly braces everywhere.
+ *   In this example we display all the children element of Condition (the form)
+ *   if the condition being passed in is true. This is a lot cleaner in jsx than
+ *   curly braces everywhere.
  */
 class Condition extends React.Component {
 

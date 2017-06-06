@@ -23,7 +23,7 @@ class ReadView extends React.Component {
     const docParts = docKey.split('.', 2);
     return {
       docKey: docParts[0], lang: docParts[1]
-    }
+    };
   };
 
   constructor(props) {
@@ -84,8 +84,8 @@ class ReadView extends React.Component {
     doRequest({ url: `/api/${docKey}`})
       .then((data) => {
         let { title, text, name, privacy, filename, forkedKey, forkedText } = data,
-            { rawDisabled, editDisabled } = this.state,
-            rawText;
+          { rawDisabled, editDisabled } = this.state,
+          rawText;
 
         // Set some things up based on whether or not this text is encrypted
         // Like only highlighting text if it's not encrypted
@@ -97,8 +97,7 @@ class ReadView extends React.Component {
         }
         this.setState({
           title, text, rawText, name, docKey, forkedKey, forkedText,
-          privacy, lang, rawDisabled, editDisabled,
-          filename: filename
+          privacy, lang, rawDisabled, editDisabled, filename
         });
         this.context.currentPaste = this.state;
       })
@@ -108,15 +107,15 @@ class ReadView extends React.Component {
       });
   };
 
-  handleSecretKeySubmit = (e) => {
-    e.preventDefault();
+  handleSecretKeySubmit = (event) => {
+    event.preventDefault();
     let decryptedText;
 
     try {
-      let bstring = atob(this.state.secretKey);
+      const bstring = atob(this.state.secretKey);
       decryptedText = CryptoJS.AES.decrypt(this.state.text, bstring)
         .toString(CryptoJS.enc.Utf8);
-    } catch(e) {
+    } catch(err) {
       this.setState({ error: 'The secret key is incorrect.' });
       return;
     }
@@ -131,7 +130,7 @@ class ReadView extends React.Component {
         text: highlighter(decryptedText, { lang: this.state.lang }),
         secretKey: '',
         rawDisabled: false,
-        editDisabled: false,
+        editDisabled: false
       });
     }
   };
@@ -154,7 +153,7 @@ class ReadView extends React.Component {
     if (this.state.text) {
       return (
         <pre>
-          <code dangerouslySetInnerHTML={{__html: this.state.text}}/>
+          <code dangerouslySetInnerHTML={{ __html: this.state.text }} />
         </pre>
       );
     }
@@ -169,7 +168,7 @@ class ReadView extends React.Component {
           <code>
             <table
               className="code-table hljs"
-              dangerouslySetInnerHTML={{__html: this.state.diffText}}
+              dangerouslySetInnerHTML={{ __html: this.state.diffText }}
             />
           </code>
         </pre>
@@ -181,19 +180,21 @@ class ReadView extends React.Component {
 
   rawButton = () => {
     const win = window.open("", '_blank');
-    win.document.body.innerHTML = '<pre>' + this.state.rawText + '</pre>';
+    win.document.body.innerHTML = `<pre>${this.state.rawText}</pre>`;
   };
 
   render() {
     // All the redirects here are for 404s. Replace the current route instead of
     // pushing.
-    if (this.state.redirect)
+    if (this.state.redirect) {
       return <Redirect to={this.state.redirect} push={false} />;
+    }
 
     const showFile = !!this.state.filename,
-          showSecretForm = this.state.privacy == privacyOptions.encrypted && !showFile,
-          showText = this.state.privacy != privacyOptions.encrypted && !showFile,
-          isImage = showFile && this.state.filename.match(/\.(jpeg|jpg|gif|png)$/i);
+      showSecretForm =
+        this.state.privacy === privacyOptions.encrypted && !showFile,
+      showText = this.state.privacy !== privacyOptions.encrypted && !showFile,
+      isImage = showFile && this.state.filename.match(/\.(jpeg|jpg|gif|png)$/i);
 
     return (
       <div
@@ -211,107 +212,108 @@ class ReadView extends React.Component {
         />
 
         {/*
-          There's a lot of logic here for which part of ReadView should be displayed.
+          There's a lot of logic here for how ReadView should be displayed.
           Eventually, this should be broken in to smaller components.
 
           This block is for text views that are not related to file uploads
         */}
-          <Condition condition={showSecretForm}>
-            <div className="view-container margin-auto text-center">
-              <h3 className="white-text">
-                This document is encrypted. Please enter Secret Key below.
-              </h3>
-              <form
-                className=""
-                onSubmit={this.handleSecretKeySubmit} >
-                <input
-                  className="p-10"
-                  type="password"
-                  name="secretKey"
-                  value={this.state.secretKey}
-                  placeholder="Secret Key"
-                  onChange={this.handleChange}
+        <Condition condition={showSecretForm}>
+          <div className="view-container margin-auto text-center">
+            <h3 className="white-text">
+              This document is encrypted. Please enter Secret Key below.
+            </h3>
+            <form
+              className=""
+              onSubmit={this.handleSecretKeySubmit}
+            >
+              <input
+                className="p-10"
+                type="password"
+                name="secretKey"
+                value={this.state.secretKey}
+                placeholder="Secret Key"
+                onChange={this.handleChange}
+              />
+            </form>
+            <Condition value={this.state.error} className="red-text" />
+          </div>
+        </Condition>
+
+        <Condition condition={!showSecretForm}>
+          <div className="view-container hljs">
+            <Condition value={this.state.error} className="red-text" />
+
+            <div className="unselectable text-center">
+              <h3 className="m-10">
+                <Condition
+                  className="hljs-keyword"
+                  value={this.state.title}
+                  default="Untitled"
                 />
-              </form>
-              <Condition value={this.state.error} className="red-text" />
+                <Condition condition={this.state.name}>
+                  <span className="italic">&nbsp;from {this.state.name}</span>
+                </Condition>
+              </h3>
             </div>
-          </Condition>
 
-          <Condition condition={!showSecretForm}>
-            <div className="view-container hljs">
-              <Condition value={this.state.error} className="red-text" />
-
-              <div className="unselectable text-center">
-                <h3 className="m-10">
-                  <Condition
-                    className="hljs-keyword"
-                    value={this.state.title}
-                    default="Untitled"
-                  />
-                  <Condition condition={this.state.name}>
-                    <span className="italic">&nbsp;from {this.state.name}</span>
-                  </Condition>
-                </h3>
-              </div>
-
-              <Condition condition={showText && this.state.forkedKey}>
-                <div className="fork-info">
-                  Forked from&nbsp;
-                  <Link to={{
-                    pathname: `/${this.state.forkedKey}`,
-                    state: { reload: true }
-                  }}>
-                    {this.state.forkedKey}
-                  </Link>
-                  <span className="white-text">
-                    &nbsp;|&nbsp;
+            <Condition condition={showText && this.state.forkedKey}>
+              <div className="fork-info">
+                Forked from&nbsp;
+                <Link to={{
+                  pathname: `/${this.state.forkedKey}`,
+                  state: { reload: true } }}
+                >
+                  {this.state.forkedKey}
+                </Link>
+                <span className="white-text">
+                  &nbsp;|&nbsp;
+                </span>
+                <Condition condition={!this.state.showDiff}>
+                  <span
+                    className="c-pointer"
+                    onClick={this.handleShowDiff}
+                  >
+                    Show diff
                   </span>
-                  <Condition condition={!this.state.showDiff}>
-                    <span
-                      className="c-pointer"
-                      onClick={this.handleShowDiff}
-                    >
-                      Show diff
-                    </span>
-                  </Condition>
-                  <Condition condition={this.state.showDiff}>
-                    <span className="c-pointer"
-                          onClick={() => this.setState({ showDiff: false })}
-                    >
-                      Hide diff
-                    </span>
-                  </Condition>
-                </div>
-              </Condition>
+                </Condition>
+                <Condition condition={this.state.showDiff}>
+                  <span className="c-pointer"
+                    onClick={() => this.setState({ showDiff: false })}
+                  >
+                    Hide diff
+                  </span>
+                </Condition>
+              </div>
+            </Condition>
 
-              <Condition condition={showText && !this.state.showDiff}>
-                <div className="code-document">
-                  {this.renderCodeBlock()}
-                </div>
-              </Condition>
+            <Condition condition={showText && !this.state.showDiff}>
+              <div className="code-document">
+                {this.renderCodeBlock()}
+              </div>
+            </Condition>
 
-              <Condition condition={showText && this.state.showDiff}>
-                <div className="code-document">
-                  {this.renderDiffBlock()}
-                </div>
-              </Condition>
+            <Condition condition={showText && this.state.showDiff}>
+              <div className="code-document">
+                {this.renderDiffBlock()}
+              </div>
+            </Condition>
 
-              <Condition condition={showFile}>
-                <div className="view-container text-center file-download">
-                  <Condition condition={isImage}>
-                    <a href={`/api/file/${this.state.docKey}`} target="_blank">
-                      <img src={`/api/file/${this.state.docKey}`} />
-                    </a>
-                  </Condition>
-                  <Condition condition={!isImage}>
-                    <a href={`/api/file/${this.state.docKey}`}>
-                      {this.state.filename}
-                    </a>
-                  </Condition>
-                </div>
-              </Condition>
-            </div>
-          </Condition>
+            <Condition condition={showFile}>
+              <div className="view-container text-center file-download">
+                <Condition condition={isImage}>
+                  <a href={`/api/file/${this.state.docKey}`} target="_blank">
+                    <img src={`/api/file/${this.state.docKey}`} />
+                  </a>
+                </Condition>
+                <Condition condition={!isImage}>
+                  <a href={`/api/file/${this.state.docKey}`}>
+                    {this.state.filename}
+                  </a>
+                </Condition>
+              </div>
+            </Condition>
+          </div>
+        </Condition>
 
       </div>
     );

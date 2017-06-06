@@ -8,7 +8,7 @@ import React from 'react';
 class DiffBlock extends React.Component {
 
   static replaceNewlines(text) {
-    return text.replace(/\r\n/g,'\n');
+    return text.replace(/\r\n/g, '\n');
   }
 
   constructor(props) {
@@ -21,11 +21,12 @@ class DiffBlock extends React.Component {
   renderDiff = () => {
     // Make sure line endings are the same so they don't show up in diff
     const oldText = DiffBlock.replaceNewlines(this.props.oldText || ''),
-          newText = DiffBlock.replaceNewlines(this.props.newText || ''),
-          diff = diffLines(oldText, newText, { newlineIsToken: true });
+      newText = DiffBlock.replaceNewlines(this.props.newText || ''),
+      diff = diffLines(oldText, newText, { newlineIsToken: true });
 
     return diff.map((part, idx) => {
-      const spanClass = (part.added) ? 'added' : (part.removed) ? 'removed' : '';
+      const spanClass =
+        (part.added) ? 'added' : (part.removed) ? 'removed' : '';
       return (
         <pre key={idx} className={spanClass}>
           {part.value}
@@ -43,5 +44,7 @@ class DiffBlock extends React.Component {
   }
 
 }
+
+DiffBlock.displayName = 'DiffBlock';
 
 export default DiffBlock;

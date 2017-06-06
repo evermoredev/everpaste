@@ -24,7 +24,8 @@ class SettingsView extends React.Component {
       <div
         key={idx}
         className={`${themes[k]} theme-selection`}
-        onClick={(event) => this.handleThemeChange(event, k)}>
+        onClick={(event) => this.handleThemeChange(event, k)}
+      >
         {k}
       </div>
     );
@@ -41,11 +42,11 @@ class SettingsView extends React.Component {
             <table className="code-table hljs">
               <tbody>
                 <tr className="code-row">
-                  <td className="line-number"></td>
+                  <td className="line-number" />
                   <td className="code-col">import java.io.*; </td>
                 </tr>
                 <tr className="code-row">
-                  <td className="line-number"></td>
+                  <td className="line-number" />
                   <td className="code-col">
                     <span className="hljs-keyword">class </span>
                     <span className="hljs-title">MyFirstProgram</span> {`{`}
@@ -60,7 +61,7 @@ class SettingsView extends React.Component {
                   </td>
                 </tr>
                 <tr className="code-row">
-                  <td className="line-number"></td>
+                  <td className="line-number" />
                   <td className="code-col">&nbsp;&nbsp;
                     <span className="hljs-function">
                       <span className="hljs-keyword">public </span>
@@ -70,9 +71,9 @@ class SettingsView extends React.Component {
                       (<span className="hljs-params">String[] args</span>)
                     </span>{`{`}
                   </td>
-                 </tr>
+                </tr>
                 <tr className="code-row">
-                  <td className="line-number"></td>
+                  <td className="line-number" />
                   <td className="code-col">&nbsp;&nbsp;&nbsp;&nbsp;BufferedReader
                    <span className="hljs-keyword">in</span> =
                   </td>

@@ -14,8 +14,8 @@ class NotFoundView extends React.Component {
   render() {
     return (
       <div className={
-        `view ${this.context.styleStore.theme.className}`
-      }>
+        `view ${this.context.styleStore.theme.className}`}
+      >
         <HeaderBlock
           disabled={{ raw: true, edit: true, save: true }}
         />
@@ -26,7 +26,8 @@ class NotFoundView extends React.Component {
             &nbsp;&nbsp;&nbsp;&nbsp;isn't hanging around here.<br /><br /><br />
               `""==,,__<br />
               &nbsp;&nbsp;`"==..__"=..__ _    _..-==""_<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.-,`"=/ /\ \""/_)==""``<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.-,`"=/ /\ \""/_)==""``
+              <br />
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( (    | | | \/ |<br />
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\ '.  |  \;  \ /<br />
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|  \ |   |   ||<br />
@@ -46,5 +47,7 @@ class NotFoundView extends React.Component {
 NotFoundView.contextTypes = {
   styleStore: PropTypes.object
 };
+
+NotFoundView.displayName = 'NotFoundView';
 
 export default NotFoundView;

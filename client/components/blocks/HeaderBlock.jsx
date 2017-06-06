@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import clientConfig from '../../config/config';
-import { Condition } from '../../modules/components'
+import { Condition } from '../../modules/components';
 
 /**
  * Header display containing navigation links
@@ -26,12 +26,9 @@ class HeaderBlock extends React.Component {
 
   /**
    * Sets the mobile navigation display
-   * @param event
    */
-  toggleMobileNav = (event) => {
-    console.log('in toggle');
+  toggleMobileNav = () =>
     this.setState({ isMobileNavOpen: !this.state.isMobileNavOpen });
-  };
 
   /**
    * Helper to render a icon/link combination
@@ -40,7 +37,7 @@ class HeaderBlock extends React.Component {
   renderLink = (options) => {
     const isDisabled = this.isDisabled(options.name);
     return (isDisabled) ? (
-      <li className='disabled'>
+      <li className="disabled">
         <a>
           <i className={options.iconClass} />
           <Condition condition={this.state.isMobileNavOpen}>
@@ -66,7 +63,7 @@ class HeaderBlock extends React.Component {
   renderActionLink = (options) => {
     const isDisabled = this.isDisabled(options.name);
     return (isDisabled || !options.action) ? (
-      <li className='disabled'>
+      <li className="disabled">
         <a>
           <i className={options.iconClass} />
           <Condition condition={this.state.isMobileNavOpen}>
@@ -79,8 +76,8 @@ class HeaderBlock extends React.Component {
         <a>
           <i className={options.iconClass} />
           <span className="navigation-tooltip">
-          {options.name}
-        </span>
+            {options.name}
+          </span>
         </a>
       </li>
     );
@@ -132,9 +129,11 @@ class HeaderBlock extends React.Component {
           </ul>
         </div>
       </div>
-    )
+    );
   }
 
 }
+
+HeaderBlock.displayName = 'HeaderBlock';
 
 export default HeaderBlock;

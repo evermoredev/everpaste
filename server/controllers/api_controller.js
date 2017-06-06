@@ -130,19 +130,21 @@ class ApiController {
     // Try writing the file if it exists
     try {
       if (data.file) {
-        data.filename = data.key + mime2ext[data.file.mimetype];
+        const ext = (data.file.originalname.match(/\..{1,20}$/) || [])[0]
+          || '';
+        data.filename = data.key + ext;
         fs.writeFileSync(`server/uploads/${data.filename}`, data.file.buffer);
       }
-    } catch(e) {
+    } catch(err) {
       return fail(res, {
         resCode: 500,
         clientMsg: 'Problem uploading file. Please try again later.',
-        serverMsg: 'File error: ' + e
+        serverMsg: `File error: ${err}`
       });
     }
 
     // Create expiration timestamp or null for no expiration
-    data.expiration = (data.expiration != 'Forever') ?
+    data.expiration = (data.expiration !== 'Forever') ?
       postgresTimestamp(data.expiration) : null;
 
     // Insert the query
