@@ -39,3 +39,20 @@
     color: #8d8d89;
   }
 }
+
+.csv-table {
+  border-spacing: 0;
+  empty-cells: show;
+  td {
+    border-right: 1px solid #8d8d89;
+    border-bottom: 1px solid #8d8d89;
+    padding: 3px 5px;
+  }
+  tr td:first-child {
+    border-left: 1px solid #8d8d89;
+  }
+  tr:first-child td {
+    border-top: 1px solid #8d8d89;
+    font-weight: bold;
+  }
+}

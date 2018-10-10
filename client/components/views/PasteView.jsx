@@ -261,6 +261,7 @@ class PasteView extends React.Component {
         onPaste={this.onPaste}
       >
         <HeaderBlock
+          showPrompt={this.hasText()}
           saveButton={this.saveButton}
           disabled={{ raw: true, edit: true, save: !this.hasText() }}
         />

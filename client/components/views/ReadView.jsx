@@ -1,4 +1,5 @@
 import CryptoJS from 'crypto-js';
+import * as CSV from 'csv-string';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
@@ -47,6 +48,7 @@ class ReadView extends React.Component {
       editDisabled: true,
       error: '',
       showDiff: false,
+      renderAsCSV: false,
 
       redirect: null
     };
@@ -161,6 +163,45 @@ class ReadView extends React.Component {
     return (<LoaderBlock />);
   };
 
+  renderCSV = () => {
+    if (this.state.rawText) {
+      const text = this.state.rawText.split('\n').filter((content) => !!content);
+      let maxRowLength = 0;
+      const rows = text.map((trow) => {
+        const row = CSV.parse(trow)[0];
+        if (row.length > maxRowLength) {
+          maxRowLength = row.length;
+        }
+        return row;
+      });
+
+      return (
+        <div className="w-100 flex-center">
+          <table className="hljs csv-table">
+            <tbody>
+              {rows.map((row, idx) => {
+                if (row.length < maxRowLength) {
+                  row = row.concat(Array(maxRowLength - row.length).fill(''));
+                }
+                return (
+                  <tr key={idx}>
+                    {row.map((t, idx2) => {
+                      return (
+                        <td key={idx2}>
+                          {t.trim()}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+  };
+
   renderDiffBlock = () => {
     if (this.state.diffText) {
       return (
@@ -253,6 +294,13 @@ class ReadView extends React.Component {
                 <Condition condition={this.state.name}>
                   <span className="italic">&nbsp;from {this.state.name}</span>
                 </Condition>
+                <span
+                  className="ml-10 c-pointer"
+                  style={{ fontSize: 12 }}
+                  onClick={() => this.setState({ renderAsCSV: !this.state.renderAsCSV })}
+                >
+                  <i className="fa fa-table" />
+                </span>
               </h3>
             </div>
 
@@ -288,7 +336,8 @@ class ReadView extends React.Component {
 
             <Condition condition={showText && !this.state.showDiff}>
               <div className="code-document">
-                {this.renderCodeBlock()}
+                {this.state.renderAsCSV ?
+                  this.renderCSV() : this.renderCodeBlock()}
               </div>
             </Condition>
 

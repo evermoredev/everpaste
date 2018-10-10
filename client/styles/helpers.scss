@@ -3,6 +3,7 @@
 .d-block { display: block; }
 .d-inline { display: inline; }
 .flex-auto { flex: auto; }
+.flex-center { display: flex; justify-content: center; }
 .flex-col { display: flex; flex-direction: column; }
 .flex-row { display: flex; flex-direction: row; flex-wrap: wrap; }
 .italic { font-style: italic; }
@@ -26,3 +27,4 @@
   -ms-user-select: none;
   user-select: none;
 }
+.w-100 { width: 100%; }

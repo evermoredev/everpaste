@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Prompt, Link } from 'react-router-dom';
 
 import clientConfig from '../../config/config';
 import { Condition } from '../../modules/components';
@@ -86,6 +86,11 @@ class HeaderBlock extends React.Component {
   render() {
     return (
       <div className="header-block unselectable">
+        <Prompt
+          when={!!this.props.showPrompt}
+          message="Are you sure you want to continue without saving?"
+        />
+
         <Link to="/">
           <div className="left-nav">
             <img src={clientConfig.logoUrl} alt="logo" className="logo" />

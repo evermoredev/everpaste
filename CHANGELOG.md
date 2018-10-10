@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add a script to generate and replace letsencrypt certs
 - Handle file uploads via curl
 
+## [1.5.0] - 2018-10-10
+### Added
+- Confirm when leaving a page with entered text
+- Option to render CSV as table
+
 ## [1.4.0] - 2017-06-06
 ### Changed
 - Updated components following strict eslint guidelines
