@@ -137,6 +137,8 @@ class Server {
       (req, res) => this.apiController.handleGetList(req, res));
     this.app.get('/api/file/:key/:filename',
       (req, res) => this.apiController.handleGetFile(req.params, res));
+    this.app.get('/api/:id/plantuml',
+      (req, res) => this.apiController.handleGetPlantUml(req.params.id, res));
     this.app.get('/api/:id',
       (req, res) => this.apiController.handleGet(req.params.id, res));
   }
