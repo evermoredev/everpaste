@@ -72,7 +72,7 @@ class ReadView extends React.Component {
   componentWillReceiveProps(nextProps, nextContext) {
     const reloadComponent = (
       (nextProps.location.state && nextProps.location.state.reload) ||
-      (this.props.match.url != nextProps.match.url)
+      (this.props.match.params.docKey != nextProps.match.params.docKey)
     );
     if (reloadComponent) {
       this.setState(this.initialState, () => {
