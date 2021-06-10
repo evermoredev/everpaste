@@ -54,19 +54,19 @@ class ApiController {
     }
   }
 
-  async handleGetPlantUml(key, res, options = {}) {
+  async handlePostPlantUml(req, res) {
+    const data = req.body;
     res.set('Content-Type', 'image/svg+xml');
-
-    const data = await this.db.models.entries.getEntry(key);
-    winston.verbose('Retrieved document for plantUML', { key });
-
-    const gen = plantuml.generate(data.text, { format: 'svg' });
-    gen.out.pipe(res);
-    
-    fail(res, {
-      clientMsg: 'Unable to generate a plantUML image.',
-      serverMsg: `Problem generating plant UML image: ${params.key}`
-    });
+    try {
+      const gen = plantuml.generate(data.text, { format: 'svg' });
+      gen.out.pipe(res);
+    } catch (err) {
+      return fail(res, {
+        resCode: 500,
+        clientMsg: 'Unable to generate a plantUML image.',
+        serverMsg: `Problem generating plant UML image: ${req.params.id}`
+      });
+    }
   }
 
   async handleRawGet(key, res) {

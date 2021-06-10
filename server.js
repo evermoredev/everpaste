@@ -130,6 +130,9 @@ class Server {
     // multer for file uploads
     const upload = multer({ storage: multer.memoryStorage() }).any();
     // api calls for the server to handle
+    this.app.post('/api/:id/plantuml',
+      (req, res) =>
+        upload(req, res, (err) => this.apiController.handlePostPlantUml(req, res)));
     this.app.post('/api',
       (req, res) =>
         upload(req, res, (err) => this.apiController.handlePost(req, res)));
@@ -137,8 +140,6 @@ class Server {
       (req, res) => this.apiController.handleGetList(req, res));
     this.app.get('/api/file/:key/:filename',
       (req, res) => this.apiController.handleGetFile(req.params, res));
-    this.app.get('/api/:id/plantuml',
-      (req, res) => this.apiController.handleGetPlantUml(req.params.id, res));
     this.app.get('/api/:id',
       (req, res) => this.apiController.handleGet(req.params.id, res));
   }

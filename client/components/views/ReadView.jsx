@@ -139,7 +139,7 @@ class ReadView extends React.Component {
         secretKey: '',
         rawDisabled: false,
         editDisabled: false
-      });
+      }, () => this.loadRenderMode(this.state.renderMode));
     }
   };
 
@@ -147,6 +147,15 @@ class ReadView extends React.Component {
     this.setState({ [event.target.name]: event.target.value });
 
   loadRenderMode = (mode) => {
+    if (this.state.privacy === privacyOptions.encrypted) {
+      console.debug(
+        `Cannot load any render modes while privacy is set to ${privacyOptions.encrypted}`);
+      return;
+    }
+    if (this.state.filename) {
+      this.setState({ renderMode: 'file' });
+      return;
+    }
     this.setState({ renderMode: mode });
     switch (mode) {
       case "diff":
@@ -173,7 +182,12 @@ class ReadView extends React.Component {
   };
 
   loadPlantUml = (docKey) => {
-    doRequest({ url: `/api/${docKey}/plantuml` })
+    const params = { text: this.state.rawText };
+    doRequest({
+      method: 'POST',
+      url: `/api/${docKey}/plantuml`,
+      params
+    })
       .then((data) => {
         this.setState({ plantUml: data });
       })
