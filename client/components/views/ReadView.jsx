@@ -362,13 +362,15 @@ class ReadView extends React.Component {
                 <Condition condition={this.state.name}>
                   <span className="italic">&nbsp;from {this.state.name}</span>
                 </Condition>
-                <span
-                  className="ml-10 c-pointer"
-                  style={{ fontSize: 12 }}
-                  onClick={() => this.selectRenderMode('csv')}
-                >
-                  <i className="fa fa-table" />
-                </span>
+                <Condition condition={!showFile}>
+                  <span
+                    className="ml-10 c-pointer"
+                    style={{ fontSize: 12 }}
+                    onClick={() => this.selectRenderMode('csv')}
+                  >
+                    <i className="fa fa-table" />
+                  </span>
+                </Condition>
               </h3>
             </div>
 
