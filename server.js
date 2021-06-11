@@ -130,6 +130,9 @@ class Server {
     // multer for file uploads
     const upload = multer({ storage: multer.memoryStorage() }).any();
     // api calls for the server to handle
+    this.app.post('/api/:id/plantuml',
+      (req, res) =>
+        upload(req, res, (err) => this.apiController.handlePostPlantUml(req, res)));
     this.app.post('/api',
       (req, res) =>
         upload(req, res, (err) => this.apiController.handlePost(req, res)));

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import winston from 'winston';
+import plantuml from 'node-plantuml';
 
 import { postgresTimestamp } from '../modules/_helpers';
 import { contentType, fail } from '../modules/response';
@@ -50,6 +51,21 @@ class ApiController {
       winston.warn('Document not found', { key });
       res.writeHead(404, contentType.json);
       res.end(JSON.stringify({ message: 'Document not found.' }));
+    }
+  }
+
+  async handlePostPlantUml(req, res) {
+    const data = req.body;
+    res.set('Content-Type', 'image/svg+xml');
+    try {
+      const gen = plantuml.generate(data.text, { format: 'svg' });
+      gen.out.pipe(res);
+    } catch (err) {
+      return fail(res, {
+        resCode: 500,
+        clientMsg: 'Unable to generate a plantUML image.',
+        serverMsg: `Problem generating plant UML image: ${req.params.id}`
+      });
     }
   }
 

@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 import * as CSV from 'csv-string';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { withRouter, Redirect, Link } from 'react-router-dom';
 
 import { HeaderBlock, LoaderBlock } from '../blocks';
 import { privacyOptions } from '../../../shared/config/constants';
@@ -47,8 +47,7 @@ class ReadView extends React.Component {
       rawDisabled: true,
       editDisabled: true,
       error: '',
-      showDiff: false,
-      renderAsCSV: false,
+      renderMode: this.props.match.params.renderMode,
 
       redirect: null
     };
@@ -73,12 +72,18 @@ class ReadView extends React.Component {
   componentWillReceiveProps(nextProps, nextContext) {
     const reloadComponent = (
       (nextProps.location.state && nextProps.location.state.reload) ||
-      (this.props.match.url != nextProps.match.url)
+      (this.props.match.params.docKey != nextProps.match.params.docKey)
     );
     if (reloadComponent) {
       this.setState(this.initialState, () => {
         this.componentWillMount();
       });
+      return;
+    }
+    const resetView = this.props.match.params.renderMode !== 
+      nextProps.match.params.renderMode;
+    if (resetView) {
+      this.loadRenderMode(nextProps.match.params.renderMode);
     }
   }
 
@@ -102,9 +107,10 @@ class ReadView extends React.Component {
           privacy, lang, rawDisabled, editDisabled, filename
         });
         this.context.currentPaste = this.state;
+        this.loadRenderMode(this.props.match.params.renderMode);
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
         this.setState({ redirect: { pathname: '/404' } });
       });
   };
@@ -133,21 +139,69 @@ class ReadView extends React.Component {
         secretKey: '',
         rawDisabled: false,
         editDisabled: false
-      });
+      }, () => this.loadRenderMode(this.state.renderMode));
     }
   };
 
   handleChange = (event) =>
     this.setState({ [event.target.name]: event.target.value });
 
-  handleShowDiff = () => {
-    this.setState({ showDiff: true });
-    if (!this.state.diffText) {
-      this.setState({
-        diffText: getHighlightedDiffText(
-          this.state.forkedText, this.state.rawText, this.state.lang
-        )
+  loadRenderMode = (mode) => {
+    if (this.state.privacy === privacyOptions.encrypted) {
+      console.debug(
+        `Cannot load any render modes while privacy is set to ${privacyOptions.encrypted}`);
+      return;
+    }
+    if (this.state.filename) {
+      this.setState({ renderMode: 'file' });
+      return;
+    }
+    this.setState({ renderMode: mode });
+    switch (mode) {
+      case "diff":
+        this.loadDiff();
+        break;
+      case "plantuml":
+        this.loadPlantUml(this.state.docKey);
+        break;
+      case "csv":
+      default:
+        this.setState({ renderMode: mode });
+        break;
+    }
+  };
+
+  loadDiff = () => {
+    this.setState({
+      diffText: getHighlightedDiffText(
+        this.state.forkedText,
+        this.state.rawText,
+        this.state.lang
+      ),
+    });
+  };
+
+  loadPlantUml = (docKey) => {
+    const params = { text: this.state.rawText };
+    doRequest({
+      method: 'POST',
+      url: `/api/${docKey}/plantuml`,
+      params
+    })
+      .then((data) => {
+        this.setState({ plantUml: data });
+      })
+      .catch((error) => {
+        console.error(error);
+        this.setState({ error: "Unable to process text as PlantUML." });
       });
+  };
+
+  selectRenderMode = (mode) => {
+    if (this.props.match.params.renderMode === mode) {
+      this.props.history.push(`/${this.state.docKey}`);
+    } else {
+      this.props.history.push(`/${this.state.docKey}/${mode}`);
     }
   };
 
@@ -218,6 +272,20 @@ class ReadView extends React.Component {
 
     return (<LoaderBlock />);
   };
+
+  renderPlantUml = () => {
+    if (this.state.plantUml) {
+      return (
+        <div className="w-100 flex-center">
+          <div
+            className="p-10 bg-white flex-center"
+            dangerouslySetInnerHTML={{ __html: this.state.plantUml }}
+          />
+        </div>
+      );
+    }
+    return (<LoaderBlock />);
+  }
 
   rawButton = () => {
     const win = window.open("", '_blank');
@@ -294,13 +362,15 @@ class ReadView extends React.Component {
                 <Condition condition={this.state.name}>
                   <span className="italic">&nbsp;from {this.state.name}</span>
                 </Condition>
-                <span
-                  className="ml-10 c-pointer"
-                  style={{ fontSize: 12 }}
-                  onClick={() => this.setState({ renderAsCSV: !this.state.renderAsCSV })}
-                >
-                  <i className="fa fa-table" />
-                </span>
+                <Condition condition={!showFile}>
+                  <span
+                    className="ml-10 c-pointer"
+                    style={{ fontSize: 12 }}
+                    onClick={() => this.selectRenderMode('csv')}
+                  >
+                    <i className="fa fa-table" />
+                  </span>
+                </Condition>
               </h3>
             </div>
 
@@ -316,17 +386,17 @@ class ReadView extends React.Component {
                 <span className="white-text">
                   &nbsp;|&nbsp;
                 </span>
-                <Condition condition={!this.state.showDiff}>
+                <Condition condition={this.state.renderMode !== 'diff'}>
                   <span
                     className="c-pointer"
-                    onClick={this.handleShowDiff}
+                    onClick={() => this.selectRenderMode('diff')}
                   >
                     Show diff
                   </span>
                 </Condition>
-                <Condition condition={this.state.showDiff}>
+                <Condition condition={this.state.renderMode === 'diff'}>
                   <span className="c-pointer"
-                    onClick={() => this.setState({ showDiff: false })}
+                    onClick={() => this.selectRenderMode('')}
                   >
                     Hide diff
                   </span>
@@ -334,16 +404,27 @@ class ReadView extends React.Component {
               </div>
             </Condition>
 
-            <Condition condition={showText && !this.state.showDiff}>
+            <Condition condition={!this.state.renderMode}>
               <div className="code-document">
-                {this.state.renderAsCSV ?
-                  this.renderCSV() : this.renderCodeBlock()}
+                {this.renderCodeBlock()}
               </div>
             </Condition>
 
-            <Condition condition={showText && this.state.showDiff}>
+            <Condition condition={this.state.renderMode === 'csv'}>
+              <div className="code-document">
+                {this.renderCSV()}
+              </div>
+            </Condition>
+
+            <Condition condition={this.state.renderMode === 'diff'}>
               <div className="code-document">
                 {this.renderDiffBlock()}
+              </div>
+            </Condition>
+
+            <Condition condition={this.state.renderMode === 'plantuml'}>
+              <div className="code-document">
+                {this.renderPlantUml()}
               </div>
             </Condition>
 
@@ -377,4 +458,4 @@ ReadView.contextTypes = {
   styleStore: PropTypes.object
 };
 
-export default ReadView;
+export default withRouter(ReadView);

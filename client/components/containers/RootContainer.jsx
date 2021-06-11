@@ -46,7 +46,7 @@ class RootContainer extends React.Component {
             <Route path="/saved" component={SavedView} />
             <Route path="/settings" component={SettingsView} />
             <Route path="/404" component={NotFoundView} />
-            <Route path="/:docKey" component={ReadView} />
+            <Route path="/:docKey/:renderMode?" component={ReadView} />
             <Route component={NotFoundView} />
           </Switch>
       </Router>
